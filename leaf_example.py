@@ -4,68 +4,58 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from torchvision.models import resnet50
 import time
 import wandb
-from leaf_decorator import leaf
+from leaf_trainer import leaf, create_leaf_config, save_config, get_optimal_batch_size
 
 # Your existing model definition
 class ResNetModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.model = resnet50(pretrained=True)
+        # Use ResNet-50 but modify first layer for CIFAR-10
+        self.model = torchvision.models.resnet50(pretrained=True)
         self.model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
-        self.model.maxpool = nn.Identity()
-        self.model.fc = nn.Linear(self.model.fc.in_features, 10)
+        self.model.maxpool = nn.Identity()  # Remove maxpool since CIFAR-10 images are small
+        self.model.fc = nn.Linear(2048, 10)  # CIFAR-10 has 10 classes
     
     def forward(self, x):
         return self.model(x)
 
 # Your existing training function, now with the @leaf decorator
-@leaf(num_gpus=2)  # Just add this line to make it distributed!
-def train(model, dataloader, criterion, optimizer, trainer=None):
-    model.train()
-    running_loss = 0.0
-    correct = 0
-    total = 0
-    
-    for batch_idx, (inputs, targets) in enumerate(dataloader):
-        # If using leaf training, use the trainer
-        if trainer is not None:
-            loss = trainer.train_step(
-                inputs=inputs,
-                targets=targets,
-                criterion=criterion,
-                optimizer=optimizer
-            )
-        else:
-            # Original training code
-            inputs, targets = inputs.to(device), targets.to(device)
+def train(model, dataloader, criterion, optimizer, num_epochs=10):
+    """Training function that will be distributed across available resources."""
+    for epoch in range(num_epochs):
+        model.train()
+        running_loss = 0.0
+        for i, (inputs, labels) in enumerate(dataloader):
             optimizer.zero_grad()
             outputs = model(inputs)
-            loss = criterion(outputs, targets)
+            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-        
-        running_loss += loss.item()
-        _, predicted = outputs.max(1)
-        total += targets.size(0)
-        correct += predicted.eq(targets).sum().item()
-        
-        if (batch_idx + 1) % 100 == 0:
-            print(f'Batch: {batch_idx + 1} | Loss: {running_loss/(batch_idx + 1):.3f} | '
-                  f'Acc: {100.*correct/total:.2f}%')
-    
-    return running_loss/len(dataloader), 100.*correct/total
+            
+            running_loss += loss.item()
+            if i % 100 == 99:
+                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 100:.3f}')
+                running_loss = 0.0
 
 # Main training setup
 def main():
+    # Auto-discover available resources
+    config = create_leaf_config(auto_discover=True)
+    
+    # Save configuration for reference
+    save_config(config, 'leaf_config.json')
+    
+    # Get optimal batch size based on available resources
+    batch_size = get_optimal_batch_size(config)
+    print(f"Using batch size: {batch_size}")
+    
     # Set device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     # Hyperparameters
     num_epochs = 50
-    batch_size = 128
     learning_rate = 0.001
     
     # Data preprocessing
@@ -83,19 +73,22 @@ def main():
                            shuffle=True, num_workers=2)
     
     # Create model and training components
-    model = ResNetModel()
+    model = ResNetModel().to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     
     # Initialize wandb
     wandb.init(project="leaf-training")
     
+    # Apply leaf decorator with discovered configuration
+    train_with_leaf = leaf(config=config)(train)
+    
     # Training loop
     print('Starting training...')
     for epoch in range(num_epochs):
         start_time = time.time()
         
-        train_loss, train_acc = train(
+        train_loss, train_acc = train_with_leaf(
             model=model,
             dataloader=trainloader,
             criterion=criterion,
