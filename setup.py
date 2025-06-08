@@ -1,74 +1,102 @@
-from setuptools import setup
-from torch.utils.cpp_extension import BuildExtension, CppExtension
-import os
-import platform
+from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
 import sys
-import torch
+import setuptools
+import os
 
-def get_extension():
-    # Get PyTorch include directory
-    torch_include = os.path.join(os.path.dirname(torch.__file__), 'include')
-    
-    # Get MPI paths
-    MPI_HOME = os.environ.get('MPI_HOME', '/usr/local/mpi')
-    
-    # Common settings for all platforms
-    common_settings = {
-        'name': 'leaf_trainer',
-        'sources': ['leaf_trainer.cpp'],
-        'include_dirs': [
-            torch_include,
-            os.path.join(MPI_HOME, 'include')
-        ],
-        'library_dirs': [
-            os.path.join(MPI_HOME, 'lib')
-        ],
-        'libraries': ['mpi'],
-        'extra_compile_args': {
-            'cxx': ['-O3', '-std=c++17']
-        }
+__version__ = '0.0.1'
+
+# As of Python 3.6, CCompiler has a `has_flag` method.
+# cf http://bugs.python.org/issue26689
+def has_flag(compiler, flagname):
+    """Return a boolean indicating whether a flag name is supported on
+    the specified compiler.
+    """
+    import tempfile
+    with tempfile.NamedTemporaryFile('w', suffix='.cpp') as f:
+        f.write('int main (int argc, char **argv) { return 0; }')
+        try:
+            compiler.compile([f.name], extra_postargs=[flagname])
+        except setuptools.distutils.errors.CompileError:
+            return False
+    return True
+
+def cpp_flag(compiler):
+    """Return the -std=c++[11/14/17] compiler flag.
+    The newer version is prefered over c++11 (when it is available).
+    """
+    flags = ['-std=c++17', '-std=c++14', '-std=c++11']
+
+    for flag in flags:
+        if has_flag(compiler, flag):
+            return flag
+
+    raise RuntimeError('Unsupported compiler -- at least C++11 support '
+                      'is needed!')
+
+class get_pybind_include(object):
+    def __init__(self, user=False):
+        self.user = user
+
+    def __str__(self):
+        import pybind11
+        return pybind11.get_include(self.user)
+
+class BuildExt(build_ext):
+    """A custom build extension for adding compiler-specific options."""
+    c_opts = {
+        'msvc': ['/EHsc'],
+        'unix': [],
     }
-    
-    # Check if we're on Apple Silicon (M1/M2)
-    is_apple_silicon = platform.processor() == 'arm'
-    
-    # Check if CUDA is available
-    has_cuda = torch.cuda.is_available() and not is_apple_silicon
-    
-    if has_cuda:
-        # Use CUDA extension for NVIDIA GPUs
-        from torch.utils.cpp_extension import CUDAExtension
-        CUDA_HOME = os.environ.get('CUDA_HOME', '/usr/local/cuda')
-        return CUDAExtension(
-            **common_settings,
-            include_dirs=common_settings['include_dirs'] + [
-                os.path.join(CUDA_HOME, 'include')
-            ],
-            library_dirs=common_settings['library_dirs'] + [
-                os.path.join(CUDA_HOME, 'lib64')
-            ],
-            libraries=common_settings['libraries'] + ['cudart'],
-            extra_compile_args={
-                'cxx': ['-O3', '-std=c++17'],
-                'nvcc': ['-O3']
-            }
-        )
-    else:
-        # Use standard extension for CPU or Apple Silicon
-        return CppExtension(**common_settings)
+    l_opts = {
+        'msvc': [],
+        'unix': [],
+    }
+
+    if sys.platform == 'darwin':
+        darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.7']
+        c_opts['unix'] += darwin_opts
+        l_opts['unix'] += darwin_opts
+
+    def build_extensions(self):
+        ct = self.compiler.compiler_type
+        opts = self.c_opts.get(ct, [])
+        link_opts = self.l_opts.get(ct, [])
+        if ct == 'unix':
+            opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
+            opts.append(cpp_flag(self.compiler))
+            if has_flag(self.compiler, '-fvisibility=hidden'):
+                opts.append('-fvisibility=hidden')
+        elif ct == 'msvc':
+            opts.append('/DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
+        for ext in self.extensions:
+            ext.extra_compile_args = opts
+            ext.extra_link_args = link_opts
+        build_ext.build_extensions(self)
+
+ext_modules = [
+    Extension(
+        'leaf._core',
+        ['src/leaf/core.cpp'],
+        include_dirs=[
+            get_pybind_include(),
+            get_pybind_include(user=True),
+        ],
+        language='c++'
+    ),
+]
 
 setup(
-    name='leaf_trainer',
-    version='0.1.0',
-    packages=['leaf_trainer'],
-    ext_modules=[get_extension()],
-    cmdclass={
-        'build_ext': BuildExtension
-    },
-    install_requires=[
-        'torch>=1.7.0',
-        'numpy>=1.19.0',
-        'psutil>=5.8.0'  # For resource discovery
-    ],
-    python_requires='>=3.7',
+    name='leaf',
+    version=__version__,
+    author='Ryan Marr',
+    author_email='r.marr747@gmail.com',
+    description='Leaf is a distributed training framework.',
+    long_description='',
+    ext_modules=ext_modules,
+    install_requires=['pybind11>=2.6.0'],
+    setup_requires=['pybind11>=2.6.0'],
+    cmdclass={'build_ext': BuildExt},
+    zip_safe=False,
+    python_requires=">=3.6",
 ) 
