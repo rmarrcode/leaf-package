@@ -13,6 +13,10 @@
 #include <iomanip>
 #include <mpi.h>
 #include <fstream>
+#include <thread>
+#include <chrono>
+#include <grpc/grpc.h>
+#include "leaftest.grpc.pb.h"
 
 namespace py = pybind11;
 
@@ -24,12 +28,66 @@ private:
     std::string key_path;
     bool is_connected;
 
+    bool verify_grpc_connection() {
+        // First, copy the server test binary to the remote server
+        std::string scp_cmd = "scp -o BatchMode=yes -o ConnectTimeout=5 ";
+        if (!key_path.empty()) {
+            scp_cmd += "-i " + key_path + " ";
+        }
+        scp_cmd += "-P " + std::to_string(port) + " ";
+        scp_cmd += "server_test " + username + "@" + hostname + ":/tmp/";
+        
+        if (std::system(scp_cmd.c_str()) != 0) {
+            std::cerr << "Failed to copy server test binary to " << hostname << std::endl;
+            return false;
+        }
+
+        // Start the server test program in the background
+        std::string ssh_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 ";
+        if (!key_path.empty()) {
+            ssh_cmd += "-i " + key_path + " ";
+        }
+        ssh_cmd += "-p " + std::to_string(port) + " ";
+        ssh_cmd += username + "@" + hostname + " 'chmod +x /tmp/server_test && /tmp/server_test > /dev/null 2>&1 &'";
+        
+        if (std::system(ssh_cmd.c_str()) != 0) {
+            std::cerr << "Failed to start server test on " << hostname << std::endl;
+            return false;
+        }
+
+        // Wait a moment for the server to start
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        // Create gRPC channel and stub
+        std::string target = hostname + ":50051";
+        auto channel = grpc::CreateChannel(target, grpc::InsecureChannelCredentials());
+        auto stub = leaftest::ServerTest::NewStub(channel);
+
+        // Try to get server time
+        grpc::ClientContext context;
+        leaftest::TimeRequest request;
+        leaftest::TimeResponse response;
+        
+        auto status = stub->GetServerTime(&context, request, &response);
+        
+        if (status.ok()) {
+            std::cout << "Successfully connected to " << hostname 
+                      << " (Server time: " << response.server_time_ms() << " ms)" << std::endl;
+            return true;
+        } else {
+            std::cerr << "Failed to get server time from " << hostname 
+                      << ": " << status.error_message() << std::endl;
+            return false;
+        }
+    }
+
 public:
     UserCredentials(const std::string& user, const std::string& host, 
                    int p = 22, const std::string& key = "")
         : username(user), hostname(host), port(p), key_path(key), is_connected(false) {}
 
     bool verify_connection() {
+        // First verify basic SSH connection
         std::string cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 ";
         if (!key_path.empty()) {
             cmd += "-i " + key_path + " ";
@@ -38,7 +96,14 @@ public:
         cmd += username + "@" + hostname + " 'echo 2>&1'";
         
         int result = std::system(cmd.c_str());
-        is_connected = (result == 0);
+        if (result != 0) {
+            std::cerr << "Basic SSH connection failed for " << hostname << std::endl;
+            is_connected = false;
+            return false;
+        }
+
+        // Then verify gRPC connection
+        is_connected = verify_grpc_connection();
         return is_connected;
     }
 
@@ -356,334 +421,28 @@ public:
 class LeafTrainer {
 private:
     LeafConfig config;
-    int world_size;
-    int world_rank;
-    bool is_initialized;
     std::vector<std::string> available_hosts;
 
-    void initialize_mpi() {
-        if (!is_initialized) {
-            // Get all available servers from config
-            auto servers = config.get_servers();
-            available_hosts.clear();
-            
-            // Create hostfile content
-            std::string hostfile_path = "/tmp/leaf_mpi_hostfile";
-            std::ofstream hostfile(hostfile_path);
-            
-            for (const auto& server_name : servers) {
-                auto server_info = config.get_server_info(server_name);
-                if (server_info["connected"].cast<bool>()) {
-                    std::string hostname = server_info["hostname"].cast<std::string>();
-                    available_hosts.push_back(hostname);
-                    
-                    // Count all compute resources for this server
-                    int gpu_count = 0;
-                    int mps_count = 0;
-                    int cpu_count = 0;
-                    
-                    auto resources = server_info["resources"].cast<py::list>();
-                    for (const auto& resource : resources) {
-                        auto res_dict = resource.cast<py::dict>();
-                        std::string type = res_dict["type"].cast<std::string>();
-                        
-                        if (type == "GPU") {
-                            gpu_count++;
-                        } else if (type == "MPS") {
-                            mps_count++;
-                        } else if (type == "CPU") {
-                            // For CPU, we'll use the number of CPU cores if available
-                            auto props = res_dict["properties"].cast<py::dict>();
-                            if (props.contains("cores")) {
-                                cpu_count = props["cores"].cast<int>();
-                            } else {
-                                // Default to 1 if cores info not available
-                                cpu_count = 1;
-                            }
-                        }
-                    }
-                    
-                    // Calculate total slots as sum of all compute resources
-                    int total_slots = gpu_count + mps_count + cpu_count;
-                    
-                    // Add to hostfile with total slots
-                    hostfile << hostname << " slots=" << total_slots << "\n";
-                    
-                    if (world_rank == 0) {
-                        std::cout << "Server " << hostname << " resources: "
-                                 << gpu_count << " GPUs, "
-                                 << mps_count << " MPS, "
-                                 << cpu_count << " CPU cores"
-                                 << " (total slots: " << total_slots << ")" << std::endl;
-                    }
-                }
-            }
-            hostfile.close();
+    void initialize() {
 
-            // Set MPI environment variables
-            setenv("OMPI_MCA_btl_tcp_if_include", "eth0", 1);  // Use eth0 interface
-            setenv("OMPI_MCA_btl", "^openib", 1);  // Disable InfiniBand
-            
-            // Initialize MPI with hostfile
-            char* argv[] = {const_cast<char*>("leaf_trainer"), nullptr};
-            int argc = 1;
-            MPI_Init(&argc, &argv);
-            
-            // Get world size and rank
-            MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-            MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-            
-            if (world_rank == 0) {
-                std::cout << "Initialized MPI with " << world_size << " processes across " 
-                         << available_hosts.size() << " hosts" << std::endl;
-            }
-            
-            is_initialized = true;
-        }
     }
 
-    void finalize_mpi() {
-        if (is_initialized) {
-            MPI_Finalize();
-            is_initialized = false;
-            
-            // Clean up hostfile
-            std::remove("/tmp/leaf_mpi_hostfile");
-        }
+    void finalize() {
+        
     }
 
 public:
-    LeafTrainer(const LeafConfig& cfg) 
-        : config(cfg), world_size(0), world_rank(0), is_initialized(false) {
-        initialize_mpi();
+    LeafTrainer(const LeafConfig& cfg) : config(cfg) {
+        initialize();
     }
 
     ~LeafTrainer() {
-        finalize_mpi();
+        finalize();
     }
 
     void train(py::object model, py::object optimizer, py::object train_loader, 
               int epochs, py::object criterion = py::none()) {
-        if (!is_initialized) {
-            throw std::runtime_error("MPI not initialized");
-        }
 
-        // Get total number of batches
-        int total_batches = train_loader.attr("__len__")().cast<int>();
-
-        // Get server info for this rank to determine device
-        auto servers = config.get_servers();
-        std::string device = "cpu";  // default device
-        
-        // Find which server this rank belongs to
-        int current_rank = 0;
-        for (const auto& server_name : servers) {
-            auto server_info = config.get_server_info(server_name);
-            if (server_info["connected"].cast<bool>()) {
-                auto resources = server_info["resources"].cast<py::list>();
-                int gpu_count = 0;
-                int mps_count = 0;
-                
-                // Count available resources
-                for (const auto& resource : resources) {
-                    auto res_dict = resource.cast<py::dict>();
-                    std::string type = res_dict["type"].cast<std::string>();
-                    if (type == "GPU") gpu_count++;
-                    else if (type == "MPS") mps_count++;
-                }
-                
-                // Calculate how many ranks this server handles
-                int server_ranks = gpu_count + mps_count + 1;  // +1 for CPU
-                
-                // Check if this rank belongs to this server
-                if (world_rank >= current_rank && world_rank < current_rank + server_ranks) {
-                    int local_rank = world_rank - current_rank;
-                    
-                    // Assign device based on local rank
-                    if (local_rank < gpu_count) {
-                        device = "cuda:" + std::to_string(local_rank);
-                    } else if (local_rank < gpu_count + mps_count) {
-                        device = "mps";
-                    } else {
-                        device = "cpu";
-                    }
-                    break;
-                }
-                
-                current_rank += server_ranks;
-            }
-        }
-
-        // Broadcast initial model parameters to all processes
-        auto parameters = model.attr("parameters")();
-        std::vector<std::vector<float>> param_buffers;
-        
-        if (world_rank == 0) {
-            // Master process collects parameters
-            for (auto param : parameters) {
-                auto tensor = param.attr("data").cast<py::object>();
-                auto numpy_array = tensor.attr("cpu")().attr("numpy")();
-                auto array = numpy_array.cast<py::array_t<float>>();
-                std::vector<float> param_vec(array.size());
-                std::memcpy(param_vec.data(), array.data(), array.size() * sizeof(float));
-                param_buffers.push_back(param_vec);
-            }
-        }
-
-        // Broadcast parameter sizes
-        std::vector<int> param_sizes;
-        if (world_rank == 0) {
-            for (const auto& buffer : param_buffers) {
-                param_sizes.push_back(buffer.size());
-            }
-        }
-        int num_params = param_sizes.size();
-        MPI_Bcast(&num_params, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        
-        if (world_rank != 0) {
-            param_sizes.resize(num_params);
-        }
-        MPI_Bcast(param_sizes.data(), num_params, MPI_INT, 0, MPI_COMM_WORLD);
-
-        // Broadcast parameters
-        if (world_rank != 0) {
-            param_buffers.resize(num_params);
-            for (int i = 0; i < num_params; ++i) {
-                param_buffers[i].resize(param_sizes[i]);
-            }
-        }
-        
-        for (int i = 0; i < num_params; ++i) {
-            MPI_Bcast(param_buffers[i].data(), param_sizes[i], MPI_FLOAT, 0, MPI_COMM_WORLD);
-        }
-
-        // Move model to appropriate device and update parameters
-        model.attr("to")(device);
-        int param_idx = 0;
-        for (auto param : parameters) {
-            auto tensor = param.attr("data").cast<py::object>();
-            auto numpy_array = tensor.attr("cpu")().attr("numpy")();
-            auto array = numpy_array.cast<py::array_t<float>>();
-            std::memcpy(array.mutable_data(), param_buffers[param_idx].data(), 
-                       param_sizes[param_idx] * sizeof(float));
-            param_idx++;
-        }
-        
-        // Training loop
-        for (int epoch = 0; epoch < epochs; ++epoch) {
-            float epoch_loss = 0.0f;
-            int processed_batches = 0;
-
-            // Reset the data loader for this epoch
-            train_loader.attr("reset")();
-
-            // Process batches in parallel across all processes
-            for (int batch_idx = world_rank; batch_idx < total_batches; batch_idx += world_size) {
-                // Get the batch for this process
-                auto batch = train_loader.attr("__getitem__")(batch_idx);
-                auto inputs = batch[0].attr("to")(device);
-                auto targets = batch[1].attr("to")(device);
-
-                // Forward pass
-                auto outputs = model.attr("__call__")(inputs);
-                auto loss = criterion.is_none() ? 
-                    model.attr("loss")(outputs, targets) : 
-                    criterion(outputs, targets);
-
-                // Backward pass
-                optimizer.attr("zero_grad")();
-                loss.attr("backward")();
-
-                // Collect gradients from this process
-                std::vector<std::vector<float>> all_gradients;
-                for (auto param : parameters) {
-                    if (param.attr("grad").is_none()) continue;
-                    auto grad = param.attr("grad").attr("cpu")().attr("numpy")();
-                    auto array = grad.cast<py::array_t<float>>();
-                    std::vector<float> grad_vec(array.size());
-                    std::memcpy(grad_vec.data(), array.data(), array.size() * sizeof(float));
-                    all_gradients.push_back(grad_vec);
-                }
-
-                // Prepare buffer for all-reduce
-                std::vector<float> flat_gradients;
-                for (const auto& grad : all_gradients) {
-                    flat_gradients.insert(flat_gradients.end(), grad.begin(), grad.end());
-                }
-
-                // All-reduce gradients across all processes
-                std::vector<float> reduced_gradients(flat_gradients.size());
-                MPI_Allreduce(flat_gradients.data(), reduced_gradients.data(), 
-                            flat_gradients.size(), MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
-
-                // Average the gradients
-                for (float& grad : reduced_gradients) {
-                    grad /= world_size;
-                }
-
-                // Update model parameters with averaged gradients
-                int grad_idx = 0;
-                for (auto param : parameters) {
-                    if (param.attr("grad").is_none()) continue;
-                    auto grad = param.attr("grad");
-                    auto numpy_array = grad.attr("cpu")().attr("numpy")();
-                    auto array = numpy_array.cast<py::array_t<float>>();
-                    auto size = array.size();
-                    std::memcpy(array.mutable_data(), 
-                              reduced_gradients.data() + grad_idx,
-                              size * sizeof(float));
-                    grad_idx += size;
-                }
-
-                // Update parameters
-                optimizer.attr("step")();
-
-                // Broadcast updated parameters to all processes
-                param_buffers.clear();
-                for (auto param : parameters) {
-                    auto tensor = param.attr("data").cast<py::object>();
-                    auto numpy_array = tensor.attr("cpu")().attr("numpy")();
-                    auto array = numpy_array.cast<py::array_t<float>>();
-                    std::vector<float> param_vec(array.size());
-                    std::memcpy(param_vec.data(), array.data(), array.size() * sizeof(float));
-                    param_buffers.push_back(param_vec);
-                }
-
-                // Broadcast new parameters
-                for (int i = 0; i < num_params; ++i) {
-                    MPI_Bcast(param_buffers[i].data(), param_sizes[i], MPI_FLOAT, 0, MPI_COMM_WORLD);
-                }
-
-                // Update local model parameters
-                param_idx = 0;
-                for (auto param : parameters) {
-                    auto tensor = param.attr("data").cast<py::object>();
-                    auto numpy_array = tensor.attr("cpu")().attr("numpy")();
-                    auto array = numpy_array.cast<py::array_t<float>>();
-                    std::memcpy(array.mutable_data(), param_buffers[param_idx].data(), 
-                              param_sizes[param_idx] * sizeof(float));
-                    param_idx++;
-                }
-
-                epoch_loss += loss.attr("item")().cast<float>();
-                processed_batches++;
-
-                // Synchronize all processes after each batch
-                MPI_Barrier(MPI_COMM_WORLD);
-            }
-
-            // Average loss across all processes
-            float total_loss;
-            MPI_Allreduce(&epoch_loss, &total_loss, 1, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
-            total_loss /= (world_size * processed_batches);
-
-            if (world_rank == 0) {
-                std::cout << "Epoch " << epoch + 1 << "/" << epochs 
-                         << " Loss: " << total_loss 
-                         << " (processed " << processed_batches << " batches per process)" 
-                         << std::endl;
-            }
-        }
     }
 };
 
