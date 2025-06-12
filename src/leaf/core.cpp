@@ -441,7 +441,7 @@ public:
     }
 
     void train(py::object model, py::object optimizer, py::object train_loader, 
-              int epochs, py::object criterion = py::none()) {
+              int epochs, py::object criterion = py::none()) {        
 
     }
 };
