@@ -74,6 +74,12 @@ class BuildExt(build_ext):
             ext.extra_link_args = link_opts
         build_ext.build_extensions(self)
 
+# Add include directories
+mpi_include = '/opt/homebrew/opt/open-mpi/include'
+grpc_include = '/opt/homebrew/opt/grpc/include'
+protobuf_include = '/opt/homebrew/opt/protobuf/include'
+absl_include = '/opt/homebrew/opt/abseil/include'
+
 ext_modules = [
     Extension(
         'leaf._core',
@@ -81,7 +87,13 @@ ext_modules = [
         include_dirs=[
             get_pybind_include(),
             get_pybind_include(user=True),
+            mpi_include,
+            grpc_include,
+            protobuf_include,
+            absl_include,
         ],
+        libraries=['grpc++', 'grpc++_reflection', 'protobuf'],
+        library_dirs=['/opt/homebrew/opt/grpc/lib', '/opt/homebrew/opt/protobuf/lib'],
         language='c++'
     ),
 ]

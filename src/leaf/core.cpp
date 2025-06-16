@@ -16,7 +16,8 @@
 #include <thread>
 #include <chrono>
 #include <grpc/grpc.h>
-#include "leaftest.grpc.pb.h"
+#include <grpcpp/grpcpp.h>
+#include "server_test.grpc.pb.h"
 
 namespace py = pybind11;
 
@@ -28,55 +29,80 @@ private:
     std::string key_path;
     bool is_connected;
 
+    bool verify_ssh_connection() {
+        std::string cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no ";
+        if (!key_path.empty()) {
+            cmd += "-i " + key_path + " ";
+        }
+        cmd += "-p " + std::to_string(port) + " ";
+        cmd += username + "@" + hostname + " 'echo 2>&1'";
+        
+        int result = std::system(cmd.c_str());
+        if (result != 0) {
+            std::cerr << "SSH connection failed for " << hostname << std::endl;
+            return false;
+        }
+        return true;
+    }
+
     bool verify_grpc_connection() {
-        // First, copy the server test binary to the remote server
-        std::string scp_cmd = "scp -o BatchMode=yes -o ConnectTimeout=5 ";
-        if (!key_path.empty()) {
-            scp_cmd += "-i " + key_path + " ";
-        }
-        scp_cmd += "-P " + std::to_string(port) + " ";
-        scp_cmd += "server_test " + username + "@" + hostname + ":/tmp/";
-        
-        if (std::system(scp_cmd.c_str()) != 0) {
-            std::cerr << "Failed to copy server test binary to " << hostname << std::endl;
-            return false;
-        }
+        try {
+            // First, copy the server test binary to the remote server
+            std::string scp_cmd = "scp -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                scp_cmd += "-i " + key_path + " ";
+            }
+            scp_cmd += "-P " + std::to_string(port) + " ";
+            scp_cmd += "binaries/server_test " + username + "@" + hostname + ":/tmp/";
+            
+            if (std::system(scp_cmd.c_str()) != 0) {
+                std::cerr << "Failed to copy server test binary to " << hostname << std::endl;
+                return false;
+            }
 
-        // Start the server test program in the background
-        std::string ssh_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 ";
-        if (!key_path.empty()) {
-            ssh_cmd += "-i " + key_path + " ";
-        }
-        ssh_cmd += "-p " + std::to_string(port) + " ";
-        ssh_cmd += username + "@" + hostname + " 'chmod +x /tmp/server_test && /tmp/server_test > /dev/null 2>&1 &'";
-        
-        if (std::system(ssh_cmd.c_str()) != 0) {
-            std::cerr << "Failed to start server test on " << hostname << std::endl;
-            return false;
-        }
+            // Start the server test program in the background
+            std::string ssh_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                ssh_cmd += "-i " + key_path + " ";
+            }
+            ssh_cmd += "-p " + std::to_string(port) + " ";
+            ssh_cmd += username + "@" + hostname + " 'chmod +x /tmp/server_test && /tmp/server_test > /dev/null 2>&1 &'";
+            
+            if (std::system(ssh_cmd.c_str()) != 0) {
+                std::cerr << "Failed to start server test on " << hostname << std::endl;
+                return false;
+            }
 
-        // Wait a moment for the server to start
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+            // Wait a moment for the server to start
+            std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        // Create gRPC channel and stub
-        std::string target = hostname + ":50051";
-        auto channel = grpc::CreateChannel(target, grpc::InsecureChannelCredentials());
-        auto stub = leaftest::ServerTest::NewStub(channel);
+            // Create gRPC channel and stub
+            std::string target = hostname + ":50051";
+            auto channel = grpc::CreateChannel(target, grpc::InsecureChannelCredentials());
+            auto stub = server_test::TimeService::NewStub(channel);
 
-        // Try to get server time
-        grpc::ClientContext context;
-        leaftest::TimeRequest request;
-        leaftest::TimeResponse response;
-        
-        auto status = stub->GetServerTime(&context, request, &response);
-        
-        if (status.ok()) {
-            std::cout << "Successfully connected to " << hostname 
-                      << " (Server time: " << response.server_time_ms() << " ms)" << std::endl;
-            return true;
-        } else {
-            std::cerr << "Failed to get server time from " << hostname 
-                      << ": " << status.error_message() << std::endl;
+            // Try to get server time
+            grpc::ClientContext context;
+            server_test::TimeRequest request;
+            server_test::TimeResponse response;
+            
+            // Set a timeout for the RPC call (5 seconds)
+            context.set_deadline(std::chrono::system_clock::now() + 
+                               std::chrono::seconds(5));
+            
+            auto status = stub->GetTime(&context, request, &response);
+            
+            if (status.ok()) {
+                std::cout << "Successfully connected to " << hostname 
+                          << " (Server time: " << response.timestamp() << " ms)" << std::endl;
+                return true;
+            } else {
+                std::cerr << "Failed to get server time from " << hostname 
+                          << ": " << status.error_message() << std::endl;
+                return false;
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Error verifying gRPC connection: " << e.what() << std::endl;
             return false;
         }
     }
@@ -88,16 +114,7 @@ public:
 
     bool verify_connection() {
         // First verify basic SSH connection
-        std::string cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 ";
-        if (!key_path.empty()) {
-            cmd += "-i " + key_path + " ";
-        }
-        cmd += "-p " + std::to_string(port) + " ";
-        cmd += username + "@" + hostname + " 'echo 2>&1'";
-        
-        int result = std::system(cmd.c_str());
-        if (result != 0) {
-            std::cerr << "Basic SSH connection failed for " << hostname << std::endl;
+        if (!verify_ssh_connection()) {
             is_connected = false;
             return false;
         }
