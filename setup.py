@@ -74,16 +74,18 @@ class BuildExt(build_ext):
             ext.extra_link_args = link_opts
         build_ext.build_extensions(self)
 
-# Add include directories
-mpi_include = '/opt/homebrew/opt/open-mpi/include'
-grpc_include = '/opt/homebrew/opt/grpc/include'
-protobuf_include = '/opt/homebrew/opt/protobuf/include'
-absl_include = '/opt/homebrew/opt/abseil/include'
+# Get environment variables for include and library paths
+mpi_include = os.environ.get('MPI_HOME', '') + '/include'
+grpc_include = os.environ.get('GRPC_HOME', '') + '/include'
+protobuf_include = os.environ.get('PROTOBUF_HOME', '') + '/include'
+absl_include = os.environ.get('ABSL_HOME', '') + '/include'
 
 ext_modules = [
     Extension(
         'leaf._core',
-        ['src/leaf/core.cpp'],
+        ['src/leaf/core.cpp',
+         'src/leaf/server_test.pb.cc',
+         'src/leaf/server_test.grpc.pb.cc'],
         include_dirs=[
             get_pybind_include(),
             get_pybind_include(user=True),
@@ -91,9 +93,13 @@ ext_modules = [
             grpc_include,
             protobuf_include,
             absl_include,
+            'src/leaf',  # Add the directory containing the generated files
         ],
         libraries=['grpc++', 'grpc++_reflection', 'protobuf'],
-        library_dirs=['/opt/homebrew/opt/grpc/lib', '/opt/homebrew/opt/protobuf/lib'],
+        library_dirs=[
+            os.environ.get('GRPC_HOME', '') + '/lib',
+            os.environ.get('PROTOBUF_HOME', '') + '/lib'
+        ],
         language='c++'
     ),
 ]

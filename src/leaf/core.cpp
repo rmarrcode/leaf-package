@@ -17,6 +17,7 @@
 #include <chrono>
 #include <grpc/grpc.h>
 #include <grpcpp/grpcpp.h>
+#include "server_test.pb.h"
 #include "server_test.grpc.pb.h"
 
 namespace py = pybind11;
@@ -30,6 +31,7 @@ private:
     bool is_connected;
 
     bool verify_ssh_connection() {
+        std::cout << "Attempting SSH connection..." << std::endl;
         std::string cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no ";
         if (!key_path.empty()) {
             cmd += "-i " + key_path + " ";
@@ -42,59 +44,299 @@ private:
             std::cerr << "SSH connection failed for " << hostname << std::endl;
             return false;
         }
+        std::cout << "SSH connection successful" << std::endl;
         return true;
     }
 
     bool verify_grpc_connection() {
         try {
-            // First, copy the server test binary to the remote server
-            std::string scp_cmd = "scp -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no ";
+            std::cout << "Starting gRPC connection verification..." << std::endl;
+            std::cout << "Connecting to " << hostname << ":" << port << " as " << username << std::endl;
+            
+            // First verify SSH connection with verbose output
+            std::string test_ssh_cmd = "ssh -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                test_ssh_cmd += "-i " + key_path + " ";
+            }
+            test_ssh_cmd += "-p " + std::to_string(port) + " ";
+            test_ssh_cmd += username + "@" + hostname + " 'echo SSH connection test successful'";
+            
+            std::cout << "Testing SSH connection..." << std::endl;
+            if (std::system(test_ssh_cmd.c_str()) != 0) {
+                std::cerr << "SSH connection test failed. Please verify:" << std::endl;
+                std::cerr << "1. SSH port " << port << " is correct" << std::endl;
+                std::cerr << "2. Username " << username << " is correct" << std::endl;
+                std::cerr << "3. SSH key is properly set up" << std::endl;
+                return false;
+            }
+            std::cout << "SSH connection test successful" << std::endl;
+            
+            // Check if Docker is installed and install if needed
+            std::string check_docker_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                check_docker_cmd += "-i " + key_path + " ";
+            }
+            check_docker_cmd += "-p " + std::to_string(port) + " ";
+            check_docker_cmd += username + "@" + hostname + " 'which docker || echo \"DOCKER_NOT_FOUND\"'";
+            
+            std::cout << "Checking for Docker installation..." << std::endl;
+            std::array<char, 128> buffer;
+            std::string result;
+            std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(check_docker_cmd.c_str(), "r"), pclose);
+            
+            if (pipe) {
+                while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                    result += buffer.data();
+                }
+            }
+            
+            if (result.find("DOCKER_NOT_FOUND") != std::string::npos) {
+                std::cout << "Docker not found. Installing Docker..." << std::endl;
+                
+                // Install Docker with progress output
+                std::string install_docker_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+                if (!key_path.empty()) {
+                    install_docker_cmd += "-i " + key_path + " ";
+                }
+                install_docker_cmd += "-p " + std::to_string(port) + " ";
+                install_docker_cmd += username + "@" + hostname + " '"
+                    "echo \"Updating package lists...\" && "
+                    "sudo apt-get update && "
+                    "echo \"Installing prerequisites...\" && "
+                    "sudo apt-get install -y ca-certificates curl gnupg && "
+                    "echo \"Setting up Docker repository...\" && "
+                    "sudo install -m 0755 -d /etc/apt/keyrings && "
+                    "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && "
+                    "sudo chmod a+r /etc/apt/keyrings/docker.gpg && "
+                    "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && "
+                    "echo \"Installing Docker...\" && "
+                    "sudo apt-get update && "
+                    "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && "
+                    "echo \"Docker installation complete\"'";
+                
+                std::cout << "Running Docker installation command..." << std::endl;
+                if (std::system(install_docker_cmd.c_str()) != 0) {
+                    std::cerr << "Failed to install Docker on " << hostname << std::endl;
+                    return false;
+                }
+                
+                std::cout << "Docker installed successfully" << std::endl;
+            } else {
+                std::cout << "Docker is already installed" << std::endl;
+            }
+
+            // Check if Docker daemon is running and start it if needed
+            std::cout << "Checking Docker daemon status..." << std::endl;
+            std::string check_daemon_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                check_daemon_cmd += "-i " + key_path + " ";
+            }
+            check_daemon_cmd += "-p " + std::to_string(port) + " ";
+            check_daemon_cmd += username + "@" + hostname + " 'sudo systemctl is-active docker || echo \"DOCKER_NOT_RUNNING\"'";
+            
+            result.clear();
+            pipe = std::unique_ptr<FILE, decltype(&pclose)>(popen(check_daemon_cmd.c_str(), "r"), pclose);
+            
+            if (pipe) {
+                while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                    result += buffer.data();
+                }
+            }
+            
+            if (result.find("DOCKER_NOT_RUNNING") != std::string::npos || result.find("inactive") != std::string::npos) {
+                std::cout << "Docker daemon is not running. Starting Docker daemon..." << std::endl;
+                
+                // First ensure Docker socket directory exists and has correct permissions
+                std::string setup_docker_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+                if (!key_path.empty()) {
+                    setup_docker_cmd += "-i " + key_path + " ";
+                }
+                setup_docker_cmd += "-p " + std::to_string(port) + " ";
+                setup_docker_cmd += username + "@" + hostname + " '"
+                    "sudo mkdir -p /var/run && "
+                    "sudo chmod 777 /var/run && "
+                    "sudo mkdir -p /var/run/docker && "
+                    "sudo chmod 777 /var/run/docker && "
+                    "sudo service docker stop || true && "
+                    "sudo rm -f /var/run/docker.sock && "
+                    "sudo service docker start || "
+                    "(sudo nohup dockerd > /var/log/docker.log 2>&1 &) && "
+                    "sleep 5 && "  // Wait for daemon to fully start
+                    "sudo docker info || echo \"DOCKER_START_FAILED\"'";
+                
+                std::cout << "Setting up Docker daemon..." << std::endl;
+                if (std::system(setup_docker_cmd.c_str()) != 0) {
+                    std::cerr << "Failed to set up Docker daemon on " << hostname << std::endl;
+                    return false;
+                }
+
+                // Verify Docker daemon is running
+                std::string verify_docker_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+                if (!key_path.empty()) {
+                    verify_docker_cmd += "-i " + key_path + " ";
+                }
+                verify_docker_cmd += "-p " + std::to_string(port) + " ";
+                verify_docker_cmd += username + "@" + hostname + " '"
+                    "sudo docker info > /dev/null 2>&1 && echo \"DOCKER_RUNNING\" || echo \"DOCKER_NOT_RUNNING\"'";
+                
+                result.clear();
+                pipe = std::unique_ptr<FILE, decltype(&pclose)>(popen(verify_docker_cmd.c_str(), "r"), pclose);
+                
+                if (pipe) {
+                    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                        result += buffer.data();
+                    }
+                }
+                
+                if (result.find("DOCKER_RUNNING") == std::string::npos) {
+                    std::cerr << "Docker daemon failed to start properly on " << hostname << std::endl;
+                    std::cerr << "Attempting alternative startup method..." << std::endl;
+                    
+                    // Try alternative startup method
+                    std::string alt_start_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+                    if (!key_path.empty()) {
+                        alt_start_cmd += "-i " + key_path + " ";
+                    }
+                    alt_start_cmd += "-p " + std::to_string(port) + " ";
+                    alt_start_cmd += username + "@" + hostname + " '"
+                        "sudo pkill -f dockerd || true && "
+                        "sudo rm -f /var/run/docker.sock && "
+                        "sudo nohup dockerd > /var/log/docker.log 2>&1 & "
+                        "sleep 5 && "  // Wait for daemon to fully start
+                        "sudo docker info > /dev/null 2>&1 && echo \"DOCKER_RUNNING\" || echo \"DOCKER_NOT_RUNNING\"'";
+                    
+                    result.clear();
+                    pipe = std::unique_ptr<FILE, decltype(&pclose)>(popen(alt_start_cmd.c_str(), "r"), pclose);
+                    
+                    if (pipe) {
+                        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                            result += buffer.data();
+                        }
+                    }
+                    
+                    if (result.find("DOCKER_RUNNING") == std::string::npos) {
+                        std::cerr << "Failed to start Docker daemon using alternative method on " << hostname << std::endl;
+                        return false;
+                    }
+                }
+                
+                std::cout << "Docker daemon started successfully" << std::endl;
+            } else {
+                std::cout << "Docker daemon is already running" << std::endl;
+            }
+            
+            // First, copy the Dockerfile and source files to the remote server
+            std::cout << "Copying Docker files to remote server..." << std::endl;
+            std::string scp_cmd = "scp -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
             if (!key_path.empty()) {
                 scp_cmd += "-i " + key_path + " ";
             }
             scp_cmd += "-P " + std::to_string(port) + " ";
-            scp_cmd += "binaries/server_test " + username + "@" + hostname + ":/tmp/";
+            scp_cmd += "../../Dockerfile ../../docker-run.sh " + username + "@" + hostname + ":/tmp/leaf-build/";
+            
+            // Create build directory first
+            std::string mkdir_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                mkdir_cmd += "-i " + key_path + " ";
+            }
+            mkdir_cmd += "-p " + std::to_string(port) + " ";
+            mkdir_cmd += username + "@" + hostname + " 'rm -rf /tmp/leaf-build && mkdir -p /tmp/leaf-build && chmod 777 /tmp/leaf-build'";
+            
+            if (std::system(mkdir_cmd.c_str()) != 0) {
+                std::cerr << "Failed to create build directory on " << hostname << std::endl;
+                return false;
+            }
             
             if (std::system(scp_cmd.c_str()) != 0) {
-                std::cerr << "Failed to copy server test binary to " << hostname << std::endl;
+                std::cerr << "Failed to copy Docker files to " << hostname << std::endl;
+                return false;
+            }
+            std::cout << "Docker files copied successfully" << std::endl;
+
+            // Copy source files
+            std::cout << "Copying source files to remote server..." << std::endl;
+            scp_cmd = "scp -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                scp_cmd += "-i " + key_path + " ";
+            }
+            scp_cmd += "-P " + std::to_string(port) + " ";
+            scp_cmd += "src/leaf/server_test.cpp src/leaf/server_test.proto src/leaf/Makefile " + username + "@" + hostname + ":/tmp/leaf-build/";
+            
+            if (std::system(scp_cmd.c_str()) != 0) {
+                std::cerr << "Failed to copy source files to " << hostname << std::endl;
+                return false;
+            }
+            std::cout << "Source files copied successfully" << std::endl;
+
+            // Verify files were copied
+            std::cout << "Verifying files on remote server..." << std::endl;
+            std::string verify_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                verify_cmd += "-i " + key_path + " ";
+            }
+            verify_cmd += "-p " + std::to_string(port) + " ";
+            verify_cmd += username + "@" + hostname + " 'ls -la /tmp/leaf-build/'";
+            
+            if (std::system(verify_cmd.c_str()) != 0) {
+                std::cerr << "Failed to verify files on " << hostname << std::endl;
                 return false;
             }
 
-            // Start the server test program in the background
-            std::string ssh_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no ";
+            // Build and run the Docker container
+            std::cout << "Starting Docker container..." << std::endl;
+            std::string ssh_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
             if (!key_path.empty()) {
                 ssh_cmd += "-i " + key_path + " ";
             }
             ssh_cmd += "-p " + std::to_string(port) + " ";
-            ssh_cmd += username + "@" + hostname + " 'chmod +x /tmp/server_test && /tmp/server_test > /dev/null 2>&1 &'";
+            ssh_cmd += username + "@" + hostname + " 'cd /tmp/leaf-build && chmod +x docker-run.sh && ./docker-run.sh'";
             
             if (std::system(ssh_cmd.c_str()) != 0) {
-                std::cerr << "Failed to start server test on " << hostname << std::endl;
+                std::cerr << "Failed to start Docker container on " << hostname << std::endl;
                 return false;
             }
+            std::cout << "Docker container started successfully" << std::endl;
 
-            // Wait a moment for the server to start
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            // Wait for the server to start
+            std::cout << "Waiting for server to start..." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+
+            // Verify container is running
+            std::cout << "Verifying container status..." << std::endl;
+            ssh_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                ssh_cmd += "-i " + key_path + " ";
+            }
+            ssh_cmd += "-p " + std::to_string(port) + " ";
+            ssh_cmd += username + "@" + hostname + " 'docker ps | grep leaf-grpc-server'";
+            
+            if (std::system(ssh_cmd.c_str()) != 0) {
+                std::cerr << "Docker container is not running on " << hostname << std::endl;
+                return false;
+            }
+            std::cout << "Container is running" << std::endl;
 
             // Create gRPC channel and stub
+            std::cout << "Creating gRPC channel..." << std::endl;
             std::string target = hostname + ":50051";
             auto channel = grpc::CreateChannel(target, grpc::InsecureChannelCredentials());
-            auto stub = server_test::TimeService::NewStub(channel);
+            auto stub = leaftest::ServerTest::NewStub(channel);
 
             // Try to get server time
+            std::cout << "Attempting to get server time..." << std::endl;
             grpc::ClientContext context;
-            server_test::TimeRequest request;
-            server_test::TimeResponse response;
+            leaftest::TimeRequest request;
+            leaftest::TimeResponse response;
             
             // Set a timeout for the RPC call (5 seconds)
             context.set_deadline(std::chrono::system_clock::now() + 
                                std::chrono::seconds(5));
             
-            auto status = stub->GetTime(&context, request, &response);
+            auto status = stub->GetServerTime(&context, request, &response);
             
             if (status.ok()) {
                 std::cout << "Successfully connected to " << hostname 
-                          << " (Server time: " << response.timestamp() << " ms)" << std::endl;
+                          << " (Server time: " << response.server_time_ms() << " ms)" << std::endl;
                 return true;
             } else {
                 std::cerr << "Failed to get server time from " << hostname 
@@ -113,14 +355,18 @@ public:
         : username(user), hostname(host), port(p), key_path(key), is_connected(false) {}
 
     bool verify_connection() {
+        std::cout << "Starting connection verification..." << std::endl;
         // First verify basic SSH connection
         if (!verify_ssh_connection()) {
+            std::cout << "SSH verification failed" << std::endl;
             is_connected = false;
             return false;
         }
 
+        std::cout << "SSH verification successful, proceeding to gRPC verification" << std::endl;
         // Then verify gRPC connection
         is_connected = verify_grpc_connection();
+        std::cout << "gRPC verification " << (is_connected ? "successful" : "failed") << std::endl;
         return is_connected;
     }
 

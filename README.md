@@ -61,6 +61,11 @@ print("Available servers:", servers)
 config.remove_server("gpu-server-1")
 ```
 
+## Dependences
+Open MPI
+GRPC
+Abseil
+
 ## Features
 
 - Automatic local resource discovery
