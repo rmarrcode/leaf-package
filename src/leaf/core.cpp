@@ -297,6 +297,7 @@ private:
             }
             std::cout << "Docker container started successfully" << std::endl;
 
+
             // Wait for the server to start
             std::cout << "Waiting for server to start..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(5));
