@@ -8,34 +8,12 @@ docker --version
 echo "Cleaning up any existing container..."
 docker rm -f leaf-grpc-server 2>/dev/null || true
 
-# Create a build directory
-BUILD_DIR="/tmp/leaf-build"
-echo "Creating build directory at $BUILD_DIR..."
-rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR"
-
-# Copy files to build directory
-echo "Setting up build directory..."
+# The files are already in the current directory (/tmp/leaf-build)
 echo "Current directory: $(pwd)"
 echo "Listing files in current directory:"
 ls -la
 
-# Copy files with verbose output
-echo "Copying Dockerfile..."
-cp -v Dockerfile "$BUILD_DIR/"
-echo "Copying source files..."
-cp -v src/leaf/server_test.cpp "$BUILD_DIR/"
-cp -v src/leaf/server_test.proto "$BUILD_DIR/"
-
-# Verify files were copied
-echo "Verifying files in build directory:"
-ls -la "$BUILD_DIR"
-
-# Change to build directory
-echo "Changing to build directory..."
-cd "$BUILD_DIR"
-
-# Build Docker image
+# Build Docker image (files are already here)
 echo "Building Docker image..."
 docker build -t leaf-grpc-server . 2>&1 | tee docker-build.log
 
@@ -47,9 +25,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Run Docker container
-echo "Starting Docker container..."
-docker run -d -p 50051:50051 --name leaf-grpc-server leaf-grpc-server 2>&1 | tee docker-run.log
+# Run Docker container (only bind to localhost for SSH tunneling)
+echo "Starting Docker container for SSH tunnel access..."
+docker run -d -p 127.0.0.1:50051:50051 --name leaf-grpc-server leaf-grpc-server 2>&1 | tee docker-run.log
 
 # Check if container started successfully
 if [ $? -ne 0 ]; then
@@ -80,4 +58,12 @@ fi
 echo "Container is running. Checking logs..."
 docker logs leaf-grpc-server
 
-echo "Server should be ready to accept connections on port 50051" 
+# Verify port is exposed locally
+echo "Checking if port 50051 is exposed locally..."
+docker port leaf-grpc-server
+timeout 5 bash -c "</dev/tcp/localhost/50051" && echo "Port 50051 is accessible locally" || echo "Port 50051 is NOT accessible locally"
+
+echo "Server is ready for SSH tunnel access!"
+echo "From your local machine, run:"
+echo "ssh -L 50051:localhost:50051 root@$(hostname -I | awk '{print $1}') -p 40236"
+echo "Then connect to localhost:50051 from your local code" 

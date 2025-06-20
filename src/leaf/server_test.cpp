@@ -13,30 +13,22 @@ using leaftest::TimeRequest;
 using leaftest::TimeResponse;
 
 class ServerTestServiceImpl final : public ServerTest::Service {
-    Status GetServerTime(ServerContext* context, const TimeRequest* request, TimeResponse* response) override {
-        // For demonstration, we simply return a fixed response
-        response->set_server_time_ms(123456789);
+    Status GetServerTime(ServerContext* /*context*/, const TimeRequest* /*request*/, TimeResponse* response) override {
+        response->set_server_time_ms(123456789);  // fixed demo value
         return Status::OK;
     }
 };
 
-void RunServer(int port) {
-    std::string server_address("0.0.0.0:50051");
+int main(int /*argc*/, char** /*argv*/) {
+    const std::string addr("0.0.0.0:50051");
+
     ServerTestServiceImpl service;
-
     ServerBuilder builder;
-    builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+    builder.AddListeningPort(addr, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
-    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-    std::cout << "Server listening on " << server_address << std::endl;
-    server->Wait();
-}
 
-int main(int argc, char** argv) {
-    int port = 50051; // Default port
-    if (argc > 1) {
-        port = std::stoi(argv[1]);
-    }
-    RunServer(port);
+    std::unique_ptr<Server> server(builder.BuildAndStart());
+    std::cout << "Server listening on " << addr << std::endl;
+    server->Wait();
     return 0;
-} 
+}

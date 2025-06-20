@@ -1,9 +1,0 @@
-README.md
-setup.py
-leaf.egg-info/PKG-INFO
-leaf.egg-info/SOURCES.txt
-leaf.egg-info/dependency_links.txt
-leaf.egg-info/not-zip-safe
-leaf.egg-info/requires.txt
-leaf.egg-info/top_level.txt
-src/leaf/core.cpp

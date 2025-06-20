@@ -1,12 +1,13 @@
+# A user should never have to build the server_test binary.
+
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17
-INCLUDES = -I/usr/include \
-           -I/usr/local/include
+CXXFLAGS = -std=c++17 $(shell pkg-config --cflags protobuf grpc++ )
+LDFLAGS = $(shell pkg-config --libs protobuf grpc++ )
 
 # Protocol Buffers and gRPC
 PROTOC = protoc
-GRPC_CPP_PLUGIN = grpc_cpp_plugin
+GRPC_CPP_PLUGIN = /opt/homebrew/bin/grpc_cpp_plugin
 
 # Source files
 PROTO_FILE = server_test.proto
@@ -14,10 +15,6 @@ PROTO_SRCS = server_test.pb.cc
 PROTO_HDRS = server_test.pb.h
 GRPC_SRCS = server_test.grpc.pb.cc
 GRPC_HDRS = server_test.grpc.pb.h
-
-# Libraries
-GRPC_LIBS = -lgrpc++ -lgrpc
-PROTO_LIBS = -lprotobuf
 
 # Targets
 all: $(PROTO_SRCS) $(GRPC_SRCS) server_test
@@ -32,7 +29,7 @@ $(GRPC_SRCS) $(GRPC_HDRS): $(PROTO_FILE)
 
 # Build server_test
 server_test: server_test.cpp $(PROTO_SRCS) $(GRPC_SRCS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(GRPC_LIBS) $(PROTO_LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Clean
 clean:

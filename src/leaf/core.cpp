@@ -29,6 +29,91 @@ private:
     int port;
     std::string key_path;
     bool is_connected;
+    int tunnel_pid;  // PID of SSH tunnel process
+
+    bool setup_ssh_tunnel() {
+        std::cout << "Setting up SSH tunnel for gRPC connection..." << std::endl;
+        
+        // Check if tunnel is already running
+        std::string check_cmd = "lsof -Pi :50051 -sTCP:LISTEN -t 2>/dev/null";
+        std::array<char, 128> buffer;
+        std::string result;
+        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(check_cmd.c_str(), "r"), pclose);
+        
+        if (pipe) {
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                result += buffer.data();
+            }
+        }
+        
+        if (!result.empty()) {
+            std::cout << "Port 50051 is already in use. Killing existing tunnel..." << std::endl;
+            std::string kill_cmd = "pkill -f 'ssh.*50051:localhost'";
+            std::system(kill_cmd.c_str());
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
+        
+        // Build SSH tunnel command
+        std::string ssh_cmd = "ssh -L 50051:localhost:50051 ";
+        if (!key_path.empty()) {
+            ssh_cmd += "-i " + key_path + " ";
+        }
+        ssh_cmd += "-p " + std::to_string(port) + " ";
+        ssh_cmd += username + "@" + hostname + " -N";
+        
+        std::cout << "Starting SSH tunnel with command: " << ssh_cmd << std::endl;
+        
+        // Start tunnel in background
+        ssh_cmd += " &";
+        int result_code = std::system(ssh_cmd.c_str());
+        
+        if (result_code != 0) {
+            std::cerr << "Failed to start SSH tunnel" << std::endl;
+            return false;
+        }
+        
+        // Wait for tunnel to establish
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        
+        // Verify tunnel is working
+        std::string verify_cmd = "lsof -Pi :50051 -sTCP:LISTEN -t 2>/dev/null";
+        result.clear();
+        pipe = std::unique_ptr<FILE, decltype(&pclose)>(popen(verify_cmd.c_str(), "r"), pclose);
+        
+        if (pipe) {
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                result += buffer.data();
+            }
+        }
+        
+        if (!result.empty()) {
+            // Extract PID from result
+            std::string pid_str = result;
+            if (pid_str.find('\n') != std::string::npos) {
+                pid_str = pid_str.substr(0, pid_str.find('\n'));
+            }
+            try {
+                tunnel_pid = std::stoi(pid_str);
+                std::cout << "SSH tunnel established successfully! PID: " << tunnel_pid << std::endl;
+                return true;
+            } catch (const std::exception& e) {
+                std::cerr << "Failed to parse tunnel PID: " << e.what() << std::endl;
+                return false;
+            }
+        } else {
+            std::cerr << "SSH tunnel verification failed" << std::endl;
+            return false;
+        }
+    }
+
+    void cleanup_ssh_tunnel() {
+        if (tunnel_pid > 0) {
+            std::cout << "Cleaning up SSH tunnel (PID: " << tunnel_pid << ")..." << std::endl;
+            std::string kill_cmd = "kill " + std::to_string(tunnel_pid);
+            std::system(kill_cmd.c_str());
+            tunnel_pid = 0;
+        }
+    }
 
     bool verify_ssh_connection() {
         std::cout << "Attempting SSH connection..." << std::endl;
@@ -227,12 +312,6 @@ private:
             
             // First, copy the Dockerfile and source files to the remote server
             std::cout << "Copying Docker files to remote server..." << std::endl;
-            std::string scp_cmd = "scp -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
-            if (!key_path.empty()) {
-                scp_cmd += "-i " + key_path + " ";
-            }
-            scp_cmd += "-P " + std::to_string(port) + " ";
-            scp_cmd += "../../Dockerfile ../../docker-run.sh " + username + "@" + hostname + ":/tmp/leaf-build/";
             
             // Create build directory first
             std::string mkdir_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
@@ -247,40 +326,21 @@ private:
                 return false;
             }
             
+            std::string scp_cmd = "scp -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+            if (!key_path.empty()) {
+                scp_cmd += "-i " + key_path + " ";
+            }
+            scp_cmd += "-P " + std::to_string(port) + " ";
+            scp_cmd += "Dockerfile docker-run.sh src/leaf/server_test.cpp src/leaf/server_test.proto " + username + "@" + hostname + ":/tmp/leaf-build/";
+            
             if (std::system(scp_cmd.c_str()) != 0) {
                 std::cerr << "Failed to copy Docker files to " << hostname << std::endl;
                 return false;
             }
             std::cout << "Docker files copied successfully" << std::endl;
 
-            // Copy source files
-            std::cout << "Copying source files to remote server..." << std::endl;
-            scp_cmd = "scp -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
-            if (!key_path.empty()) {
-                scp_cmd += "-i " + key_path + " ";
-            }
-            scp_cmd += "-P " + std::to_string(port) + " ";
-            scp_cmd += "src/leaf/server_test.cpp src/leaf/server_test.proto src/leaf/Makefile " + username + "@" + hostname + ":/tmp/leaf-build/";
-            
-            if (std::system(scp_cmd.c_str()) != 0) {
-                std::cerr << "Failed to copy source files to " << hostname << std::endl;
-                return false;
-            }
-            std::cout << "Source files copied successfully" << std::endl;
-
             // Verify files were copied
-            std::cout << "Verifying files on remote server..." << std::endl;
-            std::string verify_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
-            if (!key_path.empty()) {
-                verify_cmd += "-i " + key_path + " ";
-            }
-            verify_cmd += "-p " + std::to_string(port) + " ";
-            verify_cmd += username + "@" + hostname + " 'ls -la /tmp/leaf-build/'";
-            
-            if (std::system(verify_cmd.c_str()) != 0) {
-                std::cerr << "Failed to verify files on " << hostname << std::endl;
-                return false;
-            }
+            // DO BETTER VERIFICATION
 
             // Build and run the Docker container
             std::cout << "Starting Docker container..." << std::endl;
@@ -296,7 +356,6 @@ private:
                 return false;
             }
             std::cout << "Docker container started successfully" << std::endl;
-
 
             // Wait for the server to start
             std::cout << "Waiting for server to start..." << std::endl;
@@ -317,9 +376,16 @@ private:
             }
             std::cout << "Container is running" << std::endl;
 
+            // Set up SSH tunnel for gRPC connection
+            if (!setup_ssh_tunnel()) {
+                std::cerr << "Failed to set up SSH tunnel" << std::endl;
+                return false;
+            }
+
             // Create gRPC channel and stub
             std::cout << "Creating gRPC channel..." << std::endl;
-            std::string target = hostname + ":50051";
+            std::string target = "localhost:50051";  // Use localhost for SSH tunneling
+            std::cout << "Connecting to gRPC target: " << target << std::endl;
             auto channel = grpc::CreateChannel(target, grpc::InsecureChannelCredentials());
             auto stub = leaftest::ServerTest::NewStub(channel);
 
@@ -329,10 +395,11 @@ private:
             leaftest::TimeRequest request;
             leaftest::TimeResponse response;
             
-            // Set a timeout for the RPC call (5 seconds)
+            // Set a timeout for the RPC call (10 seconds for debugging)
             context.set_deadline(std::chrono::system_clock::now() + 
-                               std::chrono::seconds(5));
+                               std::chrono::seconds(10));
             
+            std::cout << "Making RPC call to GetServerTime..." << std::endl;
             auto status = stub->GetServerTime(&context, request, &response);
             
             if (status.ok()) {
@@ -342,8 +409,11 @@ private:
             } else {
                 std::cerr << "Failed to get server time from " << hostname 
                           << ": " << status.error_message() << std::endl;
+                std::cerr << "Error code: " << status.error_code() << std::endl;
+                std::cerr << "Error details: " << status.error_details() << std::endl;
                 return false;
             }
+
         } catch (const std::exception& e) {
             std::cerr << "Error verifying gRPC connection: " << e.what() << std::endl;
             return false;
@@ -353,7 +423,11 @@ private:
 public:
     UserCredentials(const std::string& user, const std::string& host, 
                    int p = 22, const std::string& key = "")
-        : username(user), hostname(host), port(p), key_path(key), is_connected(false) {}
+        : username(user), hostname(host), port(p), key_path(key), is_connected(false), tunnel_pid(0) {}
+
+    ~UserCredentials() {
+        cleanup_ssh_tunnel();
+    }
 
     bool verify_connection() {
         std::cout << "Starting connection verification..." << std::endl;
@@ -380,6 +454,7 @@ public:
     std::string get_hostname() const { return hostname; }
     int get_port() const { return port; }
     std::string get_key_path() const { return key_path; }
+    int get_tunnel_pid() const { return tunnel_pid; }
 };
 
 class ComputeResource {

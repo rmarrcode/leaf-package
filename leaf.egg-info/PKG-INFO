@@ -1,7 +1,0 @@
-Metadata-Version: 2.1
-Name: leaf
-Version: 0.0.1
-Summary: Leaf is a distributed training framework.
-Author: Ryan Marr
-Author-email: r.marr747@gmail.com
-Requires-Python: >=3.6
