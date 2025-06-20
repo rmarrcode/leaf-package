@@ -83,9 +83,11 @@ absl_include = os.environ.get('ABSL_HOME', '') + '/include'
 ext_modules = [
     Extension(
         'leaf._core',
-        ['src/leaf/core.cpp',
-         'src/leaf/server_test.pb.cc',
-         'src/leaf/server_test.grpc.pb.cc'],
+        sources=[
+            'src/core.cpp',
+            'src/server_test.pb.cc',
+            'src/server_test.grpc.pb.cc'
+        ],
         include_dirs=[
             get_pybind_include(),
             get_pybind_include(user=True),
@@ -93,7 +95,7 @@ ext_modules = [
             grpc_include,
             protobuf_include,
             absl_include,
-            'src/leaf',  # Add the directory containing the generated files
+            'src',  # Add the directory containing the generated files
         ],
         libraries=['grpc++', 'grpc++_reflection', 'protobuf'],
         library_dirs=[
