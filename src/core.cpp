@@ -32,7 +32,6 @@ private:
     int tunnel_pid;  // PID of SSH tunnel process
 
     bool setup_ssh_tunnel() {
-        std::cout << "Setting up SSH tunnel for gRPC connection..." << std::endl;
         
         // Check if tunnel is already running
         std::string check_cmd = "lsof -Pi :50051 -sTCP:LISTEN -t 2>/dev/null";
@@ -60,9 +59,7 @@ private:
         }
         ssh_cmd += "-p " + std::to_string(port) + " ";
         ssh_cmd += username + "@" + hostname + " -N";
-        
-        std::cout << "Starting SSH tunnel with command: " << ssh_cmd << std::endl;
-        
+                
         // Start tunnel in background
         ssh_cmd += " &";
         int result_code = std::system(ssh_cmd.c_str());
@@ -94,7 +91,6 @@ private:
             }
             try {
                 tunnel_pid = std::stoi(pid_str);
-                std::cout << "SSH tunnel established successfully! PID: " << tunnel_pid << std::endl;
                 return true;
             } catch (const std::exception& e) {
                 std::cerr << "Failed to parse tunnel PID: " << e.what() << std::endl;
@@ -116,7 +112,7 @@ private:
     }
 
     bool verify_ssh_connection() {
-        std::string test_ssh_cmd = "ssh -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+        std::string test_ssh_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
         if (!key_path.empty()) {
             test_ssh_cmd += "-i " + key_path + " ";
         }
@@ -245,7 +241,7 @@ private:
             return false;
         }
         // Copy Docker files to build directory
-        std::string scp_cmd = "scp -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
+        std::string scp_cmd = "scp -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ";
         if (!key_path.empty()) {
             scp_cmd += "-i " + key_path + " ";
         }
@@ -308,16 +304,19 @@ private:
 
     bool verify_grpc_connection() {
 
-        try {            
+        try {         
+            
             if (!verify_ssh_connection()) {
                 return false;
             }
+            std::cout << hostname << " : ssh connection successful" << std::endl;
 
             if (!verify_remote_docker_installation()) {
                 if (!install_remote_docker()) {
                     return false;
                 }
             }
+            std::cout << hostname << " :docker verification successful" << std::endl;
 
             std::string result = verify_remote_docker_daemon_status();
             if (result.find("DOCKER_NOT_RUNNING") != std::string::npos || result.find("inactive") != std::string::npos) {
@@ -325,22 +324,28 @@ private:
                     return false;
                 }
             }
+            std::cout << hostname << " : docker daemon verification successful" << std::endl;
 
             if (!copy_docker_files_to_remote_server()) {
                 return false;
             }
-
+            std::cout << hostname << " : docker files copied successful" << std::endl;
+            
             if (!build_run_docker_container()) {
                 return false;
             }
-
+            std::cout << hostname << " : docker container built successful" << std::endl;
+            
             if (!setup_ssh_tunnel()) {
                 return false;
             }
-
+            std::cout << hostname << " : ssh tunnel setup successful" << std::endl;
+            
             if (!test_grpc_connection()) {
                 return false;
             }
+            std::cout << hostname << " : grpc connection successful" << std::endl;
+
             return true;
 
         } catch (const std::exception& e) {

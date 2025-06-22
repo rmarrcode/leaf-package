@@ -21,14 +21,11 @@ class ServerTestServiceImpl final : public ServerTest::Service {
 
 int main(int /*argc*/, char** /*argv*/) {
     const std::string addr("0.0.0.0:50051");
-
     ServerTestServiceImpl service;
     ServerBuilder builder;
     builder.AddListeningPort(addr, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
-
     std::unique_ptr<Server> server(builder.BuildAndStart());
-    std::cout << "Server listening on " << addr << std::endl;
     server->Wait();
     return 0;
 }
