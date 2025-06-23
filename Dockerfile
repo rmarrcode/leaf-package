@@ -12,14 +12,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /src
 
 # Copy sources
-COPY server_test.cpp .
-COPY server_test.proto .
+COPY server_communication.cpp .
+COPY server_communication.proto .
 
 # Generate gRPC / protobuf sources
-RUN protoc --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/usr/bin/grpc_cpp_plugin server_test.proto
+RUN protoc --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/usr/bin/grpc_cpp_plugin server_communication.proto
 
 # Compile
-RUN g++ -std=c++17 server_test.cpp server_test.pb.cc server_test.grpc.pb.cc -lgrpc++ -lprotobuf -o server_test
+RUN g++ -std=c++17 server_communication.cpp server_communication.pb.cc server_communication.grpc.pb.cc -lgrpc++ -lprotobuf -o server_communication
 
 # ---------- Stage 2 : runtime ----------
 FROM ubuntu:22.04
@@ -33,10 +33,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY --from=builder /src/server_test ./server_test
+COPY --from=builder /src/server_communication ./server_communication
 
-RUN chmod +x server_test
+RUN chmod +x server_communication
 
 EXPOSE 50051
 
-CMD ["./server_test"] 
+CMD ["./server_communication"] 

@@ -85,8 +85,10 @@ ext_modules = [
         'leaf._core',
         sources=[
             'src/core.cpp',
-            'src/server_test.pb.cc',
-            'src/server_test.grpc.pb.cc'
+            'src/user_credentials.cpp',
+            'src/server.cpp',
+            'src/server_communication.pb.cc',
+            'src/server_communication.grpc.pb.cc'
         ],
         include_dirs=[
             get_pybind_include(),

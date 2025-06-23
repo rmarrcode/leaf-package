@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package leaftest;
+
+service ServerCommunication {
+    rpc GetServerTime (TimeRequest) returns (TimeResponse) {}
+    rpc ComputeGradients (ForwardPassRequest) returns (GradientResponse) {}
+}
+
+message TimeRequest {
+    // Empty request
+}
+
+message TimeResponse {
+    int64 server_time_ms = 1;  // Server time in milliseconds
+}
+
+message ForwardPassRequest {
+    bytes model_state = 1;  // Serialized model state
+    bytes input_data = 2;   // Serialized input batch data
+    bytes target_data = 3;  // Serialized target data
+    string loss_function = 4; // Loss function type
+}
+
+message GradientResponse {
+    bytes gradients = 1;     // Serialized gradients
+    double loss_value = 2;   // Loss value from forward pass
+    bool success = 3;        // Whether computation was successful
+    string error_message = 4; // Error message if computation failed
+} 
