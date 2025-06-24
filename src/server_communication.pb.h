@@ -53,6 +53,18 @@ struct TableStruct_server_5fcommunication_2eproto {
 extern const ::google::protobuf::internal::DescriptorTable
     descriptor_table_server_5fcommunication_2eproto;
 namespace leaftest {
+class ForwardPassRequest;
+struct ForwardPassRequestDefaultTypeInternal;
+extern ForwardPassRequestDefaultTypeInternal _ForwardPassRequest_default_instance_;
+class ForwardPassResponse;
+struct ForwardPassResponseDefaultTypeInternal;
+extern ForwardPassResponseDefaultTypeInternal _ForwardPassResponse_default_instance_;
+class GradientRequest;
+struct GradientRequestDefaultTypeInternal;
+extern GradientRequestDefaultTypeInternal _GradientRequest_default_instance_;
+class GradientResponse;
+struct GradientResponseDefaultTypeInternal;
+extern GradientResponseDefaultTypeInternal _GradientResponse_default_instance_;
 class TimeRequest;
 struct TimeRequestDefaultTypeInternal;
 extern TimeRequestDefaultTypeInternal _TimeRequest_default_instance_;
@@ -405,6 +417,1018 @@ class TimeRequest final : public ::google::protobuf::internal::ZeroFieldsBase
   };
   friend struct ::TableStruct_server_5fcommunication_2eproto;
 };
+// -------------------------------------------------------------------
+
+class GradientResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:leaftest.GradientResponse) */ {
+ public:
+  inline GradientResponse() : GradientResponse(nullptr) {}
+  ~GradientResponse() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GradientResponse* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GradientResponse));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GradientResponse(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GradientResponse(const GradientResponse& from) : GradientResponse(nullptr, from) {}
+  inline GradientResponse(GradientResponse&& from) noexcept
+      : GradientResponse(nullptr, std::move(from)) {}
+  inline GradientResponse& operator=(const GradientResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GradientResponse& operator=(GradientResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GradientResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GradientResponse* internal_default_instance() {
+    return reinterpret_cast<const GradientResponse*>(
+        &_GradientResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 5;
+  friend void swap(GradientResponse& a, GradientResponse& b) { a.Swap(&b); }
+  inline void Swap(GradientResponse* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GradientResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GradientResponse* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GradientResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GradientResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GradientResponse& from) { GradientResponse::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GradientResponse* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "leaftest.GradientResponse"; }
+
+ protected:
+  explicit GradientResponse(::google::protobuf::Arena* arena);
+  GradientResponse(::google::protobuf::Arena* arena, const GradientResponse& from);
+  GradientResponse(::google::protobuf::Arena* arena, GradientResponse&& from) noexcept
+      : GradientResponse(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kGradientsFieldNumber = 1,
+    kErrorMessageFieldNumber = 4,
+    kLossFieldNumber = 2,
+    kSuccessFieldNumber = 3,
+  };
+  // bytes gradients = 1;
+  void clear_gradients() ;
+  const std::string& gradients() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_gradients(Arg_&& arg, Args_... args);
+  std::string* mutable_gradients();
+  PROTOBUF_NODISCARD std::string* release_gradients();
+  void set_allocated_gradients(std::string* value);
+
+  private:
+  const std::string& _internal_gradients() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_gradients(
+      const std::string& value);
+  std::string* _internal_mutable_gradients();
+
+  public:
+  // string error_message = 4;
+  void clear_error_message() ;
+  const std::string& error_message() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_error_message(Arg_&& arg, Args_... args);
+  std::string* mutable_error_message();
+  PROTOBUF_NODISCARD std::string* release_error_message();
+  void set_allocated_error_message(std::string* value);
+
+  private:
+  const std::string& _internal_error_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error_message(
+      const std::string& value);
+  std::string* _internal_mutable_error_message();
+
+  public:
+  // float loss = 2;
+  void clear_loss() ;
+  float loss() const;
+  void set_loss(float value);
+
+  private:
+  float _internal_loss() const;
+  void _internal_set_loss(float value);
+
+  public:
+  // bool success = 3;
+  void clear_success() ;
+  bool success() const;
+  void set_success(bool value);
+
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:leaftest.GradientResponse)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 4, 0,
+      47, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GradientResponse& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr gradients_;
+    ::google::protobuf::internal::ArenaStringPtr error_message_;
+    float loss_;
+    bool success_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_server_5fcommunication_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GradientRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:leaftest.GradientRequest) */ {
+ public:
+  inline GradientRequest() : GradientRequest(nullptr) {}
+  ~GradientRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GradientRequest* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GradientRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GradientRequest(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GradientRequest(const GradientRequest& from) : GradientRequest(nullptr, from) {}
+  inline GradientRequest(GradientRequest&& from) noexcept
+      : GradientRequest(nullptr, std::move(from)) {}
+  inline GradientRequest& operator=(const GradientRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GradientRequest& operator=(GradientRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GradientRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GradientRequest* internal_default_instance() {
+    return reinterpret_cast<const GradientRequest*>(
+        &_GradientRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 4;
+  friend void swap(GradientRequest& a, GradientRequest& b) { a.Swap(&b); }
+  inline void Swap(GradientRequest* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GradientRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GradientRequest* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GradientRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GradientRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GradientRequest& from) { GradientRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GradientRequest* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "leaftest.GradientRequest"; }
+
+ protected:
+  explicit GradientRequest(::google::protobuf::Arena* arena);
+  GradientRequest(::google::protobuf::Arena* arena, const GradientRequest& from);
+  GradientRequest(::google::protobuf::Arena* arena, GradientRequest&& from) noexcept
+      : GradientRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kModelStateFieldNumber = 1,
+    kInputDataFieldNumber = 2,
+    kTargetDataFieldNumber = 3,
+    kModelTypeFieldNumber = 4,
+    kCriterionTypeFieldNumber = 5,
+  };
+  // bytes model_state = 1;
+  void clear_model_state() ;
+  const std::string& model_state() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_state(Arg_&& arg, Args_... args);
+  std::string* mutable_model_state();
+  PROTOBUF_NODISCARD std::string* release_model_state();
+  void set_allocated_model_state(std::string* value);
+
+  private:
+  const std::string& _internal_model_state() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_state(
+      const std::string& value);
+  std::string* _internal_mutable_model_state();
+
+  public:
+  // bytes input_data = 2;
+  void clear_input_data() ;
+  const std::string& input_data() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_input_data(Arg_&& arg, Args_... args);
+  std::string* mutable_input_data();
+  PROTOBUF_NODISCARD std::string* release_input_data();
+  void set_allocated_input_data(std::string* value);
+
+  private:
+  const std::string& _internal_input_data() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_input_data(
+      const std::string& value);
+  std::string* _internal_mutable_input_data();
+
+  public:
+  // bytes target_data = 3;
+  void clear_target_data() ;
+  const std::string& target_data() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_target_data(Arg_&& arg, Args_... args);
+  std::string* mutable_target_data();
+  PROTOBUF_NODISCARD std::string* release_target_data();
+  void set_allocated_target_data(std::string* value);
+
+  private:
+  const std::string& _internal_target_data() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_target_data(
+      const std::string& value);
+  std::string* _internal_mutable_target_data();
+
+  public:
+  // string model_type = 4;
+  void clear_model_type() ;
+  const std::string& model_type() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_type(Arg_&& arg, Args_... args);
+  std::string* mutable_model_type();
+  PROTOBUF_NODISCARD std::string* release_model_type();
+  void set_allocated_model_type(std::string* value);
+
+  private:
+  const std::string& _internal_model_type() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_type(
+      const std::string& value);
+  std::string* _internal_mutable_model_type();
+
+  public:
+  // string criterion_type = 5;
+  void clear_criterion_type() ;
+  const std::string& criterion_type() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_criterion_type(Arg_&& arg, Args_... args);
+  std::string* mutable_criterion_type();
+  PROTOBUF_NODISCARD std::string* release_criterion_type();
+  void set_allocated_criterion_type(std::string* value);
+
+  private:
+  const std::string& _internal_criterion_type() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_criterion_type(
+      const std::string& value);
+  std::string* _internal_mutable_criterion_type();
+
+  public:
+  // @@protoc_insertion_point(class_scope:leaftest.GradientRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      3, 5, 0,
+      57, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GradientRequest& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr model_state_;
+    ::google::protobuf::internal::ArenaStringPtr input_data_;
+    ::google::protobuf::internal::ArenaStringPtr target_data_;
+    ::google::protobuf::internal::ArenaStringPtr model_type_;
+    ::google::protobuf::internal::ArenaStringPtr criterion_type_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_server_5fcommunication_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ForwardPassResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:leaftest.ForwardPassResponse) */ {
+ public:
+  inline ForwardPassResponse() : ForwardPassResponse(nullptr) {}
+  ~ForwardPassResponse() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ForwardPassResponse* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ForwardPassResponse));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ForwardPassResponse(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline ForwardPassResponse(const ForwardPassResponse& from) : ForwardPassResponse(nullptr, from) {}
+  inline ForwardPassResponse(ForwardPassResponse&& from) noexcept
+      : ForwardPassResponse(nullptr, std::move(from)) {}
+  inline ForwardPassResponse& operator=(const ForwardPassResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ForwardPassResponse& operator=(ForwardPassResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ForwardPassResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ForwardPassResponse* internal_default_instance() {
+    return reinterpret_cast<const ForwardPassResponse*>(
+        &_ForwardPassResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 3;
+  friend void swap(ForwardPassResponse& a, ForwardPassResponse& b) { a.Swap(&b); }
+  inline void Swap(ForwardPassResponse* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ForwardPassResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ForwardPassResponse* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ForwardPassResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ForwardPassResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ForwardPassResponse& from) { ForwardPassResponse::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ForwardPassResponse* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "leaftest.ForwardPassResponse"; }
+
+ protected:
+  explicit ForwardPassResponse(::google::protobuf::Arena* arena);
+  ForwardPassResponse(::google::protobuf::Arena* arena, const ForwardPassResponse& from);
+  ForwardPassResponse(::google::protobuf::Arena* arena, ForwardPassResponse&& from) noexcept
+      : ForwardPassResponse(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kGradientsFieldNumber = 1,
+    kErrorMessageFieldNumber = 4,
+    kLossFieldNumber = 2,
+    kSuccessFieldNumber = 3,
+  };
+  // bytes gradients = 1;
+  void clear_gradients() ;
+  const std::string& gradients() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_gradients(Arg_&& arg, Args_... args);
+  std::string* mutable_gradients();
+  PROTOBUF_NODISCARD std::string* release_gradients();
+  void set_allocated_gradients(std::string* value);
+
+  private:
+  const std::string& _internal_gradients() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_gradients(
+      const std::string& value);
+  std::string* _internal_mutable_gradients();
+
+  public:
+  // string error_message = 4;
+  void clear_error_message() ;
+  const std::string& error_message() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_error_message(Arg_&& arg, Args_... args);
+  std::string* mutable_error_message();
+  PROTOBUF_NODISCARD std::string* release_error_message();
+  void set_allocated_error_message(std::string* value);
+
+  private:
+  const std::string& _internal_error_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error_message(
+      const std::string& value);
+  std::string* _internal_mutable_error_message();
+
+  public:
+  // float loss = 2;
+  void clear_loss() ;
+  float loss() const;
+  void set_loss(float value);
+
+  private:
+  float _internal_loss() const;
+  void _internal_set_loss(float value);
+
+  public:
+  // bool success = 3;
+  void clear_success() ;
+  bool success() const;
+  void set_success(bool value);
+
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:leaftest.ForwardPassResponse)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 4, 0,
+      50, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const ForwardPassResponse& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr gradients_;
+    ::google::protobuf::internal::ArenaStringPtr error_message_;
+    float loss_;
+    bool success_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_server_5fcommunication_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ForwardPassRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:leaftest.ForwardPassRequest) */ {
+ public:
+  inline ForwardPassRequest() : ForwardPassRequest(nullptr) {}
+  ~ForwardPassRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ForwardPassRequest* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ForwardPassRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ForwardPassRequest(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline ForwardPassRequest(const ForwardPassRequest& from) : ForwardPassRequest(nullptr, from) {}
+  inline ForwardPassRequest(ForwardPassRequest&& from) noexcept
+      : ForwardPassRequest(nullptr, std::move(from)) {}
+  inline ForwardPassRequest& operator=(const ForwardPassRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ForwardPassRequest& operator=(ForwardPassRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ForwardPassRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ForwardPassRequest* internal_default_instance() {
+    return reinterpret_cast<const ForwardPassRequest*>(
+        &_ForwardPassRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 2;
+  friend void swap(ForwardPassRequest& a, ForwardPassRequest& b) { a.Swap(&b); }
+  inline void Swap(ForwardPassRequest* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ForwardPassRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ForwardPassRequest* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ForwardPassRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ForwardPassRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ForwardPassRequest& from) { ForwardPassRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ForwardPassRequest* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "leaftest.ForwardPassRequest"; }
+
+ protected:
+  explicit ForwardPassRequest(::google::protobuf::Arena* arena);
+  ForwardPassRequest(::google::protobuf::Arena* arena, const ForwardPassRequest& from);
+  ForwardPassRequest(::google::protobuf::Arena* arena, ForwardPassRequest&& from) noexcept
+      : ForwardPassRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kModelStateFieldNumber = 1,
+    kInputDataFieldNumber = 2,
+    kTargetDataFieldNumber = 3,
+    kModelTypeFieldNumber = 4,
+    kCriterionTypeFieldNumber = 5,
+  };
+  // bytes model_state = 1;
+  void clear_model_state() ;
+  const std::string& model_state() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_state(Arg_&& arg, Args_... args);
+  std::string* mutable_model_state();
+  PROTOBUF_NODISCARD std::string* release_model_state();
+  void set_allocated_model_state(std::string* value);
+
+  private:
+  const std::string& _internal_model_state() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_state(
+      const std::string& value);
+  std::string* _internal_mutable_model_state();
+
+  public:
+  // bytes input_data = 2;
+  void clear_input_data() ;
+  const std::string& input_data() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_input_data(Arg_&& arg, Args_... args);
+  std::string* mutable_input_data();
+  PROTOBUF_NODISCARD std::string* release_input_data();
+  void set_allocated_input_data(std::string* value);
+
+  private:
+  const std::string& _internal_input_data() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_input_data(
+      const std::string& value);
+  std::string* _internal_mutable_input_data();
+
+  public:
+  // bytes target_data = 3;
+  void clear_target_data() ;
+  const std::string& target_data() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_target_data(Arg_&& arg, Args_... args);
+  std::string* mutable_target_data();
+  PROTOBUF_NODISCARD std::string* release_target_data();
+  void set_allocated_target_data(std::string* value);
+
+  private:
+  const std::string& _internal_target_data() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_target_data(
+      const std::string& value);
+  std::string* _internal_mutable_target_data();
+
+  public:
+  // string model_type = 4;
+  void clear_model_type() ;
+  const std::string& model_type() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_type(Arg_&& arg, Args_... args);
+  std::string* mutable_model_type();
+  PROTOBUF_NODISCARD std::string* release_model_type();
+  void set_allocated_model_type(std::string* value);
+
+  private:
+  const std::string& _internal_model_type() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_type(
+      const std::string& value);
+  std::string* _internal_mutable_model_type();
+
+  public:
+  // string criterion_type = 5;
+  void clear_criterion_type() ;
+  const std::string& criterion_type() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_criterion_type(Arg_&& arg, Args_... args);
+  std::string* mutable_criterion_type();
+  PROTOBUF_NODISCARD std::string* release_criterion_type();
+  void set_allocated_criterion_type(std::string* value);
+
+  private:
+  const std::string& _internal_criterion_type() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_criterion_type(
+      const std::string& value);
+  std::string* _internal_mutable_criterion_type();
+
+  public:
+  // @@protoc_insertion_point(class_scope:leaftest.ForwardPassRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      3, 5, 0,
+      60, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const ForwardPassRequest& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr model_state_;
+    ::google::protobuf::internal::ArenaStringPtr input_data_;
+    ::google::protobuf::internal::ArenaStringPtr target_data_;
+    ::google::protobuf::internal::ArenaStringPtr model_type_;
+    ::google::protobuf::internal::ArenaStringPtr criterion_type_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_server_5fcommunication_2eproto;
+};
 
 // ===================================================================
 
@@ -446,6 +1470,782 @@ inline ::int64_t TimeResponse::_internal_server_time_ms() const {
 inline void TimeResponse::_internal_set_server_time_ms(::int64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.server_time_ms_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ForwardPassRequest
+
+// bytes model_state = 1;
+inline void ForwardPassRequest::clear_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.ClearToEmpty();
+}
+inline const std::string& ForwardPassRequest::model_state() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassRequest.model_state)
+  return _internal_model_state();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ForwardPassRequest::set_model_state(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassRequest.model_state)
+}
+inline std::string* ForwardPassRequest::mutable_model_state() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_state();
+  // @@protoc_insertion_point(field_mutable:leaftest.ForwardPassRequest.model_state)
+  return _s;
+}
+inline const std::string& ForwardPassRequest::_internal_model_state() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_state_.Get();
+}
+inline void ForwardPassRequest::_internal_set_model_state(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.Set(value, GetArena());
+}
+inline std::string* ForwardPassRequest::_internal_mutable_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_state_.Mutable( GetArena());
+}
+inline std::string* ForwardPassRequest::release_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.ForwardPassRequest.model_state)
+  return _impl_.model_state_.Release();
+}
+inline void ForwardPassRequest::set_allocated_model_state(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_state_.IsDefault()) {
+    _impl_.model_state_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassRequest.model_state)
+}
+
+// bytes input_data = 2;
+inline void ForwardPassRequest::clear_input_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.ClearToEmpty();
+}
+inline const std::string& ForwardPassRequest::input_data() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassRequest.input_data)
+  return _internal_input_data();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ForwardPassRequest::set_input_data(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassRequest.input_data)
+}
+inline std::string* ForwardPassRequest::mutable_input_data() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_input_data();
+  // @@protoc_insertion_point(field_mutable:leaftest.ForwardPassRequest.input_data)
+  return _s;
+}
+inline const std::string& ForwardPassRequest::_internal_input_data() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.input_data_.Get();
+}
+inline void ForwardPassRequest::_internal_set_input_data(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.Set(value, GetArena());
+}
+inline std::string* ForwardPassRequest::_internal_mutable_input_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.input_data_.Mutable( GetArena());
+}
+inline std::string* ForwardPassRequest::release_input_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.ForwardPassRequest.input_data)
+  return _impl_.input_data_.Release();
+}
+inline void ForwardPassRequest::set_allocated_input_data(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.input_data_.IsDefault()) {
+    _impl_.input_data_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassRequest.input_data)
+}
+
+// bytes target_data = 3;
+inline void ForwardPassRequest::clear_target_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.ClearToEmpty();
+}
+inline const std::string& ForwardPassRequest::target_data() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassRequest.target_data)
+  return _internal_target_data();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ForwardPassRequest::set_target_data(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassRequest.target_data)
+}
+inline std::string* ForwardPassRequest::mutable_target_data() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_target_data();
+  // @@protoc_insertion_point(field_mutable:leaftest.ForwardPassRequest.target_data)
+  return _s;
+}
+inline const std::string& ForwardPassRequest::_internal_target_data() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_data_.Get();
+}
+inline void ForwardPassRequest::_internal_set_target_data(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.Set(value, GetArena());
+}
+inline std::string* ForwardPassRequest::_internal_mutable_target_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.target_data_.Mutable( GetArena());
+}
+inline std::string* ForwardPassRequest::release_target_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.ForwardPassRequest.target_data)
+  return _impl_.target_data_.Release();
+}
+inline void ForwardPassRequest::set_allocated_target_data(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.target_data_.IsDefault()) {
+    _impl_.target_data_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassRequest.target_data)
+}
+
+// string model_type = 4;
+inline void ForwardPassRequest::clear_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.ClearToEmpty();
+}
+inline const std::string& ForwardPassRequest::model_type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassRequest.model_type)
+  return _internal_model_type();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ForwardPassRequest::set_model_type(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassRequest.model_type)
+}
+inline std::string* ForwardPassRequest::mutable_model_type() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_type();
+  // @@protoc_insertion_point(field_mutable:leaftest.ForwardPassRequest.model_type)
+  return _s;
+}
+inline const std::string& ForwardPassRequest::_internal_model_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_type_.Get();
+}
+inline void ForwardPassRequest::_internal_set_model_type(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.Set(value, GetArena());
+}
+inline std::string* ForwardPassRequest::_internal_mutable_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_type_.Mutable( GetArena());
+}
+inline std::string* ForwardPassRequest::release_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.ForwardPassRequest.model_type)
+  return _impl_.model_type_.Release();
+}
+inline void ForwardPassRequest::set_allocated_model_type(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_type_.IsDefault()) {
+    _impl_.model_type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassRequest.model_type)
+}
+
+// string criterion_type = 5;
+inline void ForwardPassRequest::clear_criterion_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.ClearToEmpty();
+}
+inline const std::string& ForwardPassRequest::criterion_type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassRequest.criterion_type)
+  return _internal_criterion_type();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ForwardPassRequest::set_criterion_type(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassRequest.criterion_type)
+}
+inline std::string* ForwardPassRequest::mutable_criterion_type() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_criterion_type();
+  // @@protoc_insertion_point(field_mutable:leaftest.ForwardPassRequest.criterion_type)
+  return _s;
+}
+inline const std::string& ForwardPassRequest::_internal_criterion_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.criterion_type_.Get();
+}
+inline void ForwardPassRequest::_internal_set_criterion_type(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.Set(value, GetArena());
+}
+inline std::string* ForwardPassRequest::_internal_mutable_criterion_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.criterion_type_.Mutable( GetArena());
+}
+inline std::string* ForwardPassRequest::release_criterion_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.ForwardPassRequest.criterion_type)
+  return _impl_.criterion_type_.Release();
+}
+inline void ForwardPassRequest::set_allocated_criterion_type(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.criterion_type_.IsDefault()) {
+    _impl_.criterion_type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassRequest.criterion_type)
+}
+
+// -------------------------------------------------------------------
+
+// ForwardPassResponse
+
+// bytes gradients = 1;
+inline void ForwardPassResponse::clear_gradients() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.ClearToEmpty();
+}
+inline const std::string& ForwardPassResponse::gradients() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassResponse.gradients)
+  return _internal_gradients();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ForwardPassResponse::set_gradients(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassResponse.gradients)
+}
+inline std::string* ForwardPassResponse::mutable_gradients() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_gradients();
+  // @@protoc_insertion_point(field_mutable:leaftest.ForwardPassResponse.gradients)
+  return _s;
+}
+inline const std::string& ForwardPassResponse::_internal_gradients() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.gradients_.Get();
+}
+inline void ForwardPassResponse::_internal_set_gradients(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.Set(value, GetArena());
+}
+inline std::string* ForwardPassResponse::_internal_mutable_gradients() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.gradients_.Mutable( GetArena());
+}
+inline std::string* ForwardPassResponse::release_gradients() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.ForwardPassResponse.gradients)
+  return _impl_.gradients_.Release();
+}
+inline void ForwardPassResponse::set_allocated_gradients(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.gradients_.IsDefault()) {
+    _impl_.gradients_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassResponse.gradients)
+}
+
+// float loss = 2;
+inline void ForwardPassResponse::clear_loss() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.loss_ = 0;
+}
+inline float ForwardPassResponse::loss() const {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassResponse.loss)
+  return _internal_loss();
+}
+inline void ForwardPassResponse::set_loss(float value) {
+  _internal_set_loss(value);
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassResponse.loss)
+}
+inline float ForwardPassResponse::_internal_loss() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.loss_;
+}
+inline void ForwardPassResponse::_internal_set_loss(float value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.loss_ = value;
+}
+
+// bool success = 3;
+inline void ForwardPassResponse::clear_success() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.success_ = false;
+}
+inline bool ForwardPassResponse::success() const {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassResponse.success)
+  return _internal_success();
+}
+inline void ForwardPassResponse::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassResponse.success)
+}
+inline bool ForwardPassResponse::_internal_success() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.success_;
+}
+inline void ForwardPassResponse::_internal_set_success(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.success_ = value;
+}
+
+// string error_message = 4;
+inline void ForwardPassResponse::clear_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.ClearToEmpty();
+}
+inline const std::string& ForwardPassResponse::error_message() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassResponse.error_message)
+  return _internal_error_message();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ForwardPassResponse::set_error_message(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassResponse.error_message)
+}
+inline std::string* ForwardPassResponse::mutable_error_message() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_error_message();
+  // @@protoc_insertion_point(field_mutable:leaftest.ForwardPassResponse.error_message)
+  return _s;
+}
+inline const std::string& ForwardPassResponse::_internal_error_message() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.error_message_.Get();
+}
+inline void ForwardPassResponse::_internal_set_error_message(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.Set(value, GetArena());
+}
+inline std::string* ForwardPassResponse::_internal_mutable_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.error_message_.Mutable( GetArena());
+}
+inline std::string* ForwardPassResponse::release_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.ForwardPassResponse.error_message)
+  return _impl_.error_message_.Release();
+}
+inline void ForwardPassResponse::set_allocated_error_message(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.error_message_.IsDefault()) {
+    _impl_.error_message_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassResponse.error_message)
+}
+
+// -------------------------------------------------------------------
+
+// GradientRequest
+
+// bytes model_state = 1;
+inline void GradientRequest::clear_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.ClearToEmpty();
+}
+inline const std::string& GradientRequest::model_state() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.GradientRequest.model_state)
+  return _internal_model_state();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GradientRequest::set_model_state(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.GradientRequest.model_state)
+}
+inline std::string* GradientRequest::mutable_model_state() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_state();
+  // @@protoc_insertion_point(field_mutable:leaftest.GradientRequest.model_state)
+  return _s;
+}
+inline const std::string& GradientRequest::_internal_model_state() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_state_.Get();
+}
+inline void GradientRequest::_internal_set_model_state(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.Set(value, GetArena());
+}
+inline std::string* GradientRequest::_internal_mutable_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_state_.Mutable( GetArena());
+}
+inline std::string* GradientRequest::release_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.GradientRequest.model_state)
+  return _impl_.model_state_.Release();
+}
+inline void GradientRequest::set_allocated_model_state(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_state_.IsDefault()) {
+    _impl_.model_state_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.model_state)
+}
+
+// bytes input_data = 2;
+inline void GradientRequest::clear_input_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.ClearToEmpty();
+}
+inline const std::string& GradientRequest::input_data() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.GradientRequest.input_data)
+  return _internal_input_data();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GradientRequest::set_input_data(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.GradientRequest.input_data)
+}
+inline std::string* GradientRequest::mutable_input_data() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_input_data();
+  // @@protoc_insertion_point(field_mutable:leaftest.GradientRequest.input_data)
+  return _s;
+}
+inline const std::string& GradientRequest::_internal_input_data() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.input_data_.Get();
+}
+inline void GradientRequest::_internal_set_input_data(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.Set(value, GetArena());
+}
+inline std::string* GradientRequest::_internal_mutable_input_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.input_data_.Mutable( GetArena());
+}
+inline std::string* GradientRequest::release_input_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.GradientRequest.input_data)
+  return _impl_.input_data_.Release();
+}
+inline void GradientRequest::set_allocated_input_data(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.input_data_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.input_data_.IsDefault()) {
+    _impl_.input_data_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.input_data)
+}
+
+// bytes target_data = 3;
+inline void GradientRequest::clear_target_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.ClearToEmpty();
+}
+inline const std::string& GradientRequest::target_data() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.GradientRequest.target_data)
+  return _internal_target_data();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GradientRequest::set_target_data(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.GradientRequest.target_data)
+}
+inline std::string* GradientRequest::mutable_target_data() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_target_data();
+  // @@protoc_insertion_point(field_mutable:leaftest.GradientRequest.target_data)
+  return _s;
+}
+inline const std::string& GradientRequest::_internal_target_data() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_data_.Get();
+}
+inline void GradientRequest::_internal_set_target_data(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.Set(value, GetArena());
+}
+inline std::string* GradientRequest::_internal_mutable_target_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.target_data_.Mutable( GetArena());
+}
+inline std::string* GradientRequest::release_target_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.GradientRequest.target_data)
+  return _impl_.target_data_.Release();
+}
+inline void GradientRequest::set_allocated_target_data(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_data_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.target_data_.IsDefault()) {
+    _impl_.target_data_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.target_data)
+}
+
+// string model_type = 4;
+inline void GradientRequest::clear_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.ClearToEmpty();
+}
+inline const std::string& GradientRequest::model_type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.GradientRequest.model_type)
+  return _internal_model_type();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GradientRequest::set_model_type(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.GradientRequest.model_type)
+}
+inline std::string* GradientRequest::mutable_model_type() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_type();
+  // @@protoc_insertion_point(field_mutable:leaftest.GradientRequest.model_type)
+  return _s;
+}
+inline const std::string& GradientRequest::_internal_model_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_type_.Get();
+}
+inline void GradientRequest::_internal_set_model_type(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.Set(value, GetArena());
+}
+inline std::string* GradientRequest::_internal_mutable_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_type_.Mutable( GetArena());
+}
+inline std::string* GradientRequest::release_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.GradientRequest.model_type)
+  return _impl_.model_type_.Release();
+}
+inline void GradientRequest::set_allocated_model_type(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_type_.IsDefault()) {
+    _impl_.model_type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.model_type)
+}
+
+// string criterion_type = 5;
+inline void GradientRequest::clear_criterion_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.ClearToEmpty();
+}
+inline const std::string& GradientRequest::criterion_type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.GradientRequest.criterion_type)
+  return _internal_criterion_type();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GradientRequest::set_criterion_type(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.GradientRequest.criterion_type)
+}
+inline std::string* GradientRequest::mutable_criterion_type() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_criterion_type();
+  // @@protoc_insertion_point(field_mutable:leaftest.GradientRequest.criterion_type)
+  return _s;
+}
+inline const std::string& GradientRequest::_internal_criterion_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.criterion_type_.Get();
+}
+inline void GradientRequest::_internal_set_criterion_type(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.Set(value, GetArena());
+}
+inline std::string* GradientRequest::_internal_mutable_criterion_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.criterion_type_.Mutable( GetArena());
+}
+inline std::string* GradientRequest::release_criterion_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.GradientRequest.criterion_type)
+  return _impl_.criterion_type_.Release();
+}
+inline void GradientRequest::set_allocated_criterion_type(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.criterion_type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.criterion_type_.IsDefault()) {
+    _impl_.criterion_type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.criterion_type)
+}
+
+// -------------------------------------------------------------------
+
+// GradientResponse
+
+// bytes gradients = 1;
+inline void GradientResponse::clear_gradients() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.ClearToEmpty();
+}
+inline const std::string& GradientResponse::gradients() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.GradientResponse.gradients)
+  return _internal_gradients();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GradientResponse::set_gradients(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.GradientResponse.gradients)
+}
+inline std::string* GradientResponse::mutable_gradients() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_gradients();
+  // @@protoc_insertion_point(field_mutable:leaftest.GradientResponse.gradients)
+  return _s;
+}
+inline const std::string& GradientResponse::_internal_gradients() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.gradients_.Get();
+}
+inline void GradientResponse::_internal_set_gradients(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.Set(value, GetArena());
+}
+inline std::string* GradientResponse::_internal_mutable_gradients() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.gradients_.Mutable( GetArena());
+}
+inline std::string* GradientResponse::release_gradients() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.GradientResponse.gradients)
+  return _impl_.gradients_.Release();
+}
+inline void GradientResponse::set_allocated_gradients(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.gradients_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.gradients_.IsDefault()) {
+    _impl_.gradients_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientResponse.gradients)
+}
+
+// float loss = 2;
+inline void GradientResponse::clear_loss() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.loss_ = 0;
+}
+inline float GradientResponse::loss() const {
+  // @@protoc_insertion_point(field_get:leaftest.GradientResponse.loss)
+  return _internal_loss();
+}
+inline void GradientResponse::set_loss(float value) {
+  _internal_set_loss(value);
+  // @@protoc_insertion_point(field_set:leaftest.GradientResponse.loss)
+}
+inline float GradientResponse::_internal_loss() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.loss_;
+}
+inline void GradientResponse::_internal_set_loss(float value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.loss_ = value;
+}
+
+// bool success = 3;
+inline void GradientResponse::clear_success() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.success_ = false;
+}
+inline bool GradientResponse::success() const {
+  // @@protoc_insertion_point(field_get:leaftest.GradientResponse.success)
+  return _internal_success();
+}
+inline void GradientResponse::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:leaftest.GradientResponse.success)
+}
+inline bool GradientResponse::_internal_success() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.success_;
+}
+inline void GradientResponse::_internal_set_success(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.success_ = value;
+}
+
+// string error_message = 4;
+inline void GradientResponse::clear_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.ClearToEmpty();
+}
+inline const std::string& GradientResponse::error_message() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.GradientResponse.error_message)
+  return _internal_error_message();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GradientResponse::set_error_message(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.GradientResponse.error_message)
+}
+inline std::string* GradientResponse::mutable_error_message() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_error_message();
+  // @@protoc_insertion_point(field_mutable:leaftest.GradientResponse.error_message)
+  return _s;
+}
+inline const std::string& GradientResponse::_internal_error_message() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.error_message_.Get();
+}
+inline void GradientResponse::_internal_set_error_message(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.Set(value, GetArena());
+}
+inline std::string* GradientResponse::_internal_mutable_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.error_message_.Mutable( GetArena());
+}
+inline std::string* GradientResponse::release_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.GradientResponse.error_message)
+  return _impl_.error_message_.Release();
+}
+inline void GradientResponse::set_allocated_error_message(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.error_message_.IsDefault()) {
+    _impl_.error_message_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientResponse.error_message)
 }
 
 #ifdef __GNUC__

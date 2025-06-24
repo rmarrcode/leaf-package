@@ -43,11 +43,29 @@ class ServerCommunication final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::TimeResponse>> PrepareAsyncGetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::TimeResponse>>(PrepareAsyncGetServerTimeRaw(context, request, cq));
     }
+    virtual ::grpc::Status ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::leaftest::ForwardPassResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::ForwardPassResponse>> AsyncForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::ForwardPassResponse>>(AsyncForwardPassRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::ForwardPassResponse>> PrepareAsyncForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::ForwardPassResponse>>(PrepareAsyncForwardPassRaw(context, request, cq));
+    }
+    virtual ::grpc::Status GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::leaftest::GradientResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>> AsyncGetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>>(AsyncGetGradientsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>> PrepareAsyncGetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>>(PrepareAsyncGetGradientsRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
       virtual void GetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest* request, ::leaftest::TimeResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest* request, ::leaftest::TimeResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -55,6 +73,10 @@ class ServerCommunication final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::TimeResponse>* AsyncGetServerTimeRaw(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::TimeResponse>* PrepareAsyncGetServerTimeRaw(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::ForwardPassResponse>* AsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::ForwardPassResponse>* PrepareAsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>* AsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>* PrepareAsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -66,11 +88,29 @@ class ServerCommunication final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::TimeResponse>> PrepareAsyncGetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::TimeResponse>>(PrepareAsyncGetServerTimeRaw(context, request, cq));
     }
+    ::grpc::Status ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::leaftest::ForwardPassResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>> AsyncForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>>(AsyncForwardPassRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>> PrepareAsyncForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>>(PrepareAsyncForwardPassRaw(context, request, cq));
+    }
+    ::grpc::Status GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::leaftest::GradientResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>> AsyncGetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>>(AsyncGetGradientsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>> PrepareAsyncGetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>>(PrepareAsyncGetGradientsRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
       void GetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest* request, ::leaftest::TimeResponse* response, std::function<void(::grpc::Status)>) override;
       void GetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest* request, ::leaftest::TimeResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, std::function<void(::grpc::Status)>) override;
+      void ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, std::function<void(::grpc::Status)>) override;
+      void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -84,7 +124,13 @@ class ServerCommunication final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::leaftest::TimeResponse>* AsyncGetServerTimeRaw(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::leaftest::TimeResponse>* PrepareAsyncGetServerTimeRaw(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>* AsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>* PrepareAsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>* AsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>* PrepareAsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_GetServerTime_;
+    const ::grpc::internal::RpcMethod rpcmethod_ForwardPass_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetGradients_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -93,6 +139,8 @@ class ServerCommunication final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status GetServerTime(::grpc::ServerContext* context, const ::leaftest::TimeRequest* request, ::leaftest::TimeResponse* response);
+    virtual ::grpc::Status ForwardPass(::grpc::ServerContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response);
+    virtual ::grpc::Status GetGradients(::grpc::ServerContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_GetServerTime : public BaseClass {
@@ -114,7 +162,47 @@ class ServerCommunication final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GetServerTime<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_ForwardPass : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_ForwardPass() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_ForwardPass() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ForwardPass(::grpc::ServerContext* /*context*/, const ::leaftest::ForwardPassRequest* /*request*/, ::leaftest::ForwardPassResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestForwardPass(::grpc::ServerContext* context, ::leaftest::ForwardPassRequest* request, ::grpc::ServerAsyncResponseWriter< ::leaftest::ForwardPassResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_GetGradients : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetGradients() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_GetGradients() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGradients(::grpc::ServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetGradients(::grpc::ServerContext* context, ::leaftest::GradientRequest* request, ::grpc::ServerAsyncResponseWriter< ::leaftest::GradientResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_GetServerTime<WithAsyncMethod_ForwardPass<WithAsyncMethod_GetGradients<Service > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_GetServerTime : public BaseClass {
    private:
@@ -142,7 +230,61 @@ class ServerCommunication final {
     virtual ::grpc::ServerUnaryReactor* GetServerTime(
       ::grpc::CallbackServerContext* /*context*/, const ::leaftest::TimeRequest* /*request*/, ::leaftest::TimeResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_GetServerTime<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_ForwardPass : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_ForwardPass() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response) { return this->ForwardPass(context, request, response); }));}
+    void SetMessageAllocatorFor_ForwardPass(
+        ::grpc::MessageAllocator< ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_ForwardPass() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ForwardPass(::grpc::ServerContext* /*context*/, const ::leaftest::ForwardPassRequest* /*request*/, ::leaftest::ForwardPassResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ForwardPass(
+      ::grpc::CallbackServerContext* /*context*/, const ::leaftest::ForwardPassRequest* /*request*/, ::leaftest::ForwardPassResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_GetGradients : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetGradients() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::leaftest::GradientRequest, ::leaftest::GradientResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response) { return this->GetGradients(context, request, response); }));}
+    void SetMessageAllocatorFor_GetGradients(
+        ::grpc::MessageAllocator< ::leaftest::GradientRequest, ::leaftest::GradientResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::leaftest::GradientRequest, ::leaftest::GradientResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetGradients() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGradients(::grpc::ServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetGradients(
+      ::grpc::CallbackServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_GetServerTime<WithCallbackMethod_ForwardPass<WithCallbackMethod_GetGradients<Service > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_GetServerTime : public BaseClass {
@@ -157,6 +299,40 @@ class ServerCommunication final {
     }
     // disable synchronous version of this method
     ::grpc::Status GetServerTime(::grpc::ServerContext* /*context*/, const ::leaftest::TimeRequest* /*request*/, ::leaftest::TimeResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_ForwardPass : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_ForwardPass() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_ForwardPass() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ForwardPass(::grpc::ServerContext* /*context*/, const ::leaftest::ForwardPassRequest* /*request*/, ::leaftest::ForwardPassResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_GetGradients : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetGradients() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_GetGradients() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGradients(::grpc::ServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -182,6 +358,46 @@ class ServerCommunication final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_ForwardPass : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_ForwardPass() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_ForwardPass() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ForwardPass(::grpc::ServerContext* /*context*/, const ::leaftest::ForwardPassRequest* /*request*/, ::leaftest::ForwardPassResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestForwardPass(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetGradients : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetGradients() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_GetGradients() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGradients(::grpc::ServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetGradients(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_GetServerTime : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -201,6 +417,50 @@ class ServerCommunication final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* GetServerTime(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_ForwardPass : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_ForwardPass() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ForwardPass(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_ForwardPass() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ForwardPass(::grpc::ServerContext* /*context*/, const ::leaftest::ForwardPassRequest* /*request*/, ::leaftest::ForwardPassResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ForwardPass(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetGradients : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetGradients() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetGradients(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetGradients() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGradients(::grpc::ServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetGradients(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -230,9 +490,63 @@ class ServerCommunication final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetServerTime(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::leaftest::TimeRequest,::leaftest::TimeResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GetServerTime<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_ForwardPass : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_ForwardPass() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse>* streamer) {
+                       return this->StreamedForwardPass(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_ForwardPass() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status ForwardPass(::grpc::ServerContext* /*context*/, const ::leaftest::ForwardPassRequest* /*request*/, ::leaftest::ForwardPassResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedForwardPass(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::leaftest::ForwardPassRequest,::leaftest::ForwardPassResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GetGradients : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetGradients() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::leaftest::GradientRequest, ::leaftest::GradientResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::leaftest::GradientRequest, ::leaftest::GradientResponse>* streamer) {
+                       return this->StreamedGetGradients(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetGradients() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetGradients(::grpc::ServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetGradients(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::leaftest::GradientRequest,::leaftest::GradientResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ForwardPass<WithStreamedUnaryMethod_GetGradients<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GetServerTime<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ForwardPass<WithStreamedUnaryMethod_GetGradients<Service > > > StreamedService;
 };
 
 }  // namespace leaftest

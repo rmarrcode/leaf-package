@@ -68,6 +68,148 @@ struct TimeRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TimeRequestDefaultTypeInternal _TimeRequest_default_instance_;
+
+inline constexpr GradientResponse::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : gradients_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        error_message_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        loss_{0},
+        success_{false},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR GradientResponse::GradientResponse(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct GradientResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GradientResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GradientResponseDefaultTypeInternal() {}
+  union {
+    GradientResponse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GradientResponseDefaultTypeInternal _GradientResponse_default_instance_;
+
+inline constexpr GradientRequest::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : model_state_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        input_data_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        target_data_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        model_type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        criterion_type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR GradientRequest::GradientRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct GradientRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GradientRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GradientRequestDefaultTypeInternal() {}
+  union {
+    GradientRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GradientRequestDefaultTypeInternal _GradientRequest_default_instance_;
+
+inline constexpr ForwardPassResponse::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : gradients_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        error_message_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        loss_{0},
+        success_{false},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR ForwardPassResponse::ForwardPassResponse(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct ForwardPassResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ForwardPassResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ForwardPassResponseDefaultTypeInternal() {}
+  union {
+    ForwardPassResponse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ForwardPassResponseDefaultTypeInternal _ForwardPassResponse_default_instance_;
+
+inline constexpr ForwardPassRequest::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : model_state_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        input_data_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        target_data_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        model_type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        criterion_type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR ForwardPassRequest::ForwardPassRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct ForwardPassRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ForwardPassRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ForwardPassRequestDefaultTypeInternal() {}
+  union {
+    ForwardPassRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ForwardPassRequestDefaultTypeInternal _ForwardPassRequest_default_instance_;
 }  // namespace leaftest
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_server_5fcommunication_2eproto = nullptr;
@@ -93,36 +235,109 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::leaftest::TimeResponse, _impl_.server_time_ms_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.model_state_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.input_data_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.target_data_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.model_type_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.criterion_type_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassResponse, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassResponse, _impl_.gradients_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassResponse, _impl_.loss_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassResponse, _impl_.success_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassResponse, _impl_.error_message_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.model_state_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.input_data_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.target_data_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.model_type_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.criterion_type_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _impl_.gradients_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _impl_.loss_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _impl_.success_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _impl_.error_message_),
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
         {0, -1, -1, sizeof(::leaftest::TimeRequest)},
         {8, -1, -1, sizeof(::leaftest::TimeResponse)},
+        {17, -1, -1, sizeof(::leaftest::ForwardPassRequest)},
+        {30, -1, -1, sizeof(::leaftest::ForwardPassResponse)},
+        {42, -1, -1, sizeof(::leaftest::GradientRequest)},
+        {55, -1, -1, sizeof(::leaftest::GradientResponse)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::leaftest::_TimeRequest_default_instance_._instance,
     &::leaftest::_TimeResponse_default_instance_._instance,
+    &::leaftest::_ForwardPassRequest_default_instance_._instance,
+    &::leaftest::_ForwardPassResponse_default_instance_._instance,
+    &::leaftest::_GradientRequest_default_instance_._instance,
+    &::leaftest::_GradientResponse_default_instance_._instance,
 };
 const char descriptor_table_protodef_server_5fcommunication_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
     "\n\032server_communication.proto\022\010leaftest\"\r"
     "\n\013TimeRequest\"&\n\014TimeResponse\022\026\n\016server_"
-    "time_ms\030\001 \001(\0032W\n\023ServerCommunication\022@\n\r"
-    "GetServerTime\022\025.leaftest.TimeRequest\032\026.l"
-    "eaftest.TimeResponse\"\000b\006proto3"
+    "time_ms\030\001 \001(\003\"~\n\022ForwardPassRequest\022\023\n\013m"
+    "odel_state\030\001 \001(\014\022\022\n\ninput_data\030\002 \001(\014\022\023\n\013"
+    "target_data\030\003 \001(\014\022\022\n\nmodel_type\030\004 \001(\t\022\026\n"
+    "\016criterion_type\030\005 \001(\t\"^\n\023ForwardPassResp"
+    "onse\022\021\n\tgradients\030\001 \001(\014\022\014\n\004loss\030\002 \001(\002\022\017\n"
+    "\007success\030\003 \001(\010\022\025\n\rerror_message\030\004 \001(\t\"{\n"
+    "\017GradientRequest\022\023\n\013model_state\030\001 \001(\014\022\022\n"
+    "\ninput_data\030\002 \001(\014\022\023\n\013target_data\030\003 \001(\014\022\022"
+    "\n\nmodel_type\030\004 \001(\t\022\026\n\016criterion_type\030\005 \001"
+    "(\t\"[\n\020GradientResponse\022\021\n\tgradients\030\001 \001("
+    "\014\022\014\n\004loss\030\002 \001(\002\022\017\n\007success\030\003 \001(\010\022\025\n\rerro"
+    "r_message\030\004 \001(\t2\356\001\n\023ServerCommunication\022"
+    "@\n\rGetServerTime\022\025.leaftest.TimeRequest\032"
+    "\026.leaftest.TimeResponse\"\000\022L\n\013ForwardPass"
+    "\022\034.leaftest.ForwardPassRequest\032\035.leaftes"
+    "t.ForwardPassResponse\"\000\022G\n\014GetGradients\022"
+    "\031.leaftest.GradientRequest\032\032.leaftest.Gr"
+    "adientResponse\"\000b\006proto3"
 };
 static ::absl::once_flag descriptor_table_server_5fcommunication_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_server_5fcommunication_2eproto = {
     false,
     false,
-    190,
+    784,
     descriptor_table_protodef_server_5fcommunication_2eproto,
     "server_communication.proto",
     &descriptor_table_server_5fcommunication_2eproto_once,
     nullptr,
     0,
-    2,
+    6,
     schemas,
     file_default_instances,
     TableStruct_server_5fcommunication_2eproto::offsets,
@@ -438,6 +653,1320 @@ void TimeResponse::InternalSwap(TimeResponse* PROTOBUF_RESTRICT other) {
 }
 
 ::google::protobuf::Metadata TimeResponse::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class ForwardPassRequest::_Internal {
+ public:
+};
+
+ForwardPassRequest::ForwardPassRequest(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:leaftest.ForwardPassRequest)
+}
+inline PROTOBUF_NDEBUG_INLINE ForwardPassRequest::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::leaftest::ForwardPassRequest& from_msg)
+      : model_state_(arena, from.model_state_),
+        input_data_(arena, from.input_data_),
+        target_data_(arena, from.target_data_),
+        model_type_(arena, from.model_type_),
+        criterion_type_(arena, from.criterion_type_),
+        _cached_size_{0} {}
+
+ForwardPassRequest::ForwardPassRequest(
+    ::google::protobuf::Arena* arena,
+    const ForwardPassRequest& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ForwardPassRequest* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:leaftest.ForwardPassRequest)
+}
+inline PROTOBUF_NDEBUG_INLINE ForwardPassRequest::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : model_state_(arena),
+        input_data_(arena),
+        target_data_(arena),
+        model_type_(arena),
+        criterion_type_(arena),
+        _cached_size_{0} {}
+
+inline void ForwardPassRequest::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+ForwardPassRequest::~ForwardPassRequest() {
+  // @@protoc_insertion_point(destructor:leaftest.ForwardPassRequest)
+  SharedDtor(*this);
+}
+inline void ForwardPassRequest::SharedDtor(MessageLite& self) {
+  ForwardPassRequest& this_ = static_cast<ForwardPassRequest&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.model_state_.Destroy();
+  this_._impl_.input_data_.Destroy();
+  this_._impl_.target_data_.Destroy();
+  this_._impl_.model_type_.Destroy();
+  this_._impl_.criterion_type_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* ForwardPassRequest::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) ForwardPassRequest(arena);
+}
+constexpr auto ForwardPassRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ForwardPassRequest),
+                                            alignof(ForwardPassRequest));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull ForwardPassRequest::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_ForwardPassRequest_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &ForwardPassRequest::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<ForwardPassRequest>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &ForwardPassRequest::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<ForwardPassRequest>(), &ForwardPassRequest::ByteSizeLong,
+            &ForwardPassRequest::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_._cached_size_),
+        false,
+    },
+    &ForwardPassRequest::kDescriptorMethods,
+    &descriptor_table_server_5fcommunication_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* ForwardPassRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<3, 5, 0, 60, 2> ForwardPassRequest::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    5, 56,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967264,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    5,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::leaftest::ForwardPassRequest>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // bytes model_state = 1;
+    {::_pbi::TcParser::FastBS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.model_state_)}},
+    // bytes input_data = 2;
+    {::_pbi::TcParser::FastBS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.input_data_)}},
+    // bytes target_data = 3;
+    {::_pbi::TcParser::FastBS1,
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.target_data_)}},
+    // string model_type = 4;
+    {::_pbi::TcParser::FastUS1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.model_type_)}},
+    // string criterion_type = 5;
+    {::_pbi::TcParser::FastUS1,
+     {42, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.criterion_type_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bytes model_state = 1;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.model_state_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // bytes input_data = 2;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.input_data_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // bytes target_data = 3;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.target_data_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // string model_type = 4;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.model_type_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string criterion_type = 5;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.criterion_type_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\33\0\0\0\12\16\0\0"
+    "leaftest.ForwardPassRequest"
+    "model_type"
+    "criterion_type"
+  }},
+};
+
+PROTOBUF_NOINLINE void ForwardPassRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:leaftest.ForwardPassRequest)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.model_state_.ClearToEmpty();
+  _impl_.input_data_.ClearToEmpty();
+  _impl_.target_data_.ClearToEmpty();
+  _impl_.model_type_.ClearToEmpty();
+  _impl_.criterion_type_.ClearToEmpty();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* ForwardPassRequest::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const ForwardPassRequest& this_ = static_cast<const ForwardPassRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* ForwardPassRequest::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const ForwardPassRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:leaftest.ForwardPassRequest)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // bytes model_state = 1;
+          if (!this_._internal_model_state().empty()) {
+            const std::string& _s = this_._internal_model_state();
+            target = stream->WriteBytesMaybeAliased(1, _s, target);
+          }
+
+          // bytes input_data = 2;
+          if (!this_._internal_input_data().empty()) {
+            const std::string& _s = this_._internal_input_data();
+            target = stream->WriteBytesMaybeAliased(2, _s, target);
+          }
+
+          // bytes target_data = 3;
+          if (!this_._internal_target_data().empty()) {
+            const std::string& _s = this_._internal_target_data();
+            target = stream->WriteBytesMaybeAliased(3, _s, target);
+          }
+
+          // string model_type = 4;
+          if (!this_._internal_model_type().empty()) {
+            const std::string& _s = this_._internal_model_type();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.ForwardPassRequest.model_type");
+            target = stream->WriteStringMaybeAliased(4, _s, target);
+          }
+
+          // string criterion_type = 5;
+          if (!this_._internal_criterion_type().empty()) {
+            const std::string& _s = this_._internal_criterion_type();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.ForwardPassRequest.criterion_type");
+            target = stream->WriteStringMaybeAliased(5, _s, target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:leaftest.ForwardPassRequest)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t ForwardPassRequest::ByteSizeLong(const MessageLite& base) {
+          const ForwardPassRequest& this_ = static_cast<const ForwardPassRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t ForwardPassRequest::ByteSizeLong() const {
+          const ForwardPassRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:leaftest.ForwardPassRequest)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // bytes model_state = 1;
+            if (!this_._internal_model_state().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_model_state());
+            }
+            // bytes input_data = 2;
+            if (!this_._internal_input_data().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_input_data());
+            }
+            // bytes target_data = 3;
+            if (!this_._internal_target_data().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_target_data());
+            }
+            // string model_type = 4;
+            if (!this_._internal_model_type().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_model_type());
+            }
+            // string criterion_type = 5;
+            if (!this_._internal_criterion_type().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_criterion_type());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void ForwardPassRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<ForwardPassRequest*>(&to_msg);
+  auto& from = static_cast<const ForwardPassRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:leaftest.ForwardPassRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_model_state().empty()) {
+    _this->_internal_set_model_state(from._internal_model_state());
+  }
+  if (!from._internal_input_data().empty()) {
+    _this->_internal_set_input_data(from._internal_input_data());
+  }
+  if (!from._internal_target_data().empty()) {
+    _this->_internal_set_target_data(from._internal_target_data());
+  }
+  if (!from._internal_model_type().empty()) {
+    _this->_internal_set_model_type(from._internal_model_type());
+  }
+  if (!from._internal_criterion_type().empty()) {
+    _this->_internal_set_criterion_type(from._internal_criterion_type());
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ForwardPassRequest::CopyFrom(const ForwardPassRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:leaftest.ForwardPassRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void ForwardPassRequest::InternalSwap(ForwardPassRequest* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_state_, &other->_impl_.model_state_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.input_data_, &other->_impl_.input_data_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.target_data_, &other->_impl_.target_data_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_type_, &other->_impl_.model_type_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.criterion_type_, &other->_impl_.criterion_type_, arena);
+}
+
+::google::protobuf::Metadata ForwardPassRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class ForwardPassResponse::_Internal {
+ public:
+};
+
+ForwardPassResponse::ForwardPassResponse(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:leaftest.ForwardPassResponse)
+}
+inline PROTOBUF_NDEBUG_INLINE ForwardPassResponse::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::leaftest::ForwardPassResponse& from_msg)
+      : gradients_(arena, from.gradients_),
+        error_message_(arena, from.error_message_),
+        _cached_size_{0} {}
+
+ForwardPassResponse::ForwardPassResponse(
+    ::google::protobuf::Arena* arena,
+    const ForwardPassResponse& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ForwardPassResponse* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, loss_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, loss_),
+           offsetof(Impl_, success_) -
+               offsetof(Impl_, loss_) +
+               sizeof(Impl_::success_));
+
+  // @@protoc_insertion_point(copy_constructor:leaftest.ForwardPassResponse)
+}
+inline PROTOBUF_NDEBUG_INLINE ForwardPassResponse::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : gradients_(arena),
+        error_message_(arena),
+        _cached_size_{0} {}
+
+inline void ForwardPassResponse::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, loss_),
+           0,
+           offsetof(Impl_, success_) -
+               offsetof(Impl_, loss_) +
+               sizeof(Impl_::success_));
+}
+ForwardPassResponse::~ForwardPassResponse() {
+  // @@protoc_insertion_point(destructor:leaftest.ForwardPassResponse)
+  SharedDtor(*this);
+}
+inline void ForwardPassResponse::SharedDtor(MessageLite& self) {
+  ForwardPassResponse& this_ = static_cast<ForwardPassResponse&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.gradients_.Destroy();
+  this_._impl_.error_message_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* ForwardPassResponse::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) ForwardPassResponse(arena);
+}
+constexpr auto ForwardPassResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ForwardPassResponse),
+                                            alignof(ForwardPassResponse));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull ForwardPassResponse::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_ForwardPassResponse_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &ForwardPassResponse::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<ForwardPassResponse>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &ForwardPassResponse::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<ForwardPassResponse>(), &ForwardPassResponse::ByteSizeLong,
+            &ForwardPassResponse::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_._cached_size_),
+        false,
+    },
+    &ForwardPassResponse::kDescriptorMethods,
+    &descriptor_table_server_5fcommunication_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* ForwardPassResponse::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 0, 50, 2> ForwardPassResponse::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::leaftest::ForwardPassResponse>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string error_message = 4;
+    {::_pbi::TcParser::FastUS1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.error_message_)}},
+    // bytes gradients = 1;
+    {::_pbi::TcParser::FastBS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.gradients_)}},
+    // float loss = 2;
+    {::_pbi::TcParser::FastF32S1,
+     {21, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.loss_)}},
+    // bool success = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ForwardPassResponse, _impl_.success_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.success_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bytes gradients = 1;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.gradients_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // float loss = 2;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.loss_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kFloat)},
+    // bool success = 3;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.success_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
+    // string error_message = 4;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.error_message_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\34\0\0\0\15\0\0\0"
+    "leaftest.ForwardPassResponse"
+    "error_message"
+  }},
+};
+
+PROTOBUF_NOINLINE void ForwardPassResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:leaftest.ForwardPassResponse)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.gradients_.ClearToEmpty();
+  _impl_.error_message_.ClearToEmpty();
+  ::memset(&_impl_.loss_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.success_) -
+      reinterpret_cast<char*>(&_impl_.loss_)) + sizeof(_impl_.success_));
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* ForwardPassResponse::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const ForwardPassResponse& this_ = static_cast<const ForwardPassResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* ForwardPassResponse::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const ForwardPassResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:leaftest.ForwardPassResponse)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // bytes gradients = 1;
+          if (!this_._internal_gradients().empty()) {
+            const std::string& _s = this_._internal_gradients();
+            target = stream->WriteBytesMaybeAliased(1, _s, target);
+          }
+
+          // float loss = 2;
+          if (::absl::bit_cast<::uint32_t>(this_._internal_loss()) != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteFloatToArray(
+                2, this_._internal_loss(), target);
+          }
+
+          // bool success = 3;
+          if (this_._internal_success() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                3, this_._internal_success(), target);
+          }
+
+          // string error_message = 4;
+          if (!this_._internal_error_message().empty()) {
+            const std::string& _s = this_._internal_error_message();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.ForwardPassResponse.error_message");
+            target = stream->WriteStringMaybeAliased(4, _s, target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:leaftest.ForwardPassResponse)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t ForwardPassResponse::ByteSizeLong(const MessageLite& base) {
+          const ForwardPassResponse& this_ = static_cast<const ForwardPassResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t ForwardPassResponse::ByteSizeLong() const {
+          const ForwardPassResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:leaftest.ForwardPassResponse)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // bytes gradients = 1;
+            if (!this_._internal_gradients().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_gradients());
+            }
+            // string error_message = 4;
+            if (!this_._internal_error_message().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_error_message());
+            }
+            // float loss = 2;
+            if (::absl::bit_cast<::uint32_t>(this_._internal_loss()) != 0) {
+              total_size += 5;
+            }
+            // bool success = 3;
+            if (this_._internal_success() != 0) {
+              total_size += 2;
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void ForwardPassResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<ForwardPassResponse*>(&to_msg);
+  auto& from = static_cast<const ForwardPassResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:leaftest.ForwardPassResponse)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_gradients().empty()) {
+    _this->_internal_set_gradients(from._internal_gradients());
+  }
+  if (!from._internal_error_message().empty()) {
+    _this->_internal_set_error_message(from._internal_error_message());
+  }
+  if (::absl::bit_cast<::uint32_t>(from._internal_loss()) != 0) {
+    _this->_impl_.loss_ = from._impl_.loss_;
+  }
+  if (from._internal_success() != 0) {
+    _this->_impl_.success_ = from._impl_.success_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ForwardPassResponse::CopyFrom(const ForwardPassResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:leaftest.ForwardPassResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void ForwardPassResponse::InternalSwap(ForwardPassResponse* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.gradients_, &other->_impl_.gradients_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_message_, &other->_impl_.error_message_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.success_)
+      + sizeof(ForwardPassResponse::_impl_.success_)
+      - PROTOBUF_FIELD_OFFSET(ForwardPassResponse, _impl_.loss_)>(
+          reinterpret_cast<char*>(&_impl_.loss_),
+          reinterpret_cast<char*>(&other->_impl_.loss_));
+}
+
+::google::protobuf::Metadata ForwardPassResponse::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class GradientRequest::_Internal {
+ public:
+};
+
+GradientRequest::GradientRequest(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:leaftest.GradientRequest)
+}
+inline PROTOBUF_NDEBUG_INLINE GradientRequest::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::leaftest::GradientRequest& from_msg)
+      : model_state_(arena, from.model_state_),
+        input_data_(arena, from.input_data_),
+        target_data_(arena, from.target_data_),
+        model_type_(arena, from.model_type_),
+        criterion_type_(arena, from.criterion_type_),
+        _cached_size_{0} {}
+
+GradientRequest::GradientRequest(
+    ::google::protobuf::Arena* arena,
+    const GradientRequest& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  GradientRequest* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:leaftest.GradientRequest)
+}
+inline PROTOBUF_NDEBUG_INLINE GradientRequest::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : model_state_(arena),
+        input_data_(arena),
+        target_data_(arena),
+        model_type_(arena),
+        criterion_type_(arena),
+        _cached_size_{0} {}
+
+inline void GradientRequest::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+GradientRequest::~GradientRequest() {
+  // @@protoc_insertion_point(destructor:leaftest.GradientRequest)
+  SharedDtor(*this);
+}
+inline void GradientRequest::SharedDtor(MessageLite& self) {
+  GradientRequest& this_ = static_cast<GradientRequest&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.model_state_.Destroy();
+  this_._impl_.input_data_.Destroy();
+  this_._impl_.target_data_.Destroy();
+  this_._impl_.model_type_.Destroy();
+  this_._impl_.criterion_type_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* GradientRequest::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) GradientRequest(arena);
+}
+constexpr auto GradientRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(GradientRequest),
+                                            alignof(GradientRequest));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull GradientRequest::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_GradientRequest_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &GradientRequest::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<GradientRequest>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &GradientRequest::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<GradientRequest>(), &GradientRequest::ByteSizeLong,
+            &GradientRequest::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_._cached_size_),
+        false,
+    },
+    &GradientRequest::kDescriptorMethods,
+    &descriptor_table_server_5fcommunication_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* GradientRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<3, 5, 0, 57, 2> GradientRequest::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    5, 56,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967264,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    5,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::leaftest::GradientRequest>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // bytes model_state = 1;
+    {::_pbi::TcParser::FastBS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_state_)}},
+    // bytes input_data = 2;
+    {::_pbi::TcParser::FastBS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.input_data_)}},
+    // bytes target_data = 3;
+    {::_pbi::TcParser::FastBS1,
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.target_data_)}},
+    // string model_type = 4;
+    {::_pbi::TcParser::FastUS1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_type_)}},
+    // string criterion_type = 5;
+    {::_pbi::TcParser::FastUS1,
+     {42, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.criterion_type_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bytes model_state = 1;
+    {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_state_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // bytes input_data = 2;
+    {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.input_data_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // bytes target_data = 3;
+    {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.target_data_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // string model_type = 4;
+    {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_type_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string criterion_type = 5;
+    {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.criterion_type_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\30\0\0\0\12\16\0\0"
+    "leaftest.GradientRequest"
+    "model_type"
+    "criterion_type"
+  }},
+};
+
+PROTOBUF_NOINLINE void GradientRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:leaftest.GradientRequest)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.model_state_.ClearToEmpty();
+  _impl_.input_data_.ClearToEmpty();
+  _impl_.target_data_.ClearToEmpty();
+  _impl_.model_type_.ClearToEmpty();
+  _impl_.criterion_type_.ClearToEmpty();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* GradientRequest::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const GradientRequest& this_ = static_cast<const GradientRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* GradientRequest::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const GradientRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:leaftest.GradientRequest)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // bytes model_state = 1;
+          if (!this_._internal_model_state().empty()) {
+            const std::string& _s = this_._internal_model_state();
+            target = stream->WriteBytesMaybeAliased(1, _s, target);
+          }
+
+          // bytes input_data = 2;
+          if (!this_._internal_input_data().empty()) {
+            const std::string& _s = this_._internal_input_data();
+            target = stream->WriteBytesMaybeAliased(2, _s, target);
+          }
+
+          // bytes target_data = 3;
+          if (!this_._internal_target_data().empty()) {
+            const std::string& _s = this_._internal_target_data();
+            target = stream->WriteBytesMaybeAliased(3, _s, target);
+          }
+
+          // string model_type = 4;
+          if (!this_._internal_model_type().empty()) {
+            const std::string& _s = this_._internal_model_type();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.GradientRequest.model_type");
+            target = stream->WriteStringMaybeAliased(4, _s, target);
+          }
+
+          // string criterion_type = 5;
+          if (!this_._internal_criterion_type().empty()) {
+            const std::string& _s = this_._internal_criterion_type();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.GradientRequest.criterion_type");
+            target = stream->WriteStringMaybeAliased(5, _s, target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:leaftest.GradientRequest)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t GradientRequest::ByteSizeLong(const MessageLite& base) {
+          const GradientRequest& this_ = static_cast<const GradientRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t GradientRequest::ByteSizeLong() const {
+          const GradientRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:leaftest.GradientRequest)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // bytes model_state = 1;
+            if (!this_._internal_model_state().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_model_state());
+            }
+            // bytes input_data = 2;
+            if (!this_._internal_input_data().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_input_data());
+            }
+            // bytes target_data = 3;
+            if (!this_._internal_target_data().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_target_data());
+            }
+            // string model_type = 4;
+            if (!this_._internal_model_type().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_model_type());
+            }
+            // string criterion_type = 5;
+            if (!this_._internal_criterion_type().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_criterion_type());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void GradientRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<GradientRequest*>(&to_msg);
+  auto& from = static_cast<const GradientRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:leaftest.GradientRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_model_state().empty()) {
+    _this->_internal_set_model_state(from._internal_model_state());
+  }
+  if (!from._internal_input_data().empty()) {
+    _this->_internal_set_input_data(from._internal_input_data());
+  }
+  if (!from._internal_target_data().empty()) {
+    _this->_internal_set_target_data(from._internal_target_data());
+  }
+  if (!from._internal_model_type().empty()) {
+    _this->_internal_set_model_type(from._internal_model_type());
+  }
+  if (!from._internal_criterion_type().empty()) {
+    _this->_internal_set_criterion_type(from._internal_criterion_type());
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GradientRequest::CopyFrom(const GradientRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:leaftest.GradientRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void GradientRequest::InternalSwap(GradientRequest* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_state_, &other->_impl_.model_state_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.input_data_, &other->_impl_.input_data_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.target_data_, &other->_impl_.target_data_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_type_, &other->_impl_.model_type_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.criterion_type_, &other->_impl_.criterion_type_, arena);
+}
+
+::google::protobuf::Metadata GradientRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class GradientResponse::_Internal {
+ public:
+};
+
+GradientResponse::GradientResponse(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:leaftest.GradientResponse)
+}
+inline PROTOBUF_NDEBUG_INLINE GradientResponse::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::leaftest::GradientResponse& from_msg)
+      : gradients_(arena, from.gradients_),
+        error_message_(arena, from.error_message_),
+        _cached_size_{0} {}
+
+GradientResponse::GradientResponse(
+    ::google::protobuf::Arena* arena,
+    const GradientResponse& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  GradientResponse* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, loss_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, loss_),
+           offsetof(Impl_, success_) -
+               offsetof(Impl_, loss_) +
+               sizeof(Impl_::success_));
+
+  // @@protoc_insertion_point(copy_constructor:leaftest.GradientResponse)
+}
+inline PROTOBUF_NDEBUG_INLINE GradientResponse::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : gradients_(arena),
+        error_message_(arena),
+        _cached_size_{0} {}
+
+inline void GradientResponse::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, loss_),
+           0,
+           offsetof(Impl_, success_) -
+               offsetof(Impl_, loss_) +
+               sizeof(Impl_::success_));
+}
+GradientResponse::~GradientResponse() {
+  // @@protoc_insertion_point(destructor:leaftest.GradientResponse)
+  SharedDtor(*this);
+}
+inline void GradientResponse::SharedDtor(MessageLite& self) {
+  GradientResponse& this_ = static_cast<GradientResponse&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.gradients_.Destroy();
+  this_._impl_.error_message_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* GradientResponse::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) GradientResponse(arena);
+}
+constexpr auto GradientResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(GradientResponse),
+                                            alignof(GradientResponse));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull GradientResponse::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_GradientResponse_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &GradientResponse::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<GradientResponse>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &GradientResponse::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<GradientResponse>(), &GradientResponse::ByteSizeLong,
+            &GradientResponse::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_._cached_size_),
+        false,
+    },
+    &GradientResponse::kDescriptorMethods,
+    &descriptor_table_server_5fcommunication_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* GradientResponse::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 0, 47, 2> GradientResponse::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::leaftest::GradientResponse>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string error_message = 4;
+    {::_pbi::TcParser::FastUS1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.error_message_)}},
+    // bytes gradients = 1;
+    {::_pbi::TcParser::FastBS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.gradients_)}},
+    // float loss = 2;
+    {::_pbi::TcParser::FastF32S1,
+     {21, 63, 0, PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.loss_)}},
+    // bool success = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GradientResponse, _impl_.success_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.success_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bytes gradients = 1;
+    {PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.gradients_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // float loss = 2;
+    {PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.loss_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kFloat)},
+    // bool success = 3;
+    {PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.success_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
+    // string error_message = 4;
+    {PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.error_message_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\31\0\0\0\15\0\0\0"
+    "leaftest.GradientResponse"
+    "error_message"
+  }},
+};
+
+PROTOBUF_NOINLINE void GradientResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:leaftest.GradientResponse)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.gradients_.ClearToEmpty();
+  _impl_.error_message_.ClearToEmpty();
+  ::memset(&_impl_.loss_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.success_) -
+      reinterpret_cast<char*>(&_impl_.loss_)) + sizeof(_impl_.success_));
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* GradientResponse::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const GradientResponse& this_ = static_cast<const GradientResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* GradientResponse::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const GradientResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:leaftest.GradientResponse)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // bytes gradients = 1;
+          if (!this_._internal_gradients().empty()) {
+            const std::string& _s = this_._internal_gradients();
+            target = stream->WriteBytesMaybeAliased(1, _s, target);
+          }
+
+          // float loss = 2;
+          if (::absl::bit_cast<::uint32_t>(this_._internal_loss()) != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteFloatToArray(
+                2, this_._internal_loss(), target);
+          }
+
+          // bool success = 3;
+          if (this_._internal_success() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                3, this_._internal_success(), target);
+          }
+
+          // string error_message = 4;
+          if (!this_._internal_error_message().empty()) {
+            const std::string& _s = this_._internal_error_message();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.GradientResponse.error_message");
+            target = stream->WriteStringMaybeAliased(4, _s, target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:leaftest.GradientResponse)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t GradientResponse::ByteSizeLong(const MessageLite& base) {
+          const GradientResponse& this_ = static_cast<const GradientResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t GradientResponse::ByteSizeLong() const {
+          const GradientResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:leaftest.GradientResponse)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // bytes gradients = 1;
+            if (!this_._internal_gradients().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_gradients());
+            }
+            // string error_message = 4;
+            if (!this_._internal_error_message().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_error_message());
+            }
+            // float loss = 2;
+            if (::absl::bit_cast<::uint32_t>(this_._internal_loss()) != 0) {
+              total_size += 5;
+            }
+            // bool success = 3;
+            if (this_._internal_success() != 0) {
+              total_size += 2;
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void GradientResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<GradientResponse*>(&to_msg);
+  auto& from = static_cast<const GradientResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:leaftest.GradientResponse)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_gradients().empty()) {
+    _this->_internal_set_gradients(from._internal_gradients());
+  }
+  if (!from._internal_error_message().empty()) {
+    _this->_internal_set_error_message(from._internal_error_message());
+  }
+  if (::absl::bit_cast<::uint32_t>(from._internal_loss()) != 0) {
+    _this->_impl_.loss_ = from._impl_.loss_;
+  }
+  if (from._internal_success() != 0) {
+    _this->_impl_.success_ = from._impl_.success_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GradientResponse::CopyFrom(const GradientResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:leaftest.GradientResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void GradientResponse::InternalSwap(GradientResponse* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.gradients_, &other->_impl_.gradients_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_message_, &other->_impl_.error_message_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.success_)
+      + sizeof(GradientResponse::_impl_.success_)
+      - PROTOBUF_FIELD_OFFSET(GradientResponse, _impl_.loss_)>(
+          reinterpret_cast<char*>(&_impl_.loss_),
+          reinterpret_cast<char*>(&other->_impl_.loss_));
+}
+
+::google::protobuf::Metadata GradientResponse::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)

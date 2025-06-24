@@ -24,6 +24,8 @@ namespace leaftest {
 
 static const char* ServerCommunication_method_names[] = {
   "/leaftest.ServerCommunication/GetServerTime",
+  "/leaftest.ServerCommunication/ForwardPass",
+  "/leaftest.ServerCommunication/GetGradients",
 };
 
 std::unique_ptr< ServerCommunication::Stub> ServerCommunication::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -34,6 +36,8 @@ std::unique_ptr< ServerCommunication::Stub> ServerCommunication::NewStub(const s
 
 ServerCommunication::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_GetServerTime_(ServerCommunication_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ForwardPass_(ServerCommunication_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetGradients_(ServerCommunication_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status ServerCommunication::Stub::GetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::leaftest::TimeResponse* response) {
@@ -59,6 +63,52 @@ void ServerCommunication::Stub::async::GetServerTime(::grpc::ClientContext* cont
   return result;
 }
 
+::grpc::Status ServerCommunication::Stub::ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::leaftest::ForwardPassResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ForwardPass_, context, request, response);
+}
+
+void ServerCommunication::Stub::async::ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ForwardPass_, context, request, response, std::move(f));
+}
+
+void ServerCommunication::Stub::async::ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ForwardPass_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>* ServerCommunication::Stub::PrepareAsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::leaftest::ForwardPassResponse, ::leaftest::ForwardPassRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ForwardPass_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>* ServerCommunication::Stub::AsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncForwardPassRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ServerCommunication::Stub::GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::leaftest::GradientResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::leaftest::GradientRequest, ::leaftest::GradientResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetGradients_, context, request, response);
+}
+
+void ServerCommunication::Stub::async::GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::leaftest::GradientRequest, ::leaftest::GradientResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetGradients_, context, request, response, std::move(f));
+}
+
+void ServerCommunication::Stub::async::GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetGradients_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>* ServerCommunication::Stub::PrepareAsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::leaftest::GradientResponse, ::leaftest::GradientRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetGradients_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>* ServerCommunication::Stub::AsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetGradientsRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 ServerCommunication::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ServerCommunication_method_names[0],
@@ -70,12 +120,46 @@ ServerCommunication::Service::Service() {
              ::leaftest::TimeResponse* resp) {
                return service->GetServerTime(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ServerCommunication_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ServerCommunication::Service, ::leaftest::ForwardPassRequest, ::leaftest::ForwardPassResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ServerCommunication::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::leaftest::ForwardPassRequest* req,
+             ::leaftest::ForwardPassResponse* resp) {
+               return service->ForwardPass(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ServerCommunication_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ServerCommunication::Service, ::leaftest::GradientRequest, ::leaftest::GradientResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ServerCommunication::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::leaftest::GradientRequest* req,
+             ::leaftest::GradientResponse* resp) {
+               return service->GetGradients(ctx, req, resp);
+             }, this)));
 }
 
 ServerCommunication::Service::~Service() {
 }
 
 ::grpc::Status ServerCommunication::Service::GetServerTime(::grpc::ServerContext* context, const ::leaftest::TimeRequest* request, ::leaftest::TimeResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ServerCommunication::Service::ForwardPass(::grpc::ServerContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ServerCommunication::Service::GetGradients(::grpc::ServerContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response) {
   (void) context;
   (void) request;
   (void) response;

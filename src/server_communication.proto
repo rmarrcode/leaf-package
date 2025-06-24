@@ -4,7 +4,8 @@ package leaftest;
 
 service ServerCommunication {
     rpc GetServerTime (TimeRequest) returns (TimeResponse) {}
-    rpc ComputeGradients (ForwardPassRequest) returns (GradientResponse) {}
+    rpc ForwardPass (ForwardPassRequest) returns (ForwardPassResponse) {}
+    rpc GetGradients (GradientRequest) returns (GradientResponse) {}
 }
 
 message TimeRequest {
@@ -17,14 +18,30 @@ message TimeResponse {
 
 message ForwardPassRequest {
     bytes model_state = 1;  // Serialized model state
-    bytes input_data = 2;   // Serialized input batch data
-    bytes target_data = 3;  // Serialized target data
-    string loss_function = 4; // Loss function type
+    bytes input_data = 2;   // Serialized input tensor data
+    bytes target_data = 3;  // Serialized target tensor data
+    string model_type = 4;  // Type of model (e.g., "resnet50")
+    string criterion_type = 5;  // Type of loss function (e.g., "CrossEntropyLoss")
+}
+
+message ForwardPassResponse {
+    bytes gradients = 1;  // Serialized gradients
+    float loss = 2;       // Loss value
+    bool success = 3;     // Whether the operation was successful
+    string error_message = 4;  // Error message if failed
+}
+
+message GradientRequest {
+    bytes model_state = 1;  // Serialized model state
+    bytes input_data = 2;   // Serialized input tensor data
+    bytes target_data = 3;  // Serialized target tensor data
+    string model_type = 4;  // Type of model
+    string criterion_type = 5;  // Type of loss function
 }
 
 message GradientResponse {
-    bytes gradients = 1;     // Serialized gradients
-    double loss_value = 2;   // Loss value from forward pass
-    bool success = 3;        // Whether computation was successful
-    string error_message = 4; // Error message if computation failed
+    bytes gradients = 1;  // Serialized gradients
+    float loss = 2;       // Loss value
+    bool success = 3;     // Whether the operation was successful
+    string error_message = 4;  // Error message if failed
 } 
