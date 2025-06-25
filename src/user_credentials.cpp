@@ -267,7 +267,7 @@ bool UserCredentials::copy_docker_files_to_remote_server() {
         scp_cmd += "-i " + key_path + " ";
     }
     scp_cmd += "-P " + std::to_string(port) + " ";
-    scp_cmd += "Dockerfile docker-run.sh src/server_communication.cpp src/server_communication.proto " + username + "@" + hostname + ":/tmp/leaf-build/";
+    scp_cmd += "Dockerfile docker-run.sh src/server_communication.cpp src/server_communication.h src/server_communication.proto " + username + "@" + hostname + ":/tmp/leaf-build/";
     if (std::system(scp_cmd.c_str()) != 0) {
         std::cerr << "Failed to copy Docker files to " << hostname << std::endl;
         return false;

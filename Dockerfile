@@ -13,6 +13,7 @@ WORKDIR /src
 
 # Copy sources
 COPY server_communication.cpp .
+COPY server_communication.h .
 COPY server_communication.proto .
 
 # Generate gRPC / protobuf sources

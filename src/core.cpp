@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -21,6 +22,7 @@
 #include <grpcpp/grpcpp.h>
 #include "server_communication.pb.h"
 #include "server_communication.grpc.pb.h"
+#include "server_communication.h"
 #include "user_credentials.h"
 #include "server.h"
 
@@ -199,11 +201,92 @@ private:
     // Helper function to get gradients from a server
     std::pair<std::vector<float>, float> get_gradients_from_server(
         const std::string& server_name,
-        const std::vector<float>& model_state,
-        const std::vector<float>& input_data,
-        const std::vector<float>& target_data,
-        const std::string& model_type,
-        const std::string& criterion_type) {
+        py::object inputs,
+        py::object model,
+        py::object criterion,
+        py::object optimizer,
+        bool is_local = false) {
+        
+        // Extract model state from PyTorch model
+        py::object state_dict = model.attr("state_dict")();
+        std::vector<float> model_state;
+        
+
+        // Convert state dict to flat vector
+        std::cout << "  state_dict type: " << py::str(state_dict.get_type()) << std::endl;
+        std::cout << "  state_dict repr: " << py::str(state_dict) << std::endl;
+        for (auto item : state_dict) {
+            std::cout << "  Item type: " << py::str(item.get_type()) << std::endl;
+            std::cout << "  Item repr: " << py::str(item) << std::endl;
+
+            auto tensor = item;
+            py::array_t<float> numpy_array = tensor.attr("cpu")().attr("numpy")();
+            auto buffer = numpy_array.unchecked<1>();
+            for (size_t i = 0; i < buffer.size(); ++i) {
+                model_state.push_back(buffer[i]);
+            }
+        }
+        
+        // Extract input data
+        std::cout << "  inputs type: " << py::str(inputs.get_type()) << std::endl;
+        std::cout << "  inputs repr: " << py::str(inputs) << std::endl;
+        py::array_t<float> inputs_array = inputs.attr("cpu")().attr("numpy")();
+        auto inputs_buffer = inputs_array.unchecked<1>();
+        std::vector<float> input_data;
+        for (size_t i = 0; i < inputs_buffer.size(); ++i) {
+            input_data.push_back(inputs_buffer[i]);
+        }
+        
+        // Create dummy target data (this should be passed from the caller)
+        // For now, using a simple one-hot encoding
+        size_t num_classes = 10; // Default for CIFAR-10
+        std::vector<float> target_data(num_classes, 0.0f);
+        target_data[0] = 1.0f; // Dummy target
+        
+        // Get model type and criterion type
+        std::string model_type = "resnet50"; // Default
+        std::string criterion_type = "CrossEntropyLoss"; // Default
+        
+        if (is_local) {
+            // For local servers, directly use the GetGradients function from server_communication.cpp
+            std::cout << "  Computing gradients locally (using GetGradients from server_communication)..." << std::endl;
+            
+            // Create an instance of ServerCommunicationServiceImpl to use its GetGradients method
+            ServerCommunicationServiceImpl service;
+            
+            // Create the request and response objects
+            leaftest::GradientRequest request;
+            leaftest::GradientResponse response;
+            
+            // Set the request data
+            request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
+            request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
+            request.set_target_data(target_data.data(), target_data.size() * sizeof(float));
+            request.set_model_type(model_type);
+            request.set_criterion_type(criterion_type);
+            
+            // Call the GetGradients method directly
+            grpc::ServerContext context;
+            auto status = service.GetGradients(&context, &request, &response);
+            
+            if (!status.ok()) {
+                throw std::runtime_error("Local GetGradients failed: " + status.error_message());
+            }
+            
+            if (!response.success()) {
+                throw std::runtime_error("Local GetGradients failed: " + response.error_message());
+            }
+            
+            // Parse gradients from response
+            std::vector<float> gradients;
+            const std::string& gradients_data = response.gradients();
+            size_t num_gradients = gradients_data.size() / sizeof(float);
+            gradients.resize(num_gradients);
+            std::memcpy(gradients.data(), gradients_data.data(), gradients_data.size());
+            
+            std::cout << "  Local computation completed" << std::endl;
+            return {gradients, response.loss()};
+        }
         
         std::lock_guard<std::mutex> lock(channel_mutex);
         
@@ -279,7 +362,7 @@ public:
     ~LeafTrainer() {
     }
 
-    void train(py::object model, 
+    py::dict train(py::object model, 
         py::object optimizer, 
         py::object train_loader, 
         int epochs,
@@ -289,65 +372,103 @@ public:
         
         // Get available servers
         auto server_names = config.get_servers();
-        if (server_names.empty()) {
-            std::cout << "No servers available for testing" << std::endl;
-            return;
-        }
         
-        // Use the first available server for testing
-        std::string test_server = server_names[0];
-        std::cout << "Testing with server: " << test_server << std::endl;
+        // Results dictionary to return
+        py::dict results;
+        py::list server_results;
         
-        try {
-            // Create dummy test data
-            std::vector<float> dummy_model_state = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
-            std::vector<float> dummy_input_data = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
-            std::vector<float> dummy_target_data = {0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-            std::string model_type = "resnet50";
-            std::string criterion_type = "CrossEntropyLoss";
+        for (const auto& server_name : server_names) {
+            std::cout << "\n" << std::string(60, '=') << std::endl;
+            std::cout << "Testing server: " << server_name << std::endl;
+            std::cout << std::string(60, '=') << std::endl;
             
-            std::cout << "Sending test request to server..." << std::endl;
-            std::cout << "Model state size: " << dummy_model_state.size() << " floats" << std::endl;
-            std::cout << "Input data size: " << dummy_input_data.size() << " floats" << std::endl;
-            std::cout << "Target data size: " << dummy_target_data.size() << " floats" << std::endl;
-            std::cout << "Model type: " << model_type << std::endl;
-            std::cout << "Criterion type: " << criterion_type << std::endl;
+            py::dict server_result;
+            server_result["server_name"] = server_name;
             
-            // Call get_gradients_from_server
-            auto result = get_gradients_from_server(
-                test_server,
-                dummy_model_state,
-                dummy_input_data,
-                dummy_target_data,
-                model_type,
-                criterion_type
-            );
-            
-            std::vector<float>& gradients = result.first;
-            float loss = result.second;
-            
-            std::cout << "=== Test Results ===" << std::endl;
-            std::cout << "Success! Received response from server" << std::endl;
-            std::cout << "Loss: " << loss << std::endl;
-            std::cout << "Gradients size: " << gradients.size() << " floats" << std::endl;
-            
-            // Print first few gradients
-            std::cout << "First 5 gradients: ";
-            for (size_t i = 0; i < std::min(size_t(5), gradients.size()); ++i) {
-                std::cout << gradients[i] << " ";
+            try {
+                // Get server info to check if it's local
+                py::dict server_info = config.get_server_info(server_name);
+                bool is_local = server_info["is_local"].cast<bool>();
+                bool is_connected = server_info["connected"].cast<bool>();
+                
+                std::cout << "Server type: " << (is_local ? "Local" : "Remote") << std::endl;
+                std::cout << "Connection status: " << (is_connected ? "Connected" : "Not connected") << std::endl;
+                
+                server_result["is_local"] = is_local;
+                server_result["is_connected"] = is_connected;
+                
+                if (!is_connected) {
+                    std::cout << "Skipping server " << server_name << " - not connected" << std::endl;
+                    server_result["success"] = false;
+                    server_result["error"] = "Server not connected";
+                    server_results.append(server_result);
+                    continue;
+                }
+                
+                // Get a sample batch from the train loader for testing
+                py::object train_iter = train_loader.attr("__iter__")();
+                py::tuple batch = train_iter.attr("__next__")();
+                py::object inputs = batch[0];
+                py::object targets = batch[1];
+                
+                std::pair<std::vector<float>, float> result;
+                
+                result = get_gradients_from_server(server_name,
+                    inputs,
+                    model,
+                    criterion,
+                    optimizer,
+                    is_local);
+
+                // Print results
+                std::cout << "✓ Gradient computation successful!" << std::endl;
+                std::cout << "  Loss: " << result.second << std::endl;
+                std::cout << "  Gradients size: " << result.first.size() << " elements" << std::endl;
+                
+                // Print first few gradients as a sample
+                std::cout << "  Sample gradients: ";
+                for (size_t i = 0; i < std::min(size_t(5), result.first.size()); ++i) {
+                    std::cout << result.first[i];
+                    if (i < std::min(size_t(4), result.first.size() - 1)) {
+                        std::cout << ", ";
+                    }
+                }
+                if (result.first.size() > 5) {
+                    std::cout << ", ...";
+                }
+                std::cout << std::endl;
+                
+                // Store results
+                server_result["success"] = true;
+                server_result["loss"] = result.second;
+                server_result["gradients_size"] = result.first.size();
+                
+                // Convert gradients to Python list
+                py::list gradients_list;
+                for (const auto& grad : result.first) {
+                    gradients_list.append(grad);
+                }
+                server_result["gradients"] = gradients_list;
+                
+            } catch (const std::exception& e) {
+                std::cout << "✗ Error testing server " << server_name << ": " << e.what() << std::endl;
+                server_result["success"] = false;
+                server_result["error"] = e.what();
             }
-            std::cout << std::endl;
             
-            std::cout << "=== Test completed successfully ===" << std::endl;
-            
-        } catch (const std::exception& e) {
-            std::cout << "=== Test failed ===" << std::endl;
-            std::cout << "Error: " << e.what() << std::endl;
-            std::cout << "This might be expected if the gRPC server is not running" << std::endl;
+            server_results.append(server_result);
         }
         
-        std::cout << "=== End of get_gradients_from_server test ===" << std::endl;
+        std::cout << "\n" << std::string(60, '=') << std::endl;
+        std::cout << "Gradient testing completed!" << std::endl;
+        std::cout << std::string(60, '=') << std::endl;
+        
+        // Return results
+        results["server_results"] = server_results;
+        results["total_servers"] = server_names.size();
+        return results;
     }
+
 };
 
 PYBIND11_MODULE(_core, m) {

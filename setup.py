@@ -87,6 +87,7 @@ ext_modules = [
             'src/core.cpp',
             'src/user_credentials.cpp',
             'src/server.cpp',
+            'src/server_communication.cpp',
             'src/server_communication.pb.cc',
             'src/server_communication.grpc.pb.cc'
         ],
