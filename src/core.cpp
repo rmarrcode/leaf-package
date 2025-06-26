@@ -91,8 +91,10 @@ public:
                    const std::string& hostname,
                    int port = 22,
                    const std::string& key_path = "") {
+        std::cout << "Adding server: " << server_name << " with hostname: " << hostname << " and port: " << port << std::endl;
         UserCredentials creds(username, hostname, port, key_path);
         servers[server_name] = Server(server_name, creds);
+        std::cout << "Server " << server_name << " added successfully" << std::endl;
     }
 
     std::vector<std::string> get_servers() const {
@@ -113,6 +115,7 @@ public:
             info["is_local"] = server.is_local_server();
             
             const UserCredentials& creds = server.get_credentials();
+            std::cout << "Debug: Server " << server_name << " has hostname: " << creds.get_hostname() << " and port: " << creds.get_port() << std::endl;
             info["username"] = creds.get_username();
             info["hostname"] = creds.get_hostname();
             info["port"] = creds.get_port();
@@ -210,21 +213,45 @@ private:
         // Extract model state from PyTorch model
         py::object state_dict = model.attr("state_dict")();
         std::vector<float> model_state;
-        
 
         // Convert state dict to flat vector
         std::cout << "  state_dict type: " << py::str(state_dict.get_type()) << std::endl;
         std::cout << "  state_dict repr: " << py::str(state_dict) << std::endl;
-        for (auto item : state_dict) {
-            std::cout << "  Item type: " << py::str(item.get_type()) << std::endl;
-            std::cout << "  Item repr: " << py::str(item) << std::endl;
+        
+        // Iterate over the state dict items properly
+        py::object items = state_dict.attr("items")();
+        std::cout << "  items type: " << py::str(items.get_type()) << std::endl;
+        std::cout << "  items repr: " << py::str(items) << std::endl;
+        
+        std::cout << "before loop" << std::endl;
+        try {
+            for (auto item : items) {
+                std::cout << "  Item type: " << py::str(item.get_type()) << std::endl;
+                std::cout << "  Item repr: " << py::str(item) << std::endl;
 
-            auto tensor = item;
-            py::array_t<float> numpy_array = tensor.attr("cpu")().attr("numpy")();
-            auto buffer = numpy_array.unchecked<1>();
-            for (size_t i = 0; i < buffer.size(); ++i) {
-                model_state.push_back(buffer[i]);
+                // Extract the tensor value from the key-value pair
+                py::object tensor = item.attr("__getitem__")(1);  // Get the value (tensor) from the key-value pair
+                std::cout << "  Tensor type: " << py::str(tensor.get_type()) << std::endl;
+                
+                // Check if tensor has cpu() method
+                if (py::hasattr(tensor, "cpu")) {
+                    py::object cpu_tensor = tensor.attr("cpu")();
+                    if (py::hasattr(cpu_tensor, "numpy")) {
+                        py::array_t<float> numpy_array = cpu_tensor.attr("numpy")();
+                        auto buffer = numpy_array.unchecked<1>();
+                        for (size_t i = 0; i < buffer.size(); ++i) {
+                            model_state.push_back(buffer[i]);
+                        }
+                    } else {
+                        std::cout << "  Warning: CPU tensor does not have numpy() method" << std::endl;
+                    }
+                } else {
+                    std::cout << "  Warning: Tensor does not have cpu() method" << std::endl;
+                }
             }
+        } catch (const std::exception& e) {
+            std::cout << "  Error during state dict iteration: " << e.what() << std::endl;
+            throw;
         }
         
         // Extract input data
@@ -405,14 +432,22 @@ public:
                     continue;
                 }
                 
+                std::cout << "Getting sample batch from train loader..." << std::endl;
+                
                 // Get a sample batch from the train loader for testing
                 py::object train_iter = train_loader.attr("__iter__")();
+                std::cout << "Created train iterator" << std::endl;
+                
                 py::tuple batch = train_iter.attr("__next__")();
+                std::cout << "Got batch from iterator" << std::endl;
+                
                 py::object inputs = batch[0];
                 py::object targets = batch[1];
+                std::cout << "Extracted inputs and targets from batch" << std::endl;
                 
                 std::pair<std::vector<float>, float> result;
                 
+                std::cout << "Calling get_gradients_from_server..." << std::endl;
                 result = get_gradients_from_server(server_name,
                     inputs,
                     model,
