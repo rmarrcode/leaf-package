@@ -34,9 +34,8 @@ message ForwardPassResponse {
 message GradientRequest {
     bytes model_state = 1;  // Serialized model state
     bytes input_data = 2;   // Serialized input tensor data
-    bytes target_data = 3;  // Serialized target tensor data
-    string model_type = 4;  // Type of model
-    string criterion_type = 5;  // Type of loss function
+    string model_type = 3;  // Type of model
+    string criterion_type = 4;  // Type of loss function
 }
 
 message GradientResponse {

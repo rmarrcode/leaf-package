@@ -209,7 +209,10 @@ private:
         py::object criterion,
         py::object optimizer,
         bool is_local = false) {
-        
+
+        std::cout << "  inputs: " << py::str(inputs.get_type()) << std::endl;
+        std::cout << "  inputs repr: " << py::str(inputs) << std::endl;
+
         // Extract model state from PyTorch model
         py::object state_dict = model.attr("state_dict")();
         std::vector<float> model_state;
@@ -504,6 +507,229 @@ public:
         return results;
     }
 
+    // Test function that uses hardcoded values
+    py::dict test_with_hardcoded_values() {
+        std::cout << "=== Testing get_gradients_from_server with hardcoded values ===" << std::endl;
+        
+        // Get available servers
+        auto server_names = config.get_servers();
+        
+        // Results dictionary to return
+        py::dict results;
+        py::list server_results;
+        
+        // Create hardcoded input data (simplified version of the tensor you provided)
+        // This represents a 4D tensor with shape [batch_size, channels, height, width]
+        // Using a smaller subset for testing
+        std::vector<float> input_data = {
+            // Batch 0, Channel 0, 2x2 patch
+            -2.4291e+00, -2.4291e+00,
+            -2.4291e+00, -2.4291e+00,
+            
+            // Batch 0, Channel 1, 2x2 patch  
+            -2.4183e+00, -2.4183e+00,
+            -2.4183e+00, -2.4183e+00,
+            
+            // Batch 0, Channel 2, 2x2 patch
+            -2.2214e+00, -2.2214e+00,
+            -2.2214e+00, -2.2214e+00
+        };
+        
+        // Create hardcoded model state (simplified version of the state dict you provided)
+        // This represents a few key layers from ResNet
+        std::vector<float> model_state = {
+            // conv1.weight (first conv layer) - 3x3x3 kernel
+            -0.0156, -0.1879, -0.0307,
+            -0.0445,  0.1709, -0.1334,
+             0.1111, -0.1489, -0.1845,
+            
+            // bn1.weight (batch norm weights)
+            2.3888e-01, 2.9136e-01, 3.1615e-01,
+            
+            // bn1.bias (batch norm bias)
+            2.2484e-01, 6.0617e-01, 1.2483e-02,
+            
+            // fc.weight (final layer weights) - 10 classes
+            0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
+            0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
+            0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
+            
+            // fc.bias (final layer bias)
+            0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0
+        };
+        
+        // Create dummy target data (this should be passed from the caller)
+        // For now, using a simple one-hot encoding
+        size_t num_classes = 10; // Default for CIFAR-10
+        std::vector<float> target_data(num_classes, 0.0f);
+        target_data[0] = 1.0f; // Dummy target
+        
+        // Get model type and criterion type
+        std::string model_type = "resnet50"; // Default
+        std::string criterion_type = "CrossEntropyLoss"; // Default
+        
+        std::cout << "  Input data size: " << input_data.size() << " elements" << std::endl;
+        std::cout << "  Model state size: " << model_state.size() << " elements" << std::endl;
+        
+        for (const auto& server_name : server_names) {
+            std::cout << "\n" << std::string(60, '=') << std::endl;
+            std::cout << "Testing server: " << server_name << std::endl;
+            std::cout << std::string(60, '=') << std::endl;
+            
+            py::dict server_result;
+            server_result["server_name"] = server_name;
+            
+            try {
+                // Get server info to check if it's local
+                py::dict server_info = config.get_server_info(server_name);
+                bool is_local = server_info["is_local"].cast<bool>();
+                bool is_connected = server_info["connected"].cast<bool>();
+                
+                std::cout << "Server type: " << (is_local ? "Local" : "Remote") << std::endl;
+                std::cout << "Connection status: " << (is_connected ? "Connected" : "Not connected") << std::endl;
+                
+                server_result["is_local"] = is_local;
+                server_result["is_connected"] = is_connected;
+                
+                if (!is_connected) {
+                    std::cout << "Skipping server " << server_name << " - not connected" << std::endl;
+                    server_result["success"] = false;
+                    server_result["error"] = "Server not connected";
+                    server_results.append(server_result);
+                    continue;
+                }
+                
+                std::pair<std::vector<float>, float> result;
+                
+                if (is_local) {
+                    // For local servers, directly use the GetGradients function from server_communication.cpp
+                    std::cout << "  Computing gradients locally (using GetGradients from server_communication)..." << std::endl;
+                    
+                    // Create an instance of ServerCommunicationServiceImpl to use its GetGradients method
+                    ServerCommunicationServiceImpl service;
+                    
+                    // Create the request and response objects
+                    leaftest::GradientRequest request;
+                    leaftest::GradientResponse response;
+                    
+                    // Set the request data
+                    request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
+                    request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
+                    request.set_target_data(target_data.data(), target_data.size() * sizeof(float));
+                    request.set_model_type(model_type);
+                    request.set_criterion_type(criterion_type);
+                    
+                    // Call the GetGradients method directly
+                    grpc::ServerContext context;
+                    auto status = service.GetGradients(&context, &request, &response);
+                    
+                    if (!status.ok()) {
+                        throw std::runtime_error("Local GetGradients failed: " + status.error_message());
+                    }
+                    
+                    if (!response.success()) {
+                        throw std::runtime_error("Local GetGradients failed: " + response.error_message());
+                    }
+                    
+                    // Parse gradients from response
+                    std::vector<float> gradients;
+                    const std::string& gradients_data = response.gradients();
+                    size_t num_gradients = gradients_data.size() / sizeof(float);
+                    gradients.resize(num_gradients);
+                    std::memcpy(gradients.data(), gradients_data.data(), gradients_data.size());
+                    
+                    result = {gradients, response.loss()};
+                    std::cout << "  Local computation completed" << std::endl;
+                } else {
+                    std::lock_guard<std::mutex> lock(channel_mutex);
+                    
+                    // Get or create channel for this server
+                    if (server_channels.find(server_name) == server_channels.end()) {
+                        server_channels[server_name] = create_channel(server_name);
+                    }
+                    
+                    auto channel = server_channels[server_name];
+                    auto stub = leaftest::ServerCommunication::NewStub(channel);
+                    
+                    // Prepare request
+                    leaftest::GradientRequest request;
+                    request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
+                    request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
+                    request.set_model_type(model_type);
+                    request.set_criterion_type(criterion_type);
+                    
+                    // Make RPC call
+                    grpc::ClientContext context;
+                    leaftest::GradientResponse response;
+                    
+                    auto status = stub->GetGradients(&context, request, &response);
+                    
+                    if (!status.ok()) {
+                        throw std::runtime_error("RPC failed for server " + server_name + ": " + status.error_message());
+                    }
+                    
+                    if (!response.success()) {
+                        throw std::runtime_error("Server " + server_name + " failed: " + response.error_message());
+                    }
+                    
+                    // Parse gradients from response
+                    std::vector<float> gradients;
+                    const std::string& gradients_data = response.gradients();
+                    size_t num_gradients = gradients_data.size() / sizeof(float);
+                    gradients.resize(num_gradients);
+                    std::memcpy(gradients.data(), gradients_data.data(), gradients_data.size());
+                    
+                    result = {gradients, response.loss()};
+                }
+
+                // Print results
+                std::cout << "✓ Gradient computation successful!" << std::endl;
+                std::cout << "  Loss: " << result.second << std::endl;
+                std::cout << "  Gradients size: " << result.first.size() << " elements" << std::endl;
+                
+                // Print first few gradients as a sample
+                std::cout << "  Sample gradients: ";
+                for (size_t i = 0; i < std::min(size_t(5), result.first.size()); ++i) {
+                    std::cout << result.first[i];
+                    if (i < std::min(size_t(4), result.first.size() - 1)) {
+                        std::cout << ", ";
+                    }
+                }
+                if (result.first.size() > 5) {
+                    std::cout << ", ...";
+                }
+                std::cout << std::endl;
+                
+                // Store results
+                server_result["success"] = true;
+                server_result["loss"] = result.second;
+                server_result["gradients_size"] = result.first.size();
+                
+                // Convert gradients to Python list
+                py::list gradients_list;
+                for (const auto& grad : result.first) {
+                    gradients_list.append(grad);
+                }
+                server_result["gradients"] = gradients_list;
+                
+            } catch (const std::exception& e) {
+                std::cout << "✗ Error testing server " << server_name << ": " << e.what() << std::endl;
+                server_result["success"] = false;
+                server_result["error"] = e.what();
+            }
+            
+            server_results.append(server_result);
+        }
+        
+        std::cout << "\n" << std::string(60, '=') << std::endl;
+        std::cout << "Gradient testing with hardcoded values completed!" << std::endl;
+        std::cout << std::string(60, '=') << std::endl;
+        
+        // Return results
+        results["server_results"] = server_results;
+        results["total_servers"] = server_names.size();
+        return results;
+    }
 };
 
 PYBIND11_MODULE(_core, m) {
@@ -530,7 +756,8 @@ PYBIND11_MODULE(_core, m) {
              py::arg("optimizer"),
              py::arg("train_loader"),
              py::arg("epochs"),
-             py::arg("criterion") = py::none());
+             py::arg("criterion") = py::none())
+        .def("test_with_hardcoded_values", &LeafTrainer::test_with_hardcoded_values);
         
     std::cout << "_core module initialization complete!" << std::endl;
 } 
