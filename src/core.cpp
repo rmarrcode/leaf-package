@@ -386,11 +386,9 @@ private:
     }
 
 public:
-    LeafTrainer(const LeafConfig& cfg) : config(cfg) {
-    }
+    LeafTrainer(const LeafConfig& cfg) : config(cfg) {}
 
-    ~LeafTrainer() {
-    }
+    ~LeafTrainer() {}
 
     py::dict train(py::object model, 
         py::object optimizer, 
