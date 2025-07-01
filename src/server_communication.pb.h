@@ -65,6 +65,12 @@ extern GradientRequestDefaultTypeInternal _GradientRequest_default_instance_;
 class GradientResponse;
 struct GradientResponseDefaultTypeInternal;
 extern GradientResponseDefaultTypeInternal _GradientResponse_default_instance_;
+class StoreModelWeightsRequest;
+struct StoreModelWeightsRequestDefaultTypeInternal;
+extern StoreModelWeightsRequestDefaultTypeInternal _StoreModelWeightsRequest_default_instance_;
+class StoreModelWeightsResponse;
+struct StoreModelWeightsResponseDefaultTypeInternal;
+extern StoreModelWeightsResponseDefaultTypeInternal _StoreModelWeightsResponse_default_instance_;
 class TimeRequest;
 struct TimeRequestDefaultTypeInternal;
 extern TimeRequestDefaultTypeInternal _TimeRequest_default_instance_;
@@ -415,6 +421,464 @@ class TimeRequest final : public ::google::protobuf::internal::ZeroFieldsBase
                           const TimeRequest& from_msg);
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
+  friend struct ::TableStruct_server_5fcommunication_2eproto;
+};
+// -------------------------------------------------------------------
+
+class StoreModelWeightsResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:leaftest.StoreModelWeightsResponse) */ {
+ public:
+  inline StoreModelWeightsResponse() : StoreModelWeightsResponse(nullptr) {}
+  ~StoreModelWeightsResponse() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(StoreModelWeightsResponse* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(StoreModelWeightsResponse));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR StoreModelWeightsResponse(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline StoreModelWeightsResponse(const StoreModelWeightsResponse& from) : StoreModelWeightsResponse(nullptr, from) {}
+  inline StoreModelWeightsResponse(StoreModelWeightsResponse&& from) noexcept
+      : StoreModelWeightsResponse(nullptr, std::move(from)) {}
+  inline StoreModelWeightsResponse& operator=(const StoreModelWeightsResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline StoreModelWeightsResponse& operator=(StoreModelWeightsResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const StoreModelWeightsResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const StoreModelWeightsResponse* internal_default_instance() {
+    return reinterpret_cast<const StoreModelWeightsResponse*>(
+        &_StoreModelWeightsResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 7;
+  friend void swap(StoreModelWeightsResponse& a, StoreModelWeightsResponse& b) { a.Swap(&b); }
+  inline void Swap(StoreModelWeightsResponse* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(StoreModelWeightsResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  StoreModelWeightsResponse* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<StoreModelWeightsResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const StoreModelWeightsResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const StoreModelWeightsResponse& from) { StoreModelWeightsResponse::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(StoreModelWeightsResponse* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "leaftest.StoreModelWeightsResponse"; }
+
+ protected:
+  explicit StoreModelWeightsResponse(::google::protobuf::Arena* arena);
+  StoreModelWeightsResponse(::google::protobuf::Arena* arena, const StoreModelWeightsResponse& from);
+  StoreModelWeightsResponse(::google::protobuf::Arena* arena, StoreModelWeightsResponse&& from) noexcept
+      : StoreModelWeightsResponse(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kErrorMessageFieldNumber = 2,
+    kModelIdFieldNumber = 3,
+    kSuccessFieldNumber = 1,
+  };
+  // string error_message = 2;
+  void clear_error_message() ;
+  const std::string& error_message() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_error_message(Arg_&& arg, Args_... args);
+  std::string* mutable_error_message();
+  PROTOBUF_NODISCARD std::string* release_error_message();
+  void set_allocated_error_message(std::string* value);
+
+  private:
+  const std::string& _internal_error_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error_message(
+      const std::string& value);
+  std::string* _internal_mutable_error_message();
+
+  public:
+  // string model_id = 3;
+  void clear_model_id() ;
+  const std::string& model_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_id(Arg_&& arg, Args_... args);
+  std::string* mutable_model_id();
+  PROTOBUF_NODISCARD std::string* release_model_id();
+  void set_allocated_model_id(std::string* value);
+
+  private:
+  const std::string& _internal_model_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_id(
+      const std::string& value);
+  std::string* _internal_mutable_model_id();
+
+  public:
+  // bool success = 1;
+  void clear_success() ;
+  bool success() const;
+  void set_success(bool value);
+
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:leaftest.StoreModelWeightsResponse)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 3, 0,
+      64, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const StoreModelWeightsResponse& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr error_message_;
+    ::google::protobuf::internal::ArenaStringPtr model_id_;
+    bool success_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_server_5fcommunication_2eproto;
+};
+// -------------------------------------------------------------------
+
+class StoreModelWeightsRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:leaftest.StoreModelWeightsRequest) */ {
+ public:
+  inline StoreModelWeightsRequest() : StoreModelWeightsRequest(nullptr) {}
+  ~StoreModelWeightsRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(StoreModelWeightsRequest* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(StoreModelWeightsRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR StoreModelWeightsRequest(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline StoreModelWeightsRequest(const StoreModelWeightsRequest& from) : StoreModelWeightsRequest(nullptr, from) {}
+  inline StoreModelWeightsRequest(StoreModelWeightsRequest&& from) noexcept
+      : StoreModelWeightsRequest(nullptr, std::move(from)) {}
+  inline StoreModelWeightsRequest& operator=(const StoreModelWeightsRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline StoreModelWeightsRequest& operator=(StoreModelWeightsRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const StoreModelWeightsRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const StoreModelWeightsRequest* internal_default_instance() {
+    return reinterpret_cast<const StoreModelWeightsRequest*>(
+        &_StoreModelWeightsRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 6;
+  friend void swap(StoreModelWeightsRequest& a, StoreModelWeightsRequest& b) { a.Swap(&b); }
+  inline void Swap(StoreModelWeightsRequest* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(StoreModelWeightsRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  StoreModelWeightsRequest* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<StoreModelWeightsRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const StoreModelWeightsRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const StoreModelWeightsRequest& from) { StoreModelWeightsRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(StoreModelWeightsRequest* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "leaftest.StoreModelWeightsRequest"; }
+
+ protected:
+  explicit StoreModelWeightsRequest(::google::protobuf::Arena* arena);
+  StoreModelWeightsRequest(::google::protobuf::Arena* arena, const StoreModelWeightsRequest& from);
+  StoreModelWeightsRequest(::google::protobuf::Arena* arena, StoreModelWeightsRequest&& from) noexcept
+      : StoreModelWeightsRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kModelStateFieldNumber = 1,
+    kModelTypeFieldNumber = 2,
+    kModelIdFieldNumber = 3,
+  };
+  // bytes model_state = 1;
+  void clear_model_state() ;
+  const std::string& model_state() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_state(Arg_&& arg, Args_... args);
+  std::string* mutable_model_state();
+  PROTOBUF_NODISCARD std::string* release_model_state();
+  void set_allocated_model_state(std::string* value);
+
+  private:
+  const std::string& _internal_model_state() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_state(
+      const std::string& value);
+  std::string* _internal_mutable_model_state();
+
+  public:
+  // string model_type = 2;
+  void clear_model_type() ;
+  const std::string& model_type() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_type(Arg_&& arg, Args_... args);
+  std::string* mutable_model_type();
+  PROTOBUF_NODISCARD std::string* release_model_type();
+  void set_allocated_model_type(std::string* value);
+
+  private:
+  const std::string& _internal_model_type() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_type(
+      const std::string& value);
+  std::string* _internal_mutable_model_type();
+
+  public:
+  // string model_id = 3;
+  void clear_model_id() ;
+  const std::string& model_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_model_id(Arg_&& arg, Args_... args);
+  std::string* mutable_model_id();
+  PROTOBUF_NODISCARD std::string* release_model_id();
+  void set_allocated_model_id(std::string* value);
+
+  private:
+  const std::string& _internal_model_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_id(
+      const std::string& value);
+  std::string* _internal_mutable_model_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:leaftest.StoreModelWeightsRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 3, 0,
+      60, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const StoreModelWeightsRequest& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr model_state_;
+    ::google::protobuf::internal::ArenaStringPtr model_type_;
+    ::google::protobuf::internal::ArenaStringPtr model_id_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_server_5fcommunication_2eproto;
 };
 // -------------------------------------------------------------------
@@ -805,9 +1269,8 @@ class GradientRequest final : public ::google::protobuf::Message
   enum : int {
     kModelStateFieldNumber = 1,
     kInputDataFieldNumber = 2,
-    kTargetDataFieldNumber = 3,
-    kModelTypeFieldNumber = 4,
-    kCriterionTypeFieldNumber = 5,
+    kModelTypeFieldNumber = 3,
+    kCriterionTypeFieldNumber = 4,
   };
   // bytes model_state = 1;
   void clear_model_state() ;
@@ -841,23 +1304,7 @@ class GradientRequest final : public ::google::protobuf::Message
   std::string* _internal_mutable_input_data();
 
   public:
-  // bytes target_data = 3;
-  void clear_target_data() ;
-  const std::string& target_data() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_target_data(Arg_&& arg, Args_... args);
-  std::string* mutable_target_data();
-  PROTOBUF_NODISCARD std::string* release_target_data();
-  void set_allocated_target_data(std::string* value);
-
-  private:
-  const std::string& _internal_target_data() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_target_data(
-      const std::string& value);
-  std::string* _internal_mutable_target_data();
-
-  public:
-  // string model_type = 4;
+  // string model_type = 3;
   void clear_model_type() ;
   const std::string& model_type() const;
   template <typename Arg_ = const std::string&, typename... Args_>
@@ -873,7 +1320,7 @@ class GradientRequest final : public ::google::protobuf::Message
   std::string* _internal_mutable_model_type();
 
   public:
-  // string criterion_type = 5;
+  // string criterion_type = 4;
   void clear_criterion_type() ;
   const std::string& criterion_type() const;
   template <typename Arg_ = const std::string&, typename... Args_>
@@ -894,7 +1341,7 @@ class GradientRequest final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      3, 5, 0,
+      2, 4, 0,
       57, 2>
       _table_;
 
@@ -914,7 +1361,6 @@ class GradientRequest final : public ::google::protobuf::Message
                           const GradientRequest& from_msg);
     ::google::protobuf::internal::ArenaStringPtr model_state_;
     ::google::protobuf::internal::ArenaStringPtr input_data_;
-    ::google::protobuf::internal::ArenaStringPtr target_data_;
     ::google::protobuf::internal::ArenaStringPtr model_type_;
     ::google::protobuf::internal::ArenaStringPtr criterion_type_;
     ::google::protobuf::internal::CachedSize _cached_size_;
@@ -1960,55 +2406,7 @@ inline void GradientRequest::set_allocated_input_data(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.input_data)
 }
 
-// bytes target_data = 3;
-inline void GradientRequest::clear_target_data() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.target_data_.ClearToEmpty();
-}
-inline const std::string& GradientRequest::target_data() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:leaftest.GradientRequest.target_data)
-  return _internal_target_data();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void GradientRequest::set_target_data(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.target_data_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:leaftest.GradientRequest.target_data)
-}
-inline std::string* GradientRequest::mutable_target_data() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_target_data();
-  // @@protoc_insertion_point(field_mutable:leaftest.GradientRequest.target_data)
-  return _s;
-}
-inline const std::string& GradientRequest::_internal_target_data() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.target_data_.Get();
-}
-inline void GradientRequest::_internal_set_target_data(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.target_data_.Set(value, GetArena());
-}
-inline std::string* GradientRequest::_internal_mutable_target_data() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.target_data_.Mutable( GetArena());
-}
-inline std::string* GradientRequest::release_target_data() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:leaftest.GradientRequest.target_data)
-  return _impl_.target_data_.Release();
-}
-inline void GradientRequest::set_allocated_target_data(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.target_data_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.target_data_.IsDefault()) {
-    _impl_.target_data_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.target_data)
-}
-
-// string model_type = 4;
+// string model_type = 3;
 inline void GradientRequest::clear_model_type() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.model_type_.ClearToEmpty();
@@ -2056,7 +2454,7 @@ inline void GradientRequest::set_allocated_model_type(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:leaftest.GradientRequest.model_type)
 }
 
-// string criterion_type = 5;
+// string criterion_type = 4;
 inline void GradientRequest::clear_criterion_type() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.criterion_type_.ClearToEmpty();
@@ -2246,6 +2644,276 @@ inline void GradientResponse::set_allocated_error_message(std::string* value) {
     _impl_.error_message_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:leaftest.GradientResponse.error_message)
+}
+
+// -------------------------------------------------------------------
+
+// StoreModelWeightsRequest
+
+// bytes model_state = 1;
+inline void StoreModelWeightsRequest::clear_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.ClearToEmpty();
+}
+inline const std::string& StoreModelWeightsRequest::model_state() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.StoreModelWeightsRequest.model_state)
+  return _internal_model_state();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void StoreModelWeightsRequest::set_model_state(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.StoreModelWeightsRequest.model_state)
+}
+inline std::string* StoreModelWeightsRequest::mutable_model_state() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_state();
+  // @@protoc_insertion_point(field_mutable:leaftest.StoreModelWeightsRequest.model_state)
+  return _s;
+}
+inline const std::string& StoreModelWeightsRequest::_internal_model_state() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_state_.Get();
+}
+inline void StoreModelWeightsRequest::_internal_set_model_state(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.Set(value, GetArena());
+}
+inline std::string* StoreModelWeightsRequest::_internal_mutable_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_state_.Mutable( GetArena());
+}
+inline std::string* StoreModelWeightsRequest::release_model_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.StoreModelWeightsRequest.model_state)
+  return _impl_.model_state_.Release();
+}
+inline void StoreModelWeightsRequest::set_allocated_model_state(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_state_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_state_.IsDefault()) {
+    _impl_.model_state_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.StoreModelWeightsRequest.model_state)
+}
+
+// string model_type = 2;
+inline void StoreModelWeightsRequest::clear_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.ClearToEmpty();
+}
+inline const std::string& StoreModelWeightsRequest::model_type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.StoreModelWeightsRequest.model_type)
+  return _internal_model_type();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void StoreModelWeightsRequest::set_model_type(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.StoreModelWeightsRequest.model_type)
+}
+inline std::string* StoreModelWeightsRequest::mutable_model_type() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_type();
+  // @@protoc_insertion_point(field_mutable:leaftest.StoreModelWeightsRequest.model_type)
+  return _s;
+}
+inline const std::string& StoreModelWeightsRequest::_internal_model_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_type_.Get();
+}
+inline void StoreModelWeightsRequest::_internal_set_model_type(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.Set(value, GetArena());
+}
+inline std::string* StoreModelWeightsRequest::_internal_mutable_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_type_.Mutable( GetArena());
+}
+inline std::string* StoreModelWeightsRequest::release_model_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.StoreModelWeightsRequest.model_type)
+  return _impl_.model_type_.Release();
+}
+inline void StoreModelWeightsRequest::set_allocated_model_type(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_type_.IsDefault()) {
+    _impl_.model_type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.StoreModelWeightsRequest.model_type)
+}
+
+// string model_id = 3;
+inline void StoreModelWeightsRequest::clear_model_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.ClearToEmpty();
+}
+inline const std::string& StoreModelWeightsRequest::model_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.StoreModelWeightsRequest.model_id)
+  return _internal_model_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void StoreModelWeightsRequest::set_model_id(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.StoreModelWeightsRequest.model_id)
+}
+inline std::string* StoreModelWeightsRequest::mutable_model_id() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_id();
+  // @@protoc_insertion_point(field_mutable:leaftest.StoreModelWeightsRequest.model_id)
+  return _s;
+}
+inline const std::string& StoreModelWeightsRequest::_internal_model_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_id_.Get();
+}
+inline void StoreModelWeightsRequest::_internal_set_model_id(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.Set(value, GetArena());
+}
+inline std::string* StoreModelWeightsRequest::_internal_mutable_model_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_id_.Mutable( GetArena());
+}
+inline std::string* StoreModelWeightsRequest::release_model_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.StoreModelWeightsRequest.model_id)
+  return _impl_.model_id_.Release();
+}
+inline void StoreModelWeightsRequest::set_allocated_model_id(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_id_.IsDefault()) {
+    _impl_.model_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.StoreModelWeightsRequest.model_id)
+}
+
+// -------------------------------------------------------------------
+
+// StoreModelWeightsResponse
+
+// bool success = 1;
+inline void StoreModelWeightsResponse::clear_success() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.success_ = false;
+}
+inline bool StoreModelWeightsResponse::success() const {
+  // @@protoc_insertion_point(field_get:leaftest.StoreModelWeightsResponse.success)
+  return _internal_success();
+}
+inline void StoreModelWeightsResponse::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:leaftest.StoreModelWeightsResponse.success)
+}
+inline bool StoreModelWeightsResponse::_internal_success() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.success_;
+}
+inline void StoreModelWeightsResponse::_internal_set_success(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.success_ = value;
+}
+
+// string error_message = 2;
+inline void StoreModelWeightsResponse::clear_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.ClearToEmpty();
+}
+inline const std::string& StoreModelWeightsResponse::error_message() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.StoreModelWeightsResponse.error_message)
+  return _internal_error_message();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void StoreModelWeightsResponse::set_error_message(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.StoreModelWeightsResponse.error_message)
+}
+inline std::string* StoreModelWeightsResponse::mutable_error_message() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_error_message();
+  // @@protoc_insertion_point(field_mutable:leaftest.StoreModelWeightsResponse.error_message)
+  return _s;
+}
+inline const std::string& StoreModelWeightsResponse::_internal_error_message() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.error_message_.Get();
+}
+inline void StoreModelWeightsResponse::_internal_set_error_message(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.Set(value, GetArena());
+}
+inline std::string* StoreModelWeightsResponse::_internal_mutable_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.error_message_.Mutable( GetArena());
+}
+inline std::string* StoreModelWeightsResponse::release_error_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.StoreModelWeightsResponse.error_message)
+  return _impl_.error_message_.Release();
+}
+inline void StoreModelWeightsResponse::set_allocated_error_message(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.error_message_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.error_message_.IsDefault()) {
+    _impl_.error_message_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.StoreModelWeightsResponse.error_message)
+}
+
+// string model_id = 3;
+inline void StoreModelWeightsResponse::clear_model_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.ClearToEmpty();
+}
+inline const std::string& StoreModelWeightsResponse::model_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:leaftest.StoreModelWeightsResponse.model_id)
+  return _internal_model_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void StoreModelWeightsResponse::set_model_id(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:leaftest.StoreModelWeightsResponse.model_id)
+}
+inline std::string* StoreModelWeightsResponse::mutable_model_id() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_model_id();
+  // @@protoc_insertion_point(field_mutable:leaftest.StoreModelWeightsResponse.model_id)
+  return _s;
+}
+inline const std::string& StoreModelWeightsResponse::_internal_model_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_id_.Get();
+}
+inline void StoreModelWeightsResponse::_internal_set_model_id(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.Set(value, GetArena());
+}
+inline std::string* StoreModelWeightsResponse::_internal_mutable_model_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.model_id_.Mutable( GetArena());
+}
+inline std::string* StoreModelWeightsResponse::release_model_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:leaftest.StoreModelWeightsResponse.model_id)
+  return _impl_.model_id_.Release();
+}
+inline void StoreModelWeightsResponse::set_allocated_model_id(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_id_.IsDefault()) {
+    _impl_.model_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:leaftest.StoreModelWeightsResponse.model_id)
 }
 
 #ifdef __GNUC__

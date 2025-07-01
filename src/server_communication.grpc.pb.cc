@@ -26,6 +26,7 @@ static const char* ServerCommunication_method_names[] = {
   "/leaftest.ServerCommunication/GetServerTime",
   "/leaftest.ServerCommunication/ForwardPass",
   "/leaftest.ServerCommunication/GetGradients",
+  "/leaftest.ServerCommunication/StoreModelWeights",
 };
 
 std::unique_ptr< ServerCommunication::Stub> ServerCommunication::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -38,6 +39,7 @@ ServerCommunication::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>
   : channel_(channel), rpcmethod_GetServerTime_(ServerCommunication_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_ForwardPass_(ServerCommunication_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetGradients_(ServerCommunication_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StoreModelWeights_(ServerCommunication_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status ServerCommunication::Stub::GetServerTime(::grpc::ClientContext* context, const ::leaftest::TimeRequest& request, ::leaftest::TimeResponse* response) {
@@ -109,6 +111,29 @@ void ServerCommunication::Stub::async::GetGradients(::grpc::ClientContext* conte
   return result;
 }
 
+::grpc::Status ServerCommunication::Stub::StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::leaftest::StoreModelWeightsResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_StoreModelWeights_, context, request, response);
+}
+
+void ServerCommunication::Stub::async::StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_StoreModelWeights_, context, request, response, std::move(f));
+}
+
+void ServerCommunication::Stub::async::StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_StoreModelWeights_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>* ServerCommunication::Stub::PrepareAsyncStoreModelWeightsRaw(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::leaftest::StoreModelWeightsResponse, ::leaftest::StoreModelWeightsRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_StoreModelWeights_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>* ServerCommunication::Stub::AsyncStoreModelWeightsRaw(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncStoreModelWeightsRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 ServerCommunication::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ServerCommunication_method_names[0],
@@ -140,6 +165,16 @@ ServerCommunication::Service::Service() {
              ::leaftest::GradientResponse* resp) {
                return service->GetGradients(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ServerCommunication_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ServerCommunication::Service, ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ServerCommunication::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::leaftest::StoreModelWeightsRequest* req,
+             ::leaftest::StoreModelWeightsResponse* resp) {
+               return service->StoreModelWeights(ctx, req, resp);
+             }, this)));
 }
 
 ServerCommunication::Service::~Service() {
@@ -160,6 +195,13 @@ ServerCommunication::Service::~Service() {
 }
 
 ::grpc::Status ServerCommunication::Service::GetGradients(::grpc::ServerContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ServerCommunication::Service::StoreModelWeights(::grpc::ServerContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response) {
   (void) context;
   (void) request;
   (void) response;

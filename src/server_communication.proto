@@ -6,6 +6,7 @@ service ServerCommunication {
     rpc GetServerTime (TimeRequest) returns (TimeResponse) {}
     rpc ForwardPass (ForwardPassRequest) returns (ForwardPassResponse) {}
     rpc GetGradients (GradientRequest) returns (GradientResponse) {}
+    rpc StoreModelWeights (StoreModelWeightsRequest) returns (StoreModelWeightsResponse) {}
 }
 
 message TimeRequest {
@@ -43,4 +44,15 @@ message GradientResponse {
     float loss = 2;       // Loss value
     bool success = 3;     // Whether the operation was successful
     string error_message = 4;  // Error message if failed
+}
+
+message StoreModelWeightsRequest {
+    bytes model_state = 1;  // Serialized model state
+    string model_id = 2;    // Unique identifier for the model
+}
+
+message StoreModelWeightsResponse {
+    bool success = 1;     // Whether the operation was successful
+    string error_message = 2;  // Error message if failed
+    string model_id = 3;  // Echo back the model ID
 } 

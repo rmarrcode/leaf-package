@@ -57,6 +57,13 @@ class ServerCommunication final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>> PrepareAsyncGetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>>(PrepareAsyncGetGradientsRaw(context, request, cq));
     }
+    virtual ::grpc::Status StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::leaftest::StoreModelWeightsResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::StoreModelWeightsResponse>> AsyncStoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::StoreModelWeightsResponse>>(AsyncStoreModelWeightsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::StoreModelWeightsResponse>> PrepareAsyncStoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::StoreModelWeightsResponse>>(PrepareAsyncStoreModelWeightsRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
@@ -66,6 +73,8 @@ class ServerCommunication final {
       virtual void ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -77,6 +86,8 @@ class ServerCommunication final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::ForwardPassResponse>* PrepareAsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>* AsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::GradientResponse>* PrepareAsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::StoreModelWeightsResponse>* AsyncStoreModelWeightsRaw(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::leaftest::StoreModelWeightsResponse>* PrepareAsyncStoreModelWeightsRaw(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -102,6 +113,13 @@ class ServerCommunication final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>> PrepareAsyncGetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>>(PrepareAsyncGetGradientsRaw(context, request, cq));
     }
+    ::grpc::Status StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::leaftest::StoreModelWeightsResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>> AsyncStoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>>(AsyncStoreModelWeightsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>> PrepareAsyncStoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>>(PrepareAsyncStoreModelWeightsRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
@@ -111,6 +129,8 @@ class ServerCommunication final {
       void ForwardPass(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, std::function<void(::grpc::Status)>) override;
       void GetGradients(::grpc::ClientContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response, std::function<void(::grpc::Status)>) override;
+      void StoreModelWeights(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -128,9 +148,12 @@ class ServerCommunication final {
     ::grpc::ClientAsyncResponseReader< ::leaftest::ForwardPassResponse>* PrepareAsyncForwardPassRaw(::grpc::ClientContext* context, const ::leaftest::ForwardPassRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>* AsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::leaftest::GradientResponse>* PrepareAsyncGetGradientsRaw(::grpc::ClientContext* context, const ::leaftest::GradientRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>* AsyncStoreModelWeightsRaw(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::leaftest::StoreModelWeightsResponse>* PrepareAsyncStoreModelWeightsRaw(::grpc::ClientContext* context, const ::leaftest::StoreModelWeightsRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_GetServerTime_;
     const ::grpc::internal::RpcMethod rpcmethod_ForwardPass_;
     const ::grpc::internal::RpcMethod rpcmethod_GetGradients_;
+    const ::grpc::internal::RpcMethod rpcmethod_StoreModelWeights_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -141,6 +164,7 @@ class ServerCommunication final {
     virtual ::grpc::Status GetServerTime(::grpc::ServerContext* context, const ::leaftest::TimeRequest* request, ::leaftest::TimeResponse* response);
     virtual ::grpc::Status ForwardPass(::grpc::ServerContext* context, const ::leaftest::ForwardPassRequest* request, ::leaftest::ForwardPassResponse* response);
     virtual ::grpc::Status GetGradients(::grpc::ServerContext* context, const ::leaftest::GradientRequest* request, ::leaftest::GradientResponse* response);
+    virtual ::grpc::Status StoreModelWeights(::grpc::ServerContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_GetServerTime : public BaseClass {
@@ -202,7 +226,27 @@ class ServerCommunication final {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GetServerTime<WithAsyncMethod_ForwardPass<WithAsyncMethod_GetGradients<Service > > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_StoreModelWeights : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_StoreModelWeights() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_StoreModelWeights() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StoreModelWeights(::grpc::ServerContext* /*context*/, const ::leaftest::StoreModelWeightsRequest* /*request*/, ::leaftest::StoreModelWeightsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStoreModelWeights(::grpc::ServerContext* context, ::leaftest::StoreModelWeightsRequest* request, ::grpc::ServerAsyncResponseWriter< ::leaftest::StoreModelWeightsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_GetServerTime<WithAsyncMethod_ForwardPass<WithAsyncMethod_GetGradients<WithAsyncMethod_StoreModelWeights<Service > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_GetServerTime : public BaseClass {
    private:
@@ -284,7 +328,34 @@ class ServerCommunication final {
     virtual ::grpc::ServerUnaryReactor* GetGradients(
       ::grpc::CallbackServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_GetServerTime<WithCallbackMethod_ForwardPass<WithCallbackMethod_GetGradients<Service > > > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_StoreModelWeights : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_StoreModelWeights() {
+      ::grpc::Service::MarkMethodCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::leaftest::StoreModelWeightsRequest* request, ::leaftest::StoreModelWeightsResponse* response) { return this->StoreModelWeights(context, request, response); }));}
+    void SetMessageAllocatorFor_StoreModelWeights(
+        ::grpc::MessageAllocator< ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_StoreModelWeights() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StoreModelWeights(::grpc::ServerContext* /*context*/, const ::leaftest::StoreModelWeightsRequest* /*request*/, ::leaftest::StoreModelWeightsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* StoreModelWeights(
+      ::grpc::CallbackServerContext* /*context*/, const ::leaftest::StoreModelWeightsRequest* /*request*/, ::leaftest::StoreModelWeightsResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_GetServerTime<WithCallbackMethod_ForwardPass<WithCallbackMethod_GetGradients<WithCallbackMethod_StoreModelWeights<Service > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_GetServerTime : public BaseClass {
@@ -333,6 +404,23 @@ class ServerCommunication final {
     }
     // disable synchronous version of this method
     ::grpc::Status GetGradients(::grpc::ServerContext* /*context*/, const ::leaftest::GradientRequest* /*request*/, ::leaftest::GradientResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_StoreModelWeights : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_StoreModelWeights() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_StoreModelWeights() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StoreModelWeights(::grpc::ServerContext* /*context*/, const ::leaftest::StoreModelWeightsRequest* /*request*/, ::leaftest::StoreModelWeightsResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -395,6 +483,26 @@ class ServerCommunication final {
     }
     void RequestGetGradients(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_StoreModelWeights : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_StoreModelWeights() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_StoreModelWeights() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StoreModelWeights(::grpc::ServerContext* /*context*/, const ::leaftest::StoreModelWeightsRequest* /*request*/, ::leaftest::StoreModelWeightsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStoreModelWeights(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -461,6 +569,28 @@ class ServerCommunication final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* GetGradients(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_StoreModelWeights : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_StoreModelWeights() {
+      ::grpc::Service::MarkMethodRawCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->StoreModelWeights(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_StoreModelWeights() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StoreModelWeights(::grpc::ServerContext* /*context*/, const ::leaftest::StoreModelWeightsRequest* /*request*/, ::leaftest::StoreModelWeightsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* StoreModelWeights(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -544,9 +674,36 @@ class ServerCommunication final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetGradients(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::leaftest::GradientRequest,::leaftest::GradientResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ForwardPass<WithStreamedUnaryMethod_GetGradients<Service > > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_StoreModelWeights : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_StoreModelWeights() {
+      ::grpc::Service::MarkMethodStreamed(3,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::leaftest::StoreModelWeightsRequest, ::leaftest::StoreModelWeightsResponse>* streamer) {
+                       return this->StreamedStoreModelWeights(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_StoreModelWeights() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status StoreModelWeights(::grpc::ServerContext* /*context*/, const ::leaftest::StoreModelWeightsRequest* /*request*/, ::leaftest::StoreModelWeightsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedStoreModelWeights(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::leaftest::StoreModelWeightsRequest,::leaftest::StoreModelWeightsResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ForwardPass<WithStreamedUnaryMethod_GetGradients<WithStreamedUnaryMethod_StoreModelWeights<Service > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ForwardPass<WithStreamedUnaryMethod_GetGradients<Service > > > StreamedService;
+  typedef WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ForwardPass<WithStreamedUnaryMethod_GetGradients<WithStreamedUnaryMethod_StoreModelWeights<Service > > > > StreamedService;
 };
 
 }  // namespace leaftest

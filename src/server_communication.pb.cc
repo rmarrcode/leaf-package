@@ -69,6 +69,70 @@ struct TimeRequestDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TimeRequestDefaultTypeInternal _TimeRequest_default_instance_;
 
+inline constexpr StoreModelWeightsResponse::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : error_message_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        model_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        success_{false},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR StoreModelWeightsResponse::StoreModelWeightsResponse(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct StoreModelWeightsResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR StoreModelWeightsResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~StoreModelWeightsResponseDefaultTypeInternal() {}
+  union {
+    StoreModelWeightsResponse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StoreModelWeightsResponseDefaultTypeInternal _StoreModelWeightsResponse_default_instance_;
+
+inline constexpr StoreModelWeightsRequest::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : model_state_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        model_type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        model_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR StoreModelWeightsRequest::StoreModelWeightsRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct StoreModelWeightsRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR StoreModelWeightsRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~StoreModelWeightsRequestDefaultTypeInternal() {}
+  union {
+    StoreModelWeightsRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StoreModelWeightsRequestDefaultTypeInternal _StoreModelWeightsRequest_default_instance_;
+
 inline constexpr GradientResponse::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : gradients_(
@@ -107,9 +171,6 @@ inline constexpr GradientRequest::Impl_::Impl_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         input_data_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        target_data_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         model_type_(
@@ -270,7 +331,6 @@ const ::uint32_t
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.model_state_),
         PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.input_data_),
-        PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.target_data_),
         PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.model_type_),
         PROTOBUF_FIELD_OFFSET(::leaftest::GradientRequest, _impl_.criterion_type_),
         ~0u,  // no _has_bits_
@@ -285,6 +345,28 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _impl_.loss_),
         PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _impl_.success_),
         PROTOBUF_FIELD_OFFSET(::leaftest::GradientResponse, _impl_.error_message_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsRequest, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsRequest, _impl_.model_state_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsRequest, _impl_.model_type_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsRequest, _impl_.model_id_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsResponse, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsResponse, _impl_.success_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsResponse, _impl_.error_message_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsResponse, _impl_.model_id_),
 };
 
 static const ::_pbi::MigrationSchema
@@ -294,7 +376,9 @@ static const ::_pbi::MigrationSchema
         {17, -1, -1, sizeof(::leaftest::ForwardPassRequest)},
         {30, -1, -1, sizeof(::leaftest::ForwardPassResponse)},
         {42, -1, -1, sizeof(::leaftest::GradientRequest)},
-        {55, -1, -1, sizeof(::leaftest::GradientResponse)},
+        {54, -1, -1, sizeof(::leaftest::GradientResponse)},
+        {66, -1, -1, sizeof(::leaftest::StoreModelWeightsRequest)},
+        {77, -1, -1, sizeof(::leaftest::StoreModelWeightsResponse)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::leaftest::_TimeRequest_default_instance_._instance,
@@ -303,6 +387,8 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::leaftest::_ForwardPassResponse_default_instance_._instance,
     &::leaftest::_GradientRequest_default_instance_._instance,
     &::leaftest::_GradientResponse_default_instance_._instance,
+    &::leaftest::_StoreModelWeightsRequest_default_instance_._instance,
+    &::leaftest::_StoreModelWeightsResponse_default_instance_._instance,
 };
 const char descriptor_table_protodef_server_5fcommunication_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
@@ -313,31 +399,37 @@ const char descriptor_table_protodef_server_5fcommunication_2eproto[] ABSL_ATTRI
     "target_data\030\003 \001(\014\022\022\n\nmodel_type\030\004 \001(\t\022\026\n"
     "\016criterion_type\030\005 \001(\t\"^\n\023ForwardPassResp"
     "onse\022\021\n\tgradients\030\001 \001(\014\022\014\n\004loss\030\002 \001(\002\022\017\n"
-    "\007success\030\003 \001(\010\022\025\n\rerror_message\030\004 \001(\t\"{\n"
+    "\007success\030\003 \001(\010\022\025\n\rerror_message\030\004 \001(\t\"f\n"
     "\017GradientRequest\022\023\n\013model_state\030\001 \001(\014\022\022\n"
-    "\ninput_data\030\002 \001(\014\022\023\n\013target_data\030\003 \001(\014\022\022"
-    "\n\nmodel_type\030\004 \001(\t\022\026\n\016criterion_type\030\005 \001"
-    "(\t\"[\n\020GradientResponse\022\021\n\tgradients\030\001 \001("
-    "\014\022\014\n\004loss\030\002 \001(\002\022\017\n\007success\030\003 \001(\010\022\025\n\rerro"
-    "r_message\030\004 \001(\t2\356\001\n\023ServerCommunication\022"
-    "@\n\rGetServerTime\022\025.leaftest.TimeRequest\032"
-    "\026.leaftest.TimeResponse\"\000\022L\n\013ForwardPass"
-    "\022\034.leaftest.ForwardPassRequest\032\035.leaftes"
-    "t.ForwardPassResponse\"\000\022G\n\014GetGradients\022"
-    "\031.leaftest.GradientRequest\032\032.leaftest.Gr"
-    "adientResponse\"\000b\006proto3"
+    "\ninput_data\030\002 \001(\014\022\022\n\nmodel_type\030\003 \001(\t\022\026\n"
+    "\016criterion_type\030\004 \001(\t\"[\n\020GradientRespons"
+    "e\022\021\n\tgradients\030\001 \001(\014\022\014\n\004loss\030\002 \001(\002\022\017\n\007su"
+    "ccess\030\003 \001(\010\022\025\n\rerror_message\030\004 \001(\t\"U\n\030St"
+    "oreModelWeightsRequest\022\023\n\013model_state\030\001 "
+    "\001(\014\022\022\n\nmodel_type\030\002 \001(\t\022\020\n\010model_id\030\003 \001("
+    "\t\"U\n\031StoreModelWeightsResponse\022\017\n\007succes"
+    "s\030\001 \001(\010\022\025\n\rerror_message\030\002 \001(\t\022\020\n\010model_"
+    "id\030\003 \001(\t2\316\002\n\023ServerCommunication\022@\n\rGetS"
+    "erverTime\022\025.leaftest.TimeRequest\032\026.leaft"
+    "est.TimeResponse\"\000\022L\n\013ForwardPass\022\034.leaf"
+    "test.ForwardPassRequest\032\035.leaftest.Forwa"
+    "rdPassResponse\"\000\022G\n\014GetGradients\022\031.leaft"
+    "est.GradientRequest\032\032.leaftest.GradientR"
+    "esponse\"\000\022^\n\021StoreModelWeights\022\".leaftes"
+    "t.StoreModelWeightsRequest\032#.leaftest.St"
+    "oreModelWeightsResponse\"\000b\006proto3"
 };
 static ::absl::once_flag descriptor_table_server_5fcommunication_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_server_5fcommunication_2eproto = {
     false,
     false,
-    784,
+    1033,
     descriptor_table_protodef_server_5fcommunication_2eproto,
     "server_communication.proto",
     &descriptor_table_server_5fcommunication_2eproto_once,
     nullptr,
     0,
-    6,
+    8,
     schemas,
     file_default_instances,
     TableStruct_server_5fcommunication_2eproto::offsets,
@@ -1332,7 +1424,6 @@ inline PROTOBUF_NDEBUG_INLINE GradientRequest::Impl_::Impl_(
     const Impl_& from, const ::leaftest::GradientRequest& from_msg)
       : model_state_(arena, from.model_state_),
         input_data_(arena, from.input_data_),
-        target_data_(arena, from.target_data_),
         model_type_(arena, from.model_type_),
         criterion_type_(arena, from.criterion_type_),
         _cached_size_{0} {}
@@ -1358,7 +1449,6 @@ inline PROTOBUF_NDEBUG_INLINE GradientRequest::Impl_::Impl_(
     ::google::protobuf::Arena* arena)
       : model_state_(arena),
         input_data_(arena),
-        target_data_(arena),
         model_type_(arena),
         criterion_type_(arena),
         _cached_size_{0} {}
@@ -1376,7 +1466,6 @@ inline void GradientRequest::SharedDtor(MessageLite& self) {
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.model_state_.Destroy();
   this_._impl_.input_data_.Destroy();
-  this_._impl_.target_data_.Destroy();
   this_._impl_.model_type_.Destroy();
   this_._impl_.criterion_type_.Destroy();
   this_._impl_.~Impl_();
@@ -1418,15 +1507,15 @@ const ::google::protobuf::internal::ClassData* GradientRequest::GetClassData() c
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 5, 0, 57, 2> GradientRequest::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 57, 2> GradientRequest::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    5, 56,  // max_field_number, fast_idx_mask
+    4, 24,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967264,  // skipmap
+    4294967280,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    5,  // num_field_entries
+    4,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -1436,24 +1525,18 @@ const ::_pbi::TcParseTable<3, 5, 0, 57, 2> GradientRequest::_table_ = {
     ::_pbi::TcParser::GetTable<::leaftest::GradientRequest>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // string criterion_type = 4;
+    {::_pbi::TcParser::FastUS1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.criterion_type_)}},
     // bytes model_state = 1;
     {::_pbi::TcParser::FastBS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_state_)}},
     // bytes input_data = 2;
     {::_pbi::TcParser::FastBS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.input_data_)}},
-    // bytes target_data = 3;
-    {::_pbi::TcParser::FastBS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.target_data_)}},
-    // string model_type = 4;
+    // string model_type = 3;
     {::_pbi::TcParser::FastUS1,
-     {34, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_type_)}},
-    // string criterion_type = 5;
-    {::_pbi::TcParser::FastUS1,
-     {42, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.criterion_type_)}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_type_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -1463,19 +1546,16 @@ const ::_pbi::TcParseTable<3, 5, 0, 57, 2> GradientRequest::_table_ = {
     // bytes input_data = 2;
     {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.input_data_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
-    // bytes target_data = 3;
-    {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.target_data_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
-    // string model_type = 4;
+    // string model_type = 3;
     {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.model_type_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string criterion_type = 5;
+    // string criterion_type = 4;
     {PROTOBUF_FIELD_OFFSET(GradientRequest, _impl_.criterion_type_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\30\0\0\0\12\16\0\0"
+    "\30\0\0\12\16\0\0\0"
     "leaftest.GradientRequest"
     "model_type"
     "criterion_type"
@@ -1491,7 +1571,6 @@ PROTOBUF_NOINLINE void GradientRequest::Clear() {
 
   _impl_.model_state_.ClearToEmpty();
   _impl_.input_data_.ClearToEmpty();
-  _impl_.target_data_.ClearToEmpty();
   _impl_.model_type_.ClearToEmpty();
   _impl_.criterion_type_.ClearToEmpty();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -1524,26 +1603,20 @@ PROTOBUF_NOINLINE void GradientRequest::Clear() {
             target = stream->WriteBytesMaybeAliased(2, _s, target);
           }
 
-          // bytes target_data = 3;
-          if (!this_._internal_target_data().empty()) {
-            const std::string& _s = this_._internal_target_data();
-            target = stream->WriteBytesMaybeAliased(3, _s, target);
-          }
-
-          // string model_type = 4;
+          // string model_type = 3;
           if (!this_._internal_model_type().empty()) {
             const std::string& _s = this_._internal_model_type();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
                 _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.GradientRequest.model_type");
-            target = stream->WriteStringMaybeAliased(4, _s, target);
+            target = stream->WriteStringMaybeAliased(3, _s, target);
           }
 
-          // string criterion_type = 5;
+          // string criterion_type = 4;
           if (!this_._internal_criterion_type().empty()) {
             const std::string& _s = this_._internal_criterion_type();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
                 _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.GradientRequest.criterion_type");
-            target = stream->WriteStringMaybeAliased(5, _s, target);
+            target = stream->WriteStringMaybeAliased(4, _s, target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -1581,17 +1654,12 @@ PROTOBUF_NOINLINE void GradientRequest::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
                                               this_._internal_input_data());
             }
-            // bytes target_data = 3;
-            if (!this_._internal_target_data().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
-                                              this_._internal_target_data());
-            }
-            // string model_type = 4;
+            // string model_type = 3;
             if (!this_._internal_model_type().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_model_type());
             }
-            // string criterion_type = 5;
+            // string criterion_type = 4;
             if (!this_._internal_criterion_type().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_criterion_type());
@@ -1614,9 +1682,6 @@ void GradientRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const :
   }
   if (!from._internal_input_data().empty()) {
     _this->_internal_set_input_data(from._internal_input_data());
-  }
-  if (!from._internal_target_data().empty()) {
-    _this->_internal_set_target_data(from._internal_target_data());
   }
   if (!from._internal_model_type().empty()) {
     _this->_internal_set_model_type(from._internal_model_type());
@@ -1642,7 +1707,6 @@ void GradientRequest::InternalSwap(GradientRequest* PROTOBUF_RESTRICT other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_state_, &other->_impl_.model_state_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.input_data_, &other->_impl_.input_data_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.target_data_, &other->_impl_.target_data_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_type_, &other->_impl_.model_type_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.criterion_type_, &other->_impl_.criterion_type_, arena);
 }
@@ -1967,6 +2031,577 @@ void GradientResponse::InternalSwap(GradientResponse* PROTOBUF_RESTRICT other) {
 }
 
 ::google::protobuf::Metadata GradientResponse::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class StoreModelWeightsRequest::_Internal {
+ public:
+};
+
+StoreModelWeightsRequest::StoreModelWeightsRequest(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:leaftest.StoreModelWeightsRequest)
+}
+inline PROTOBUF_NDEBUG_INLINE StoreModelWeightsRequest::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::leaftest::StoreModelWeightsRequest& from_msg)
+      : model_state_(arena, from.model_state_),
+        model_type_(arena, from.model_type_),
+        model_id_(arena, from.model_id_),
+        _cached_size_{0} {}
+
+StoreModelWeightsRequest::StoreModelWeightsRequest(
+    ::google::protobuf::Arena* arena,
+    const StoreModelWeightsRequest& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  StoreModelWeightsRequest* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:leaftest.StoreModelWeightsRequest)
+}
+inline PROTOBUF_NDEBUG_INLINE StoreModelWeightsRequest::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : model_state_(arena),
+        model_type_(arena),
+        model_id_(arena),
+        _cached_size_{0} {}
+
+inline void StoreModelWeightsRequest::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+StoreModelWeightsRequest::~StoreModelWeightsRequest() {
+  // @@protoc_insertion_point(destructor:leaftest.StoreModelWeightsRequest)
+  SharedDtor(*this);
+}
+inline void StoreModelWeightsRequest::SharedDtor(MessageLite& self) {
+  StoreModelWeightsRequest& this_ = static_cast<StoreModelWeightsRequest&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.model_state_.Destroy();
+  this_._impl_.model_type_.Destroy();
+  this_._impl_.model_id_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* StoreModelWeightsRequest::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) StoreModelWeightsRequest(arena);
+}
+constexpr auto StoreModelWeightsRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(StoreModelWeightsRequest),
+                                            alignof(StoreModelWeightsRequest));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull StoreModelWeightsRequest::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_StoreModelWeightsRequest_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &StoreModelWeightsRequest::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<StoreModelWeightsRequest>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &StoreModelWeightsRequest::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<StoreModelWeightsRequest>(), &StoreModelWeightsRequest::ByteSizeLong,
+            &StoreModelWeightsRequest::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_._cached_size_),
+        false,
+    },
+    &StoreModelWeightsRequest::kDescriptorMethods,
+    &descriptor_table_server_5fcommunication_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* StoreModelWeightsRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 0, 60, 2> StoreModelWeightsRequest::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::leaftest::StoreModelWeightsRequest>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // bytes model_state = 1;
+    {::_pbi::TcParser::FastBS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_state_)}},
+    // string model_type = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_type_)}},
+    // string model_id = 3;
+    {::_pbi::TcParser::FastUS1,
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_id_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bytes model_state = 1;
+    {PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_state_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
+    // string model_type = 2;
+    {PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_type_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string model_id = 3;
+    {PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_id_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\41\0\12\10\0\0\0\0"
+    "leaftest.StoreModelWeightsRequest"
+    "model_type"
+    "model_id"
+  }},
+};
+
+PROTOBUF_NOINLINE void StoreModelWeightsRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:leaftest.StoreModelWeightsRequest)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.model_state_.ClearToEmpty();
+  _impl_.model_type_.ClearToEmpty();
+  _impl_.model_id_.ClearToEmpty();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* StoreModelWeightsRequest::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const StoreModelWeightsRequest& this_ = static_cast<const StoreModelWeightsRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* StoreModelWeightsRequest::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const StoreModelWeightsRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:leaftest.StoreModelWeightsRequest)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // bytes model_state = 1;
+          if (!this_._internal_model_state().empty()) {
+            const std::string& _s = this_._internal_model_state();
+            target = stream->WriteBytesMaybeAliased(1, _s, target);
+          }
+
+          // string model_type = 2;
+          if (!this_._internal_model_type().empty()) {
+            const std::string& _s = this_._internal_model_type();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.StoreModelWeightsRequest.model_type");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
+          }
+
+          // string model_id = 3;
+          if (!this_._internal_model_id().empty()) {
+            const std::string& _s = this_._internal_model_id();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.StoreModelWeightsRequest.model_id");
+            target = stream->WriteStringMaybeAliased(3, _s, target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:leaftest.StoreModelWeightsRequest)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t StoreModelWeightsRequest::ByteSizeLong(const MessageLite& base) {
+          const StoreModelWeightsRequest& this_ = static_cast<const StoreModelWeightsRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t StoreModelWeightsRequest::ByteSizeLong() const {
+          const StoreModelWeightsRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:leaftest.StoreModelWeightsRequest)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // bytes model_state = 1;
+            if (!this_._internal_model_state().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
+                                              this_._internal_model_state());
+            }
+            // string model_type = 2;
+            if (!this_._internal_model_type().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_model_type());
+            }
+            // string model_id = 3;
+            if (!this_._internal_model_id().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_model_id());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void StoreModelWeightsRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<StoreModelWeightsRequest*>(&to_msg);
+  auto& from = static_cast<const StoreModelWeightsRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:leaftest.StoreModelWeightsRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_model_state().empty()) {
+    _this->_internal_set_model_state(from._internal_model_state());
+  }
+  if (!from._internal_model_type().empty()) {
+    _this->_internal_set_model_type(from._internal_model_type());
+  }
+  if (!from._internal_model_id().empty()) {
+    _this->_internal_set_model_id(from._internal_model_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void StoreModelWeightsRequest::CopyFrom(const StoreModelWeightsRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:leaftest.StoreModelWeightsRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void StoreModelWeightsRequest::InternalSwap(StoreModelWeightsRequest* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_state_, &other->_impl_.model_state_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_type_, &other->_impl_.model_type_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_id_, &other->_impl_.model_id_, arena);
+}
+
+::google::protobuf::Metadata StoreModelWeightsRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class StoreModelWeightsResponse::_Internal {
+ public:
+};
+
+StoreModelWeightsResponse::StoreModelWeightsResponse(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:leaftest.StoreModelWeightsResponse)
+}
+inline PROTOBUF_NDEBUG_INLINE StoreModelWeightsResponse::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::leaftest::StoreModelWeightsResponse& from_msg)
+      : error_message_(arena, from.error_message_),
+        model_id_(arena, from.model_id_),
+        _cached_size_{0} {}
+
+StoreModelWeightsResponse::StoreModelWeightsResponse(
+    ::google::protobuf::Arena* arena,
+    const StoreModelWeightsResponse& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  StoreModelWeightsResponse* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.success_ = from._impl_.success_;
+
+  // @@protoc_insertion_point(copy_constructor:leaftest.StoreModelWeightsResponse)
+}
+inline PROTOBUF_NDEBUG_INLINE StoreModelWeightsResponse::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : error_message_(arena),
+        model_id_(arena),
+        _cached_size_{0} {}
+
+inline void StoreModelWeightsResponse::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.success_ = {};
+}
+StoreModelWeightsResponse::~StoreModelWeightsResponse() {
+  // @@protoc_insertion_point(destructor:leaftest.StoreModelWeightsResponse)
+  SharedDtor(*this);
+}
+inline void StoreModelWeightsResponse::SharedDtor(MessageLite& self) {
+  StoreModelWeightsResponse& this_ = static_cast<StoreModelWeightsResponse&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.error_message_.Destroy();
+  this_._impl_.model_id_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* StoreModelWeightsResponse::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) StoreModelWeightsResponse(arena);
+}
+constexpr auto StoreModelWeightsResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(StoreModelWeightsResponse),
+                                            alignof(StoreModelWeightsResponse));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull StoreModelWeightsResponse::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_StoreModelWeightsResponse_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &StoreModelWeightsResponse::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<StoreModelWeightsResponse>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &StoreModelWeightsResponse::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<StoreModelWeightsResponse>(), &StoreModelWeightsResponse::ByteSizeLong,
+            &StoreModelWeightsResponse::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(StoreModelWeightsResponse, _impl_._cached_size_),
+        false,
+    },
+    &StoreModelWeightsResponse::kDescriptorMethods,
+    &descriptor_table_server_5fcommunication_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* StoreModelWeightsResponse::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 0, 64, 2> StoreModelWeightsResponse::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::leaftest::StoreModelWeightsResponse>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // bool success = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(StoreModelWeightsResponse, _impl_.success_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsResponse, _impl_.success_)}},
+    // string error_message = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsResponse, _impl_.error_message_)}},
+    // string model_id = 3;
+    {::_pbi::TcParser::FastUS1,
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsResponse, _impl_.model_id_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bool success = 1;
+    {PROTOBUF_FIELD_OFFSET(StoreModelWeightsResponse, _impl_.success_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
+    // string error_message = 2;
+    {PROTOBUF_FIELD_OFFSET(StoreModelWeightsResponse, _impl_.error_message_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string model_id = 3;
+    {PROTOBUF_FIELD_OFFSET(StoreModelWeightsResponse, _impl_.model_id_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\42\0\15\10\0\0\0\0"
+    "leaftest.StoreModelWeightsResponse"
+    "error_message"
+    "model_id"
+  }},
+};
+
+PROTOBUF_NOINLINE void StoreModelWeightsResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:leaftest.StoreModelWeightsResponse)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.error_message_.ClearToEmpty();
+  _impl_.model_id_.ClearToEmpty();
+  _impl_.success_ = false;
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* StoreModelWeightsResponse::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const StoreModelWeightsResponse& this_ = static_cast<const StoreModelWeightsResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* StoreModelWeightsResponse::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const StoreModelWeightsResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:leaftest.StoreModelWeightsResponse)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // bool success = 1;
+          if (this_._internal_success() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                1, this_._internal_success(), target);
+          }
+
+          // string error_message = 2;
+          if (!this_._internal_error_message().empty()) {
+            const std::string& _s = this_._internal_error_message();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.StoreModelWeightsResponse.error_message");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
+          }
+
+          // string model_id = 3;
+          if (!this_._internal_model_id().empty()) {
+            const std::string& _s = this_._internal_model_id();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.StoreModelWeightsResponse.model_id");
+            target = stream->WriteStringMaybeAliased(3, _s, target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:leaftest.StoreModelWeightsResponse)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t StoreModelWeightsResponse::ByteSizeLong(const MessageLite& base) {
+          const StoreModelWeightsResponse& this_ = static_cast<const StoreModelWeightsResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t StoreModelWeightsResponse::ByteSizeLong() const {
+          const StoreModelWeightsResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:leaftest.StoreModelWeightsResponse)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // string error_message = 2;
+            if (!this_._internal_error_message().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_error_message());
+            }
+            // string model_id = 3;
+            if (!this_._internal_model_id().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_model_id());
+            }
+            // bool success = 1;
+            if (this_._internal_success() != 0) {
+              total_size += 2;
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void StoreModelWeightsResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<StoreModelWeightsResponse*>(&to_msg);
+  auto& from = static_cast<const StoreModelWeightsResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:leaftest.StoreModelWeightsResponse)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_error_message().empty()) {
+    _this->_internal_set_error_message(from._internal_error_message());
+  }
+  if (!from._internal_model_id().empty()) {
+    _this->_internal_set_model_id(from._internal_model_id());
+  }
+  if (from._internal_success() != 0) {
+    _this->_impl_.success_ = from._impl_.success_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void StoreModelWeightsResponse::CopyFrom(const StoreModelWeightsResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:leaftest.StoreModelWeightsResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void StoreModelWeightsResponse::InternalSwap(StoreModelWeightsResponse* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_message_, &other->_impl_.error_message_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_id_, &other->_impl_.model_id_, arena);
+        swap(_impl_.success_, other->_impl_.success_);
+}
+
+::google::protobuf::Metadata StoreModelWeightsResponse::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)

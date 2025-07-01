@@ -28,6 +28,88 @@
 
 namespace py = pybind11;
 
+// Forward declaration
+class LeafTrainer;
+
+class Model {
+private:
+    py::object pytorch_model;
+    LeafTrainer* leaf_trainer;
+
+public:
+    Model(py::object model, LeafTrainer* trainer) 
+        : pytorch_model(model), leaf_trainer(trainer) {}
+
+    // Forward pass method that mimics the original model's behavior
+    py::object forward(py::object input) {
+        // Call the original model's forward method
+        return pytorch_model.attr("forward")(input);
+    }
+
+    // Call operator to make it behave like a PyTorch model
+    py::object operator()(py::object input) {
+        return forward(input);
+    }
+
+    // Get the underlying PyTorch model
+    py::object get_pytorch_model() const {
+        return pytorch_model;
+    }
+
+    // Get the LeafTrainer pointer
+    LeafTrainer* get_leaf_trainer() const {
+        return leaf_trainer;
+    }
+
+    // Delegate common PyTorch model methods to the underlying model
+    py::object state_dict() {
+        return pytorch_model.attr("state_dict")();
+    }
+
+    py::object parameters() {
+        return pytorch_model.attr("parameters")();
+    }
+
+    py::object named_parameters() {
+        return pytorch_model.attr("named_parameters")();
+    }
+
+    py::object train() {
+        return pytorch_model.attr("train")();
+    }
+
+    py::object eval() {
+        return pytorch_model.attr("eval")();
+    }
+
+    py::object to(py::object device) {
+        return pytorch_model.attr("to")(device);
+    }
+
+    py::object cpu() {
+        return pytorch_model.attr("cpu")();
+    }
+
+    py::object cuda() {
+        return pytorch_model.attr("cuda")();
+    }
+
+    // Get model attributes
+    py::object getattr(const std::string& name) {
+        return pytorch_model.attr(name.c_str());
+    }
+
+    // Set model attributes
+    void setattr(const std::string& name, py::object value) {
+        pytorch_model.attr(name.c_str()) = value;
+    }
+
+    // Check if model has an attribute
+    bool hasattr(const std::string& name) {
+        return py::hasattr(pytorch_model, name.c_str());
+    }
+};
+
 class LeafConfig {
 private:
     std::map<std::string, Server> servers;
@@ -179,11 +261,15 @@ public:
     }
 };
 
+
+
 class LeafTrainer {
 private:
     LeafConfig config;
     std::map<std::string, std::shared_ptr<grpc::Channel>> server_channels;
     std::mutex channel_mutex;
+    std::vector<std::shared_ptr<Model>> registered_models;  // Track registered models
+    mutable std::mutex models_mutex;  // Protect access to registered_models
 
     // Helper function to create gRPC channel for a server
     std::shared_ptr<grpc::Channel> create_channel(const std::string& server_name) {
@@ -388,7 +474,203 @@ private:
 public:
     LeafTrainer(const LeafConfig& cfg) : config(cfg) {}
 
-    ~LeafTrainer() {}
+    ~LeafTrainer() {
+        // Clean up registered models
+        cleanup_models();
+    }
+
+    // Method to clean up all registered models
+    void cleanup_models() {
+        std::lock_guard<std::mutex> lock(models_mutex);
+        std::cout << "Cleaning up " << registered_models.size() << " registered models..." << std::endl;
+        registered_models.clear();
+        std::cout << "Model cleanup completed." << std::endl;
+    }
+
+    // Method to get the number of registered models
+    size_t get_model_count() const {
+        std::lock_guard<std::mutex> lock(models_mutex);
+        return registered_models.size();
+    }
+
+    // Method to get server names
+    std::vector<std::string> get_server_names() const {
+        return config.get_servers();
+    }
+
+    // Method to get server info
+    py::dict get_server_info(const std::string& server_name) const {
+        return config.get_server_info(server_name);
+    }
+
+    // Method to store model weights on a specific server
+    std::pair<bool, std::string> store_model_weights_on_server(
+        const std::string& server_name,
+        const std::vector<float>& model_state,
+        const std::string& model_id) {
+        
+        try {
+            std::lock_guard<std::mutex> lock(channel_mutex);
+            
+            // Get or create channel for this server
+            if (server_channels.find(server_name) == server_channels.end()) {
+                server_channels[server_name] = create_channel(server_name);
+            }
+            
+            auto channel = server_channels[server_name];
+            auto stub = leaftest::ServerCommunication::NewStub(channel);
+            
+            // Prepare request
+            leaftest::StoreModelWeightsRequest request;
+            request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
+            request.set_model_id(model_id);
+            
+            // Make RPC call
+            grpc::ClientContext context;
+            leaftest::StoreModelWeightsResponse response;
+            
+            auto status = stub->StoreModelWeights(&context, request, &response);
+            
+            if (!status.ok()) {
+                return {false, "RPC failed: " + status.error_message()};
+            }
+            
+            if (!response.success()) {
+                return {false, "Server failed: " + response.error_message()};
+            }
+            
+            return {true, ""};
+        } catch (const std::exception& e) {
+            return {false, e.what()};
+        }
+    }
+
+    py::object register_model(py::object model) {
+        std::cout << "Registering model with LeafTrainer..." << std::endl;
+        
+        // Create a Model instance that wraps the PyTorch model using smart pointer
+        auto leaf_model = std::make_shared<Model>(model, this);
+        
+        // Track the model for proper cleanup
+        {
+            std::lock_guard<std::mutex> lock(models_mutex);
+            registered_models.push_back(leaf_model);
+        }
+        
+        // Extract model state from PyTorch model
+        py::object state_dict = model.attr("state_dict")();
+        std::vector<float> model_state;
+        
+        // Convert state dict to flat vector
+        py::object items = state_dict.attr("items")();
+        for (auto item : items) {
+            py::object tensor = item.attr("__getitem__")(1);  // Get the value (tensor) from the key-value pair
+            
+            // Check if tensor has cpu() method
+            if (py::hasattr(tensor, "cpu")) {
+                tensor = tensor.attr("cpu")();
+            }
+            
+            // Check if tensor has numpy() method
+            if (py::hasattr(tensor, "numpy")) {
+                py::array_t<float> numpy_array = tensor.attr("numpy")();
+                auto buffer_info = numpy_array.request();
+                float* data = static_cast<float*>(buffer_info.ptr);
+                size_t size = buffer_info.size;
+                
+                // Append to model_state vector
+                size_t old_size = model_state.size();
+                model_state.resize(old_size + size);
+                std::memcpy(model_state.data() + old_size, data, size * sizeof(float));
+            }
+        }
+        
+        // Generate a unique model ID
+        std::string model_id = "model_" + std::to_string(registered_models.size());
+        
+        std::cout << "Model state extracted, size: " << model_state.size() << " parameters" << std::endl;
+        
+        // Distribute model weights to all servers
+        auto server_names = config.get_servers();
+        std::cout << "Distributing model weights to " << server_names.size() << " servers..." << std::endl;
+        
+        for (const auto& server_name : server_names) {
+            try {
+                // Get server info to check if it's local
+                py::dict server_info = config.get_server_info(server_name);
+                bool is_local = server_info["is_local"].cast<bool>();
+                bool is_connected = server_info["connected"].cast<bool>();
+                
+                if (!is_connected) {
+                    std::cout << "Skipping server " << server_name << " - not connected" << std::endl;
+                    continue;
+                }
+                
+                std::cout << "Storing model weights on server: " << server_name << std::endl;
+                
+                if (is_local) {
+                    // For local servers, directly use the StoreModelWeights function
+                    ServerCommunicationServiceImpl service;
+                    
+                    leaftest::StoreModelWeightsRequest request;
+                    leaftest::StoreModelWeightsResponse response;
+                    
+                    request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
+                    request.set_model_id(model_id);
+                    
+                    grpc::ServerContext context;
+                    auto status = service.StoreModelWeights(&context, &request, &response);
+                    
+                    if (!status.ok()) {
+                        std::cout << "Warning: Local StoreModelWeights failed: " << status.error_message() << std::endl;
+                    } else if (!response.success()) {
+                        std::cout << "Warning: Local StoreModelWeights failed: " << response.error_message() << std::endl;
+                    } else {
+                        std::cout << "✓ Model weights stored locally successfully" << std::endl;
+                    }
+                } else {
+                    // For remote servers, use gRPC
+                    std::lock_guard<std::mutex> lock(channel_mutex);
+                    
+                    // Get or create channel for this server
+                    if (server_channels.find(server_name) == server_channels.end()) {
+                        server_channels[server_name] = create_channel(server_name);
+                    }
+                    
+                    auto channel = server_channels[server_name];
+                    auto stub = leaftest::ServerCommunication::NewStub(channel);
+                    
+                    // Prepare request
+                    leaftest::StoreModelWeightsRequest request;
+                    request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
+                    request.set_model_id(model_id);
+                    
+                    // Make RPC call
+                    grpc::ClientContext context;
+                    leaftest::StoreModelWeightsResponse response;
+                    
+                    auto status = stub->StoreModelWeights(&context, request, &response);
+                    
+                    if (!status.ok()) {
+                        std::cout << "Warning: RPC failed for server " << server_name << ": " << status.error_message() << std::endl;
+                    } else if (!response.success()) {
+                        std::cout << "Warning: Server " << server_name << " failed: " << response.error_message() << std::endl;
+                    } else {
+                        std::cout << "✓ Model weights stored on server " << server_name << " successfully" << std::endl;
+                    }
+                }
+            } catch (const std::exception& e) {
+                std::cout << "Warning: Error storing model weights on server " << server_name << ": " << e.what() << std::endl;
+            }
+        }
+        
+        // Create a Python object from the C++ Model instance
+        py::object model_obj = py::cast(leaf_model);
+        
+        std::cout << "Model registered successfully! Total models: " << registered_models.size() << std::endl;
+        
+        return model_obj;
+    }
 
     py::dict train(py::object model, 
         py::object optimizer, 
@@ -733,6 +1015,24 @@ public:
 PYBIND11_MODULE(_core, m) {
     std::cout << "Initializing _core module..." << std::endl;
     
+    py::class_<Model>(m, "Model")
+        .def(py::init<py::object, LeafTrainer*>())
+        .def("forward", &Model::forward)
+        .def("__call__", &Model::operator())
+        .def("get_pytorch_model", &Model::get_pytorch_model)
+        .def("get_leaf_trainer", &Model::get_leaf_trainer)
+        .def("state_dict", &Model::state_dict)
+        .def("parameters", &Model::parameters)
+        .def("named_parameters", &Model::named_parameters)
+        .def("train", &Model::train)
+        .def("eval", &Model::eval)
+        .def("to", &Model::to)
+        .def("cpu", &Model::cpu)
+        .def("cuda", &Model::cuda)
+        .def("getattr", &Model::getattr)
+        .def("setattr", &Model::setattr)
+        .def("hasattr", &Model::hasattr);
+
     py::class_<LeafConfig>(m, "LeafConfig")
         .def(py::init<>())
         .def("add_server", &LeafConfig::add_server,
@@ -755,7 +1055,13 @@ PYBIND11_MODULE(_core, m) {
              py::arg("train_loader"),
              py::arg("epochs"),
              py::arg("criterion") = py::none())
-        .def("test_with_hardcoded_values", &LeafTrainer::test_with_hardcoded_values);
+        .def("test_with_hardcoded_values", &LeafTrainer::test_with_hardcoded_values)
+        .def("register_model", &LeafTrainer::register_model, py::arg("model"))
+        .def("cleanup_models", &LeafTrainer::cleanup_models)
+        .def("get_model_count", &LeafTrainer::get_model_count)
+        .def("get_server_names", &LeafTrainer::get_server_names)
+        .def("get_server_info", &LeafTrainer::get_server_info)
+        .def("store_model_weights_on_server", &LeafTrainer::store_model_weights_on_server);
         
     std::cout << "_core module initialization complete!" << std::endl;
 } 

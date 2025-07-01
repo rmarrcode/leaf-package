@@ -15,10 +15,44 @@ using leaftest::ForwardPassRequest;
 using leaftest::ForwardPassResponse;
 using leaftest::GradientRequest;
 using leaftest::GradientResponse;
+using leaftest::StoreModelWeightsRequest;
+using leaftest::StoreModelWeightsResponse;
 
 Status ServerCommunicationServiceImpl::GetServerTime(ServerContext* /*context*/, const TimeRequest* /*request*/, TimeResponse* response) {
     response->set_server_time_ms(123456789);  // fixed demo value
     return Status::OK;
+}
+
+Status ServerCommunicationServiceImpl::StoreModelWeights(ServerContext* /*context*/, const StoreModelWeightsRequest* request, StoreModelWeightsResponse* response) {
+    try {
+        std::string model_id = request->model_id();
+        
+        // Deserialize model state from bytes to vector<float>
+        const std::string& model_state_bytes = request->model_state();
+        size_t num_floats = model_state_bytes.size() / sizeof(float);
+        std::vector<float> model_state(num_floats);
+        
+        if (model_state_bytes.size() > 0) {
+            std::memcpy(model_state.data(), model_state_bytes.data(), model_state_bytes.size());
+        }
+        
+        // Store the model weights
+        stored_models[model_id] = model_state;
+        
+        std::cout << "Stored model weights for model ID: " << model_id 
+                  << ", size: " << model_state.size() << " parameters" << std::endl;
+        
+        response->set_success(true);
+        response->set_error_message("");
+        response->set_model_id(model_id);
+        
+        return Status::OK;
+    } catch (const std::exception& e) {
+        response->set_success(false);
+        response->set_error_message(e.what());
+        response->set_model_id(request->model_id());
+        return Status::OK;
+    }
 }
 
 Status ServerCommunicationServiceImpl::ForwardPass(ServerContext* /*context*/, const ForwardPassRequest* request, ForwardPassResponse* response) {
