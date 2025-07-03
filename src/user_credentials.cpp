@@ -307,7 +307,13 @@ bool UserCredentials::build_run_docker_container() {
 
 bool UserCredentials::test_grpc_connection() {
     std::string target = "localhost:" + std::to_string(tunnel_port);
-    auto channel = grpc::CreateChannel(target, grpc::InsecureChannelCredentials());
+    
+    // Configure channel with increased message size limits to handle large model weights
+    grpc::ChannelArguments args;
+    args.SetMaxReceiveMessageSize(100 * 1024 * 1024);  // 100MB
+    args.SetMaxSendMessageSize(100 * 1024 * 1024);     // 100MB
+    
+    auto channel = grpc::CreateCustomChannel(target, grpc::InsecureChannelCredentials(), args);
     auto stub = leaftest::ServerCommunication::NewStub(channel);
     // Try to get server time
     grpc::ClientContext context;

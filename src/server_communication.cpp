@@ -104,6 +104,12 @@ int main(int /*argc*/, char** /*argv*/) {
     const std::string addr("0.0.0.0:50051");
     ServerCommunicationServiceImpl service;
     ServerBuilder builder;
+    
+    // Configure server with increased message size limits
+    // Default is 4MB, we'll set it to 100MB to handle large model weights
+    builder.AddChannelArgument(GRPC_ARG_MAX_RECEIVE_MESSAGE_LENGTH, 100 * 1024 * 1024);  // 100MB
+    builder.AddChannelArgument(GRPC_ARG_MAX_SEND_MESSAGE_LENGTH, 100 * 1024 * 1024);      // 100MB
+    
     builder.AddListeningPort(addr, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());

@@ -283,7 +283,12 @@ private:
         std::string server_address = config.get_server_connection_info(server_name).second;
         std::cout << "Creating gRPC channel for server '" << server_name << "' at address: " << server_address << std::endl;
         
-        auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
+        // Configure channel with increased message size limits to handle large model weights
+        grpc::ChannelArguments args;
+        args.SetMaxReceiveMessageSize(100 * 1024 * 1024);  // 100MB
+        args.SetMaxSendMessageSize(100 * 1024 * 1024);     // 100MB
+        
+        auto channel = grpc::CreateCustomChannel(server_address, grpc::InsecureChannelCredentials(), args);
         return channel;
     }
 
@@ -353,12 +358,6 @@ private:
             input_data.push_back(inputs_buffer[i]);
         }
         
-        // Create dummy target data (this should be passed from the caller)
-        // For now, using a simple one-hot encoding
-        size_t num_classes = 10; // Default for CIFAR-10
-        std::vector<float> target_data(num_classes, 0.0f);
-        target_data[0] = 1.0f; // Dummy target
-        
         // Get model type and criterion type
         std::string model_type = "resnet50"; // Default
         std::string criterion_type = "CrossEntropyLoss"; // Default
@@ -377,7 +376,6 @@ private:
             // Set the request data
             request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
             request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
-            request.set_target_data(target_data.data(), target_data.size() * sizeof(float));
             request.set_model_type(model_type);
             request.set_criterion_type(criterion_type);
             
@@ -418,7 +416,6 @@ private:
         leaftest::GradientRequest request;
         request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
         request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
-        request.set_target_data(target_data.data(), target_data.size() * sizeof(float));
         request.set_model_type(model_type);
         request.set_criterion_type(criterion_type);
         
@@ -838,12 +835,6 @@ public:
             0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0
         };
         
-        // Create dummy target data (this should be passed from the caller)
-        // For now, using a simple one-hot encoding
-        size_t num_classes = 10; // Default for CIFAR-10
-        std::vector<float> target_data(num_classes, 0.0f);
-        target_data[0] = 1.0f; // Dummy target
-        
         // Get model type and criterion type
         std::string model_type = "resnet50"; // Default
         std::string criterion_type = "CrossEntropyLoss"; // Default
@@ -895,7 +886,6 @@ public:
                     // Set the request data
                     request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
                     request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
-                    request.set_target_data(target_data.data(), target_data.size() * sizeof(float));
                     request.set_model_type(model_type);
                     request.set_criterion_type(criterion_type);
                     
