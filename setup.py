@@ -85,6 +85,7 @@ ext_modules = [
         'leaf._core',
         sources=[
             'src/core.cpp',
+            'src/model.cpp',
             'src/user_credentials.cpp',
             'src/server.cpp',
             'src/server_communication.cpp',

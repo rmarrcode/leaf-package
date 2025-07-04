@@ -25,90 +25,12 @@
 #include "server_communication.h"
 #include "user_credentials.h"
 #include "server.h"
+#include "model.h"
 
 namespace py = pybind11;
 
 // Forward declaration
 class LeafTrainer;
-
-class Model {
-private:
-    py::object pytorch_model;
-    LeafTrainer* leaf_trainer;
-
-public:
-    Model(py::object model, LeafTrainer* trainer) 
-        : pytorch_model(model), leaf_trainer(trainer) {}
-
-    // Forward pass method that mimics the original model's behavior
-    py::object forward(py::object input) {
-        // Call the original model's forward method
-        return pytorch_model.attr("forward")(input);
-    }
-
-    // Call operator to make it behave like a PyTorch model
-    py::object operator()(py::object input) {
-        return forward(input);
-    }
-
-    // Get the underlying PyTorch model
-    py::object get_pytorch_model() const {
-        return pytorch_model;
-    }
-
-    // Get the LeafTrainer pointer
-    LeafTrainer* get_leaf_trainer() const {
-        return leaf_trainer;
-    }
-
-    // Delegate common PyTorch model methods to the underlying model
-    py::object state_dict() {
-        return pytorch_model.attr("state_dict")();
-    }
-
-    py::object parameters() {
-        return pytorch_model.attr("parameters")();
-    }
-
-    py::object named_parameters() {
-        return pytorch_model.attr("named_parameters")();
-    }
-
-    py::object train() {
-        return pytorch_model.attr("train")();
-    }
-
-    py::object eval() {
-        return pytorch_model.attr("eval")();
-    }
-
-    py::object to(py::object device) {
-        return pytorch_model.attr("to")(device);
-    }
-
-    py::object cpu() {
-        return pytorch_model.attr("cpu")();
-    }
-
-    py::object cuda() {
-        return pytorch_model.attr("cuda")();
-    }
-
-    // Get model attributes
-    py::object getattr(const std::string& name) {
-        return pytorch_model.attr(name.c_str());
-    }
-
-    // Set model attributes
-    void setattr(const std::string& name, py::object value) {
-        pytorch_model.attr(name.c_str()) = value;
-    }
-
-    // Check if model has an attribute
-    bool hasattr(const std::string& name) {
-        return py::hasattr(pytorch_model, name.c_str());
-    }
-};
 
 class LeafConfig {
 private:
@@ -333,7 +255,7 @@ private:
                     if (py::hasattr(cpu_tensor, "numpy")) {
                         py::array_t<float> numpy_array = cpu_tensor.attr("numpy")();
                         auto buffer = numpy_array.unchecked<1>();
-                        for (size_t i = 0; i < buffer.size(); ++i) {
+                        for (py::ssize_t i = 0; i < buffer.size(); ++i) {
                             model_state.push_back(buffer[i]);
                         }
                     } else {
@@ -354,13 +276,9 @@ private:
         py::array_t<float> inputs_array = inputs.attr("cpu")().attr("numpy")();
         auto inputs_buffer = inputs_array.unchecked<1>();
         std::vector<float> input_data;
-        for (size_t i = 0; i < inputs_buffer.size(); ++i) {
+        for (py::ssize_t i = 0; i < inputs_buffer.size(); ++i) {
             input_data.push_back(inputs_buffer[i]);
         }
-        
-        // Get model type and criterion type
-        std::string model_type = "resnet50"; // Default
-        std::string criterion_type = "CrossEntropyLoss"; // Default
         
         if (is_local) {
             // For local servers, directly use the GetGradients function from server_communication.cpp
@@ -376,8 +294,6 @@ private:
             // Set the request data
             request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
             request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
-            request.set_model_type(model_type);
-            request.set_criterion_type(criterion_type);
             
             // Call the GetGradients method directly
             grpc::ServerContext context;
@@ -416,8 +332,6 @@ private:
         leaftest::GradientRequest request;
         request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
         request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
-        request.set_model_type(model_type);
-        request.set_criterion_type(criterion_type);
         
         // Make RPC call
         grpc::ClientContext context;
@@ -554,42 +468,14 @@ public:
             registered_models.push_back(leaf_model);
         }
         
-        // Extract model state from PyTorch model
-        py::object state_dict = model.attr("state_dict")();
-        std::vector<float> model_state;
-        
-        // Convert state dict to flat vector
-        py::object items = state_dict.attr("items")();
-        for (auto item : items) {
-            py::object tensor = item.attr("__getitem__")(1);  // Get the value (tensor) from the key-value pair
-            
-            // Check if tensor has cpu() method
-            if (py::hasattr(tensor, "cpu")) {
-                tensor = tensor.attr("cpu")();
-            }
-            
-            // Check if tensor has numpy() method
-            if (py::hasattr(tensor, "numpy")) {
-                py::array_t<float> numpy_array = tensor.attr("numpy")();
-                auto buffer_info = numpy_array.request();
-                float* data = static_cast<float*>(buffer_info.ptr);
-                size_t size = buffer_info.size;
-                
-                // Append to model_state vector
-                size_t old_size = model_state.size();
-                model_state.resize(old_size + size);
-                std::memcpy(model_state.data() + old_size, data, size * sizeof(float));
-            }
-        }
-        
-        // Generate a unique model ID
-        std::string model_id = "model_" + std::to_string(registered_models.size());
+        // Extract model state from PyTorch model using the new serialize_state method
+        std::vector<float> model_state = leaf_model->serialize_state();
         
         std::cout << "Model state extracted, size: " << model_state.size() << " parameters" << std::endl;
         
-        // Distribute model weights to all servers
+        // Distribute model to all servers
         auto server_names = config.get_servers();
-        std::cout << "Distributing model weights to " << server_names.size() << " servers..." << std::endl;
+        std::cout << "Distributing model to " << server_names.size() << " servers..." << std::endl;
         
         for (const auto& server_name : server_names) {
             try {
@@ -603,30 +489,19 @@ public:
                     continue;
                 }
                 
-                std::cout << "Storing model weights on server: " << server_name << std::endl;
+                std::cout << "Storing model on server: " << server_name << std::endl;
                 
                 if (is_local) {
-                    // For local servers, directly use the StoreModelWeights function
+                    // For local servers, directly use the ServerCommunicationServiceImpl
                     ServerCommunicationServiceImpl service;
                     
-                    leaftest::StoreModelWeightsRequest request;
-                    leaftest::StoreModelWeightsResponse response;
+                    // Store the actual Model object using a simple identifier
+                    std::string model_key = "model_" + std::to_string(registered_models.size());
+                    service.store_model(model_key, leaf_model);
                     
-                    request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
-                    request.set_model_id(model_id);
-                    
-                    grpc::ServerContext context;
-                    auto status = service.StoreModelWeights(&context, &request, &response);
-                    
-                    if (!status.ok()) {
-                        std::cout << "Warning: Local StoreModelWeights failed: " << status.error_message() << std::endl;
-                    } else if (!response.success()) {
-                        std::cout << "Warning: Local StoreModelWeights failed: " << response.error_message() << std::endl;
-                    } else {
-                        std::cout << "✓ Model weights stored locally successfully" << std::endl;
-                    }
+                    std::cout << "✓ Model stored locally successfully" << std::endl;
                 } else {
-                    // For remote servers, use gRPC
+                    // For remote servers, use gRPC to send the model
                     std::lock_guard<std::mutex> lock(channel_mutex);
                     
                     // Get or create channel for this server
@@ -637,10 +512,10 @@ public:
                     auto channel = server_channels[server_name];
                     auto stub = leaftest::ServerCommunication::NewStub(channel);
                     
-                    // Prepare request
+                    // Prepare request with model state
                     leaftest::StoreModelWeightsRequest request;
                     request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
-                    request.set_model_id(model_id);
+                    request.set_model_id("model_" + std::to_string(registered_models.size()));
                     
                     // Make RPC call
                     grpc::ClientContext context;
@@ -653,11 +528,11 @@ public:
                     } else if (!response.success()) {
                         std::cout << "Warning: Server " << server_name << " failed: " << response.error_message() << std::endl;
                     } else {
-                        std::cout << "✓ Model weights stored on server " << server_name << " successfully" << std::endl;
+                        std::cout << "✓ Model stored on server " << server_name << " successfully" << std::endl;
                     }
                 }
             } catch (const std::exception& e) {
-                std::cout << "Warning: Error storing model weights on server " << server_name << ": " << e.what() << std::endl;
+                std::cout << "Warning: Error storing model on server " << server_name << ": " << e.what() << std::endl;
             }
         }
         
@@ -835,13 +710,6 @@ public:
             0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0
         };
         
-        // Get model type and criterion type
-        std::string model_type = "resnet50"; // Default
-        std::string criterion_type = "CrossEntropyLoss"; // Default
-        
-        std::cout << "  Input data size: " << input_data.size() << " elements" << std::endl;
-        std::cout << "  Model state size: " << model_state.size() << " elements" << std::endl;
-        
         for (const auto& server_name : server_names) {
             std::cout << "\n" << std::string(60, '=') << std::endl;
             std::cout << "Testing server: " << server_name << std::endl;
@@ -886,8 +754,6 @@ public:
                     // Set the request data
                     request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
                     request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
-                    request.set_model_type(model_type);
-                    request.set_criterion_type(criterion_type);
                     
                     // Call the GetGradients method directly
                     grpc::ServerContext context;
@@ -925,8 +791,6 @@ public:
                     leaftest::GradientRequest request;
                     request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
                     request.set_input_data(input_data.data(), input_data.size() * sizeof(float));
-                    request.set_model_type(model_type);
-                    request.set_criterion_type(criterion_type);
                     
                     // Make RPC call
                     grpc::ClientContext context;
@@ -1006,7 +870,8 @@ PYBIND11_MODULE(_core, m) {
     std::cout << "Initializing _core module..." << std::endl;
     
     py::class_<Model>(m, "Model")
-        .def(py::init<py::object, LeafTrainer*>())
+        .def(py::init<py::object, LeafTrainer*>(),
+             py::arg("model"), py::arg("trainer"))
         .def("forward", &Model::forward)
         .def("__call__", &Model::operator())
         .def("get_pytorch_model", &Model::get_pytorch_model)
@@ -1021,7 +886,9 @@ PYBIND11_MODULE(_core, m) {
         .def("cuda", &Model::cuda)
         .def("getattr", &Model::getattr)
         .def("setattr", &Model::setattr)
-        .def("hasattr", &Model::hasattr);
+        .def("hasattr", &Model::hasattr)
+        .def("serialize_state", &Model::serialize_state)
+        .def("deserialize_state", &Model::deserialize_state);
 
     py::class_<LeafConfig>(m, "LeafConfig")
         .def(py::init<>())

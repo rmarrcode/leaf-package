@@ -4,6 +4,7 @@
 #include <grpcpp/grpcpp.h>
 #include "server_communication.grpc.pb.h"
 #include "server_communication.h"
+#include "model.h"
 
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -36,10 +37,16 @@ Status ServerCommunicationServiceImpl::StoreModelWeights(ServerContext* /*contex
             std::memcpy(model_state.data(), model_state_bytes.data(), model_state_bytes.size());
         }
         
-        // Store the model weights
-        stored_models[model_id] = model_state;
+        // Create a new Model object with the deserialized state
+        // Note: We need to create a dummy PyTorch model here since we can't easily reconstruct it from just the weights
+        // In a real implementation, you might want to store the model architecture information as well
+        py::object dummy_model = py::none();  // Placeholder for now
+        auto model = std::make_shared<Model>(dummy_model, nullptr);
         
-        std::cout << "Stored model weights for model ID: " << model_id 
+        // Store the model
+        stored_models[model_id] = model;
+        
+        std::cout << "Stored model for model ID: " << model_id 
                   << ", size: " << model_state.size() << " parameters" << std::endl;
         
         response->set_success(true);
@@ -59,12 +66,31 @@ Status ServerCommunicationServiceImpl::ForwardPass(ServerContext* /*context*/, c
     try {
         // For now, we'll return a dummy response
         // In a real implementation, this would:
-        // 1. Deserialize the model state from request->model_state()
-        // 2. Deserialize input data from request->input_data()
-        // 3. Deserialize target data from request->target_data()
-        // 4. Load the model based on request->model_type()
-        // 5. Perform forward pass and calculate gradients
-        // 6. Serialize gradients and return them
+        // 1. Deserialize input data from request->input_data()
+        // 2. Use the stored model to perform forward pass
+        // 3. Return the output
+        
+        // Dummy implementation
+        response->set_gradients("dummy_output");
+        response->set_loss(0.5f);
+        response->set_success(true);
+        response->set_error_message("");
+        
+        return Status::OK;
+    } catch (const std::exception& e) {
+        response->set_success(false);
+        response->set_error_message(e.what());
+        return Status::OK;
+    }
+}
+
+Status ServerCommunicationServiceImpl::GetGradients(ServerContext* /*context*/, const GradientRequest* request, GradientResponse* response) {
+    try {
+        // For now, we'll return a dummy response
+        // In a real implementation, this would:
+        // 1. Deserialize input data from request->input_data()
+        // 2. Use the stored model to compute gradients
+        // 3. Return the gradients and loss
         
         // Dummy implementation
         response->set_gradients("dummy_gradients");
@@ -80,24 +106,33 @@ Status ServerCommunicationServiceImpl::ForwardPass(ServerContext* /*context*/, c
     }
 }
 
-Status ServerCommunicationServiceImpl::GetGradients(ServerContext* /*context*/, const GradientRequest* request, GradientResponse* response) {
-    try {
-        // This is essentially the same as ForwardPass for now
-        // In a real implementation, this might be used for different purposes
-        // or could be optimized differently
-        
-        // Dummy implementation
-        response->set_gradients("dummy_gradients");
-        response->set_loss(0.5f);
-        response->set_success(true);
-        response->set_error_message("");
-        
-        return Status::OK;
-    } catch (const std::exception& e) {
-        response->set_success(false);
-        response->set_error_message(e.what());
-        return Status::OK;
+// Helper methods for model management
+bool ServerCommunicationServiceImpl::has_model(const std::string& model_id) const {
+    return stored_models.find(model_id) != stored_models.end();
+}
+
+std::shared_ptr<Model> ServerCommunicationServiceImpl::get_model(const std::string& model_id) const {
+    auto it = stored_models.find(model_id);
+    if (it != stored_models.end()) {
+        return it->second;
     }
+    return nullptr;
+}
+
+void ServerCommunicationServiceImpl::store_model(const std::string& model_id, std::shared_ptr<Model> model) {
+    stored_models[model_id] = model;
+}
+
+void ServerCommunicationServiceImpl::remove_model(const std::string& model_id) {
+    stored_models.erase(model_id);
+}
+
+std::vector<std::string> ServerCommunicationServiceImpl::get_stored_model_ids() const {
+    std::vector<std::string> ids;
+    for (const auto& pair : stored_models) {
+        ids.push_back(pair.first);
+    }
+    return ids;
 }
 
 int main(int /*argc*/, char** /*argv*/) {
