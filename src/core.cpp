@@ -191,6 +191,7 @@ private:
     std::map<std::string, std::shared_ptr<grpc::Channel>> server_channels;
     std::mutex channel_mutex;
     std::vector<std::shared_ptr<Model>> registered_models;  // Track registered models
+    std::vector<std::shared_ptr<DistributedModel>> distributed_models; // Track distributed models
     mutable std::mutex models_mutex;  // Protect access to registered_models
 
     // Helper function to create gRPC channel for a server
@@ -395,6 +396,7 @@ public:
         std::lock_guard<std::mutex> lock(models_mutex);
         std::cout << "Cleaning up " << registered_models.size() << " registered models..." << std::endl;
         registered_models.clear();
+        distributed_models.clear();
         std::cout << "Model cleanup completed." << std::endl;
     }
 
@@ -458,71 +460,47 @@ public:
 
     py::object register_model(py::object model) {
         std::cout << "Registering model with LeafTrainer..." << std::endl;
-        
         // Create a Model instance that wraps the PyTorch model using smart pointer
         auto leaf_model = std::make_shared<Model>(model, this);
-        
         // Track the model for proper cleanup
         {
             std::lock_guard<std::mutex> lock(models_mutex);
             registered_models.push_back(leaf_model);
         }
-        
         // Extract model state from PyTorch model using the new serialize_state method
         std::vector<float> model_state = leaf_model->serialize_state();
-        
         std::cout << "Model state extracted, size: " << model_state.size() << " parameters" << std::endl;
-        
         // Distribute model to all servers
         auto server_names = config.get_servers();
         std::cout << "Distributing model to " << server_names.size() << " servers..." << std::endl;
-        
         for (const auto& server_name : server_names) {
             try {
-                // Get server info to check if it's local
                 py::dict server_info = config.get_server_info(server_name);
                 bool is_local = server_info["is_local"].cast<bool>();
                 bool is_connected = server_info["connected"].cast<bool>();
-                
                 if (!is_connected) {
                     std::cout << "Skipping server " << server_name << " - not connected" << std::endl;
                     continue;
                 }
-                
                 std::cout << "Storing model on server: " << server_name << std::endl;
-                
                 if (is_local) {
-                    // For local servers, directly use the ServerCommunicationServiceImpl
                     ServerCommunicationServiceImpl service;
-                    
-                    // Store the actual Model object using a simple identifier
                     std::string model_key = "model_" + std::to_string(registered_models.size());
                     service.store_model(model_key, leaf_model);
-                    
                     std::cout << "✓ Model stored locally successfully" << std::endl;
                 } else {
-                    // For remote servers, use gRPC to send the model
                     std::lock_guard<std::mutex> lock(channel_mutex);
-                    
-                    // Get or create channel for this server
                     if (server_channels.find(server_name) == server_channels.end()) {
                         server_channels[server_name] = create_channel(server_name);
                     }
-                    
                     auto channel = server_channels[server_name];
                     auto stub = leaftest::ServerCommunication::NewStub(channel);
-                    
-                    // Prepare request with model state
                     leaftest::StoreModelWeightsRequest request;
                     request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
                     request.set_model_id("model_" + std::to_string(registered_models.size()));
-                    
-                    // Make RPC call
                     grpc::ClientContext context;
                     leaftest::StoreModelWeightsResponse response;
-                    
                     auto status = stub->StoreModelWeights(&context, request, &response);
-                    
                     if (!status.ok()) {
                         std::cout << "Warning: RPC failed for server " << server_name << ": " << status.error_message() << std::endl;
                     } else if (!response.success()) {
@@ -535,12 +513,14 @@ public:
                 std::cout << "Warning: Error storing model on server " << server_name << ": " << e.what() << std::endl;
             }
         }
-        
-        // Create a Python object from the C++ Model instance
-        py::object model_obj = py::cast(leaf_model);
-        
+        // Create a DistributedModel and store it
+        auto dist_model = std::make_shared<DistributedModel>(leaf_model, this);
+        {
+            std::lock_guard<std::mutex> lock(models_mutex);
+            distributed_models.push_back(dist_model);
+        }
+        py::object model_obj = py::cast(dist_model);
         std::cout << "Model registered successfully! Total models: " << registered_models.size() << std::endl;
-        
         return model_obj;
     }
 
@@ -866,10 +846,54 @@ public:
     }
 };
 
+// DistributedModel implementation
+DistributedModel::DistributedModel(std::shared_ptr<Model> model, LeafTrainer* trainer)
+    : model(model), leaf_trainer(trainer) {}
+
+py::object DistributedModel::forward(py::object input) {
+    // Get number of servers from trainer
+    auto server_names = leaf_trainer->get_server_names();
+    size_t num_servers = server_names.size();
+    if (num_servers == 0) {
+        throw std::runtime_error("No servers available for distributed forward");
+    }
+    // Assume input is a batch tensor, split along dim 0
+    py::object torch = py::module_::import("torch");
+    py::list input_chunks = torch.attr("chunk")(input, num_servers, 0);
+    py::list outputs;
+    for (size_t i = 0; i < num_servers; ++i) {
+        // For now, call the local model for all servers for demonstration
+        // In a real implementation, you would have a remote forward RPC
+        outputs.append(model->forward(input_chunks[i]));
+    }
+    // Concatenate outputs along dim 0
+    return torch.attr("cat")(outputs, 0);
+}
+
+py::object DistributedModel::operator()(py::object input) {
+    return forward(input);
+}
+
+py::object DistributedModel::get_pytorch_model() const { return model->get_pytorch_model(); }
+LeafTrainer* DistributedModel::get_leaf_trainer() const { return leaf_trainer; }
+py::object DistributedModel::state_dict() { return model->state_dict(); }
+py::object DistributedModel::parameters() { return model->parameters(); }
+py::object DistributedModel::named_parameters() { return model->named_parameters(); }
+py::object DistributedModel::train() { return model->train(); }
+py::object DistributedModel::eval() { return model->eval(); }
+py::object DistributedModel::to(py::object device) { return model->to(device); }
+py::object DistributedModel::cpu() { return model->cpu(); }
+py::object DistributedModel::cuda() { return model->cuda(); }
+py::object DistributedModel::getattr(const std::string& name) { return model->getattr(name); }
+void DistributedModel::setattr(const std::string& name, py::object value) { model->setattr(name, value); }
+bool DistributedModel::hasattr(const std::string& name) { return model->hasattr(name); }
+std::vector<float> DistributedModel::serialize_state() const { return model->serialize_state(); }
+void DistributedModel::deserialize_state(const std::vector<float>& state) { model->deserialize_state(state); }
+
 PYBIND11_MODULE(_core, m) {
     std::cout << "Initializing _core module..." << std::endl;
     
-    py::class_<Model>(m, "Model")
+    py::class_<Model, std::shared_ptr<Model>>(m, "Model")
         .def(py::init<py::object, LeafTrainer*>(),
              py::arg("model"), py::arg("trainer"))
         .def("forward", &Model::forward)
@@ -889,6 +913,27 @@ PYBIND11_MODULE(_core, m) {
         .def("hasattr", &Model::hasattr)
         .def("serialize_state", &Model::serialize_state)
         .def("deserialize_state", &Model::deserialize_state);
+
+    py::class_<DistributedModel, std::shared_ptr<DistributedModel>>(m, "DistributedModel")
+        .def(py::init<std::shared_ptr<Model>, LeafTrainer*>(),
+             py::arg("model"), py::arg("trainer"))
+        .def("forward", &DistributedModel::forward)
+        .def("__call__", &DistributedModel::operator())
+        .def("get_pytorch_model", &DistributedModel::get_pytorch_model)
+        .def("get_leaf_trainer", &DistributedModel::get_leaf_trainer)
+        .def("state_dict", &DistributedModel::state_dict)
+        .def("parameters", &DistributedModel::parameters)
+        .def("named_parameters", &DistributedModel::named_parameters)
+        .def("train", &DistributedModel::train)
+        .def("eval", &DistributedModel::eval)
+        .def("to", &DistributedModel::to)
+        .def("cpu", &DistributedModel::cpu)
+        .def("cuda", &DistributedModel::cuda)
+        .def("getattr", &DistributedModel::getattr)
+        .def("setattr", &DistributedModel::setattr)
+        .def("hasattr", &DistributedModel::hasattr)
+        .def("serialize_state", &DistributedModel::serialize_state)
+        .def("deserialize_state", &DistributedModel::deserialize_state);
 
     py::class_<LeafConfig>(m, "LeafConfig")
         .def(py::init<>())
