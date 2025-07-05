@@ -1,5 +1,5 @@
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef DISTRIBUTED_MODEL_H
+#define DISTRIBUTED_MODEL_H
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
@@ -9,30 +9,27 @@
 
 namespace py = pybind11;
 
-// Forward declaration
+// Forward declarations
 class LeafTrainer;
+class Model;
 
-class Model {
+class DistributedModel {
 private:
-    py::object pytorch_model;
+    std::shared_ptr<Model> model;
     LeafTrainer* leaf_trainer;
 
 public:
-    Model(py::object model, LeafTrainer* trainer);
-    
-    // Forward pass method that mimics the original model's behavior
+    DistributedModel(std::shared_ptr<Model> model, LeafTrainer* trainer);
+
+    // Forward pass: split input and distribute to all servers
     py::object forward(py::object input);
-    
-    // Call operator to make it behave like a PyTorch model
     py::object operator()(py::object input);
-    
+
     // Get the underlying PyTorch model
     py::object get_pytorch_model() const;
-    
-    // Get the LeafTrainer pointer
     LeafTrainer* get_leaf_trainer() const;
-    
-    // Delegate common PyTorch model methods to the underlying model
+
+    // Delegate common PyTorch model methods
     py::object state_dict();
     py::object parameters();
     py::object named_parameters();
@@ -41,21 +38,11 @@ public:
     py::object to(py::object device);
     py::object cpu();
     py::object cuda();
-    
-    // Get model attributes
     py::object getattr(const std::string& name);
-    
-    // Set model attributes
     void setattr(const std::string& name, py::object value);
-    
-    // Check if model has an attribute
     bool hasattr(const std::string& name);
-    
-    // Serialize model state to vector of floats
     std::vector<float> serialize_state() const;
-    
-    // Deserialize model state from vector of floats
     void deserialize_state(const std::vector<float>& state);
 };
 
-#endif // MODEL_H 
+#endif // DISTRIBUTED_MODEL_H 
