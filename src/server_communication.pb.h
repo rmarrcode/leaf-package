@@ -798,8 +798,7 @@ class StoreModelWeightsRequest final : public ::google::protobuf::Message
   // accessors -------------------------------------------------------
   enum : int {
     kModelStateFieldNumber = 1,
-    kModelTypeFieldNumber = 2,
-    kModelIdFieldNumber = 3,
+    kModelIdFieldNumber = 2,
   };
   // bytes model_state = 1;
   void clear_model_state() ;
@@ -817,23 +816,7 @@ class StoreModelWeightsRequest final : public ::google::protobuf::Message
   std::string* _internal_mutable_model_state();
 
   public:
-  // string model_type = 2;
-  void clear_model_type() ;
-  const std::string& model_type() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_model_type(Arg_&& arg, Args_... args);
-  std::string* mutable_model_type();
-  PROTOBUF_NODISCARD std::string* release_model_type();
-  void set_allocated_model_type(std::string* value);
-
-  private:
-  const std::string& _internal_model_type() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_model_type(
-      const std::string& value);
-  std::string* _internal_mutable_model_type();
-
-  public:
-  // string model_id = 3;
+  // string model_id = 2;
   void clear_model_id() ;
   const std::string& model_id() const;
   template <typename Arg_ = const std::string&, typename... Args_>
@@ -854,8 +837,8 @@ class StoreModelWeightsRequest final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 0,
-      60, 2>
+      1, 2, 0,
+      50, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -873,7 +856,6 @@ class StoreModelWeightsRequest final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const StoreModelWeightsRequest& from_msg);
     ::google::protobuf::internal::ArenaStringPtr model_state_;
-    ::google::protobuf::internal::ArenaStringPtr model_type_;
     ::google::protobuf::internal::ArenaStringPtr model_id_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -1760,6 +1742,7 @@ class ForwardPassRequest final : public ::google::protobuf::Message
     kTargetDataFieldNumber = 3,
     kModelTypeFieldNumber = 4,
     kCriterionTypeFieldNumber = 5,
+    kModelIndexFieldNumber = 6,
   };
   // bytes model_state = 1;
   void clear_model_state() ;
@@ -1841,12 +1824,22 @@ class ForwardPassRequest final : public ::google::protobuf::Message
   std::string* _internal_mutable_criterion_type();
 
   public:
+  // uint32 model_index = 6;
+  void clear_model_index() ;
+  ::uint32_t model_index() const;
+  void set_model_index(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_model_index() const;
+  void _internal_set_model_index(::uint32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:leaftest.ForwardPassRequest)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      3, 5, 0,
+      3, 6, 0,
       60, 2>
       _table_;
 
@@ -1869,6 +1862,7 @@ class ForwardPassRequest final : public ::google::protobuf::Message
     ::google::protobuf::internal::ArenaStringPtr target_data_;
     ::google::protobuf::internal::ArenaStringPtr model_type_;
     ::google::protobuf::internal::ArenaStringPtr criterion_type_;
+    ::uint32_t model_index_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -2160,6 +2154,28 @@ inline void ForwardPassRequest::set_allocated_criterion_type(std::string* value)
     _impl_.criterion_type_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:leaftest.ForwardPassRequest.criterion_type)
+}
+
+// uint32 model_index = 6;
+inline void ForwardPassRequest::clear_model_index() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_index_ = 0u;
+}
+inline ::uint32_t ForwardPassRequest::model_index() const {
+  // @@protoc_insertion_point(field_get:leaftest.ForwardPassRequest.model_index)
+  return _internal_model_index();
+}
+inline void ForwardPassRequest::set_model_index(::uint32_t value) {
+  _internal_set_model_index(value);
+  // @@protoc_insertion_point(field_set:leaftest.ForwardPassRequest.model_index)
+}
+inline ::uint32_t ForwardPassRequest::_internal_model_index() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.model_index_;
+}
+inline void ForwardPassRequest::_internal_set_model_index(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.model_index_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -2698,55 +2714,7 @@ inline void StoreModelWeightsRequest::set_allocated_model_state(std::string* val
   // @@protoc_insertion_point(field_set_allocated:leaftest.StoreModelWeightsRequest.model_state)
 }
 
-// string model_type = 2;
-inline void StoreModelWeightsRequest::clear_model_type() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.model_type_.ClearToEmpty();
-}
-inline const std::string& StoreModelWeightsRequest::model_type() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:leaftest.StoreModelWeightsRequest.model_type)
-  return _internal_model_type();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void StoreModelWeightsRequest::set_model_type(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.model_type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:leaftest.StoreModelWeightsRequest.model_type)
-}
-inline std::string* StoreModelWeightsRequest::mutable_model_type() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_model_type();
-  // @@protoc_insertion_point(field_mutable:leaftest.StoreModelWeightsRequest.model_type)
-  return _s;
-}
-inline const std::string& StoreModelWeightsRequest::_internal_model_type() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.model_type_.Get();
-}
-inline void StoreModelWeightsRequest::_internal_set_model_type(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.model_type_.Set(value, GetArena());
-}
-inline std::string* StoreModelWeightsRequest::_internal_mutable_model_type() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.model_type_.Mutable( GetArena());
-}
-inline std::string* StoreModelWeightsRequest::release_model_type() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:leaftest.StoreModelWeightsRequest.model_type)
-  return _impl_.model_type_.Release();
-}
-inline void StoreModelWeightsRequest::set_allocated_model_type(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.model_type_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.model_type_.IsDefault()) {
-    _impl_.model_type_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:leaftest.StoreModelWeightsRequest.model_type)
-}
-
-// string model_id = 3;
+// string model_id = 2;
 inline void StoreModelWeightsRequest::clear_model_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.model_id_.ClearToEmpty();

@@ -16,21 +16,38 @@ class Model {
 private:
     py::object pytorch_model;
     LeafTrainer* leaf_trainer;
+    bool computed_outputs;
+    std::vector<py::object> stored_outputs;
+    py::object loss;  // Store the loss for this model
 
 public:
     Model(py::object model, LeafTrainer* trainer);
     
-    // Forward pass method that mimics the original model's behavior
-    py::object forward(py::object input);
+    // Forward pass method that returns true if successful and stores the output
+    bool forward(py::object input);
     
     // Call operator to make it behave like a PyTorch model
-    py::object operator()(py::object input);
+    bool operator()(py::object input);
     
     // Get the underlying PyTorch model
     py::object get_pytorch_model() const;
     
     // Get the LeafTrainer pointer
     LeafTrainer* get_leaf_trainer() const;
+    
+    // Get computed outputs status
+    bool has_computed_outputs() const;
+    
+    // Get stored outputs
+    const std::vector<py::object>& get_stored_outputs() const;
+    
+    // Clear stored outputs
+    void clear_stored_outputs();
+    
+    // Loss management
+    py::object get_loss() const;
+    void set_loss(py::object loss_value);
+    void clear_loss();
     
     // Delegate common PyTorch model methods to the underlying model
     py::object state_dict();

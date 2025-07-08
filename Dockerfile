@@ -27,7 +27,7 @@ COPY model.cpp .
 RUN protoc --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/usr/bin/grpc_cpp_plugin server_communication.proto
 
 # Compile with pybind11 include paths
-RUN g++ -std=c++17 -I/usr/include/python3.10 -I/usr/local/lib/python3.10/dist-packages/pybind11/include server_communication.cpp model.cpp server_communication.pb.cc server_communication.grpc.pb.cc -lgrpc++ -lprotobuf -lpython3.10 -o server_communication
+RUN g++ -std=c++17 -I/usr/include/python3.10 -I/usr/local/lib/python3.10/dist-packages/pybind11/include server_communication.cpp model.cpp server_communication.pb.cc server_communication.grpc.pb.cc -lgrpc++ -lprotobuf -lpython3.10 -o server_communication && echo "Compilation successful" && ls -la server_communication
 
 # ---------- Stage 2 : runtime ----------
 FROM ubuntu:22.04

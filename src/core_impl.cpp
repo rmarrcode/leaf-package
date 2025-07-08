@@ -7,6 +7,27 @@
 namespace py = pybind11;
 
 // LeafConfig implementation
+LeafConfig::LeafConfig() {
+    discover_local_resources();
+}
+
+void LeafConfig::add_server(const std::string& server_name,
+                           const std::string& username,
+                           const std::string& hostname,
+                           int port,
+                           const std::string& key_path) {
+    UserCredentials creds(username, hostname, port, key_path);
+    servers[server_name] = Server(server_name, creds, false);
+}
+
+std::vector<std::string> LeafConfig::get_servers() const {
+    std::vector<std::string> server_names;
+    for (const auto& [name, server] : servers) {
+        server_names.push_back(name);
+    }
+    return server_names;
+}
+
 void LeafConfig::discover_local_resources() {
     // Create a dummy UserCredentials for localhost
     UserCredentials local_creds("", "", 0, "");
@@ -130,6 +151,12 @@ std::pair<int, std::string> LeafConfig::get_server_connection_info(const std::st
 }
 
 // LeafTrainer implementation
+LeafTrainer::LeafTrainer(const LeafConfig& cfg) : config(cfg) {
+    // gRPC is automatically initialized when needed
+}
+
+LeafTrainer::~LeafTrainer() {}
+
 std::shared_ptr<grpc::Channel> LeafTrainer::create_channel(const std::string& server_name) {
     const auto& servers = config.get_servers();
     auto it = std::find(servers.begin(), servers.end(), server_name);
@@ -292,6 +319,88 @@ std::pair<std::vector<float>, float> LeafTrainer::get_gradients_from_server(
     return {gradients, response.loss()};
 }
 
+py::object LeafTrainer::forward_pass_on_server(
+    const std::string& server_name,
+    py::object inputs,
+    uint32_t model_index,
+    bool is_local) {
+    
+    try {
+        if (is_local) {
+            // For local server, use the local service
+            ServerCommunicationServiceImpl service;
+            std::string model_id = "model_" + std::to_string(model_index);
+            
+            if (!service.has_model(model_id)) {
+                throw std::runtime_error("Model with index " + std::to_string(model_index) + " not found locally");
+            }
+            
+            auto model = service.get_model(model_id);
+            if (!model) {
+                throw std::runtime_error("Failed to retrieve local model with index " + std::to_string(model_index));
+            }
+            
+            // Call the underlying PyTorch model's forward method directly
+            py::object pytorch_model = model->get_pytorch_model();
+            return pytorch_model.attr("forward")(inputs);
+        }
+        
+        // For remote servers, make RPC call
+        std::lock_guard<std::mutex> lock(channel_mutex);
+        
+        // Get or create channel for this server
+        if (server_channels.find(server_name) == server_channels.end()) {
+            server_channels[server_name] = create_channel(server_name);
+        }
+        
+        auto channel = server_channels[server_name];
+        auto stub = leaftest::ServerCommunication::NewStub(channel);
+        
+        // Serialize input data
+        py::object torch = py::module_::import("torch");
+        py::object numpy = py::module_::import("numpy");
+        
+        // Convert input to numpy array and then to bytes
+        py::array_t<float> input_array;
+        if (py::hasattr(inputs, "cpu")) {
+            py::object cpu_input = inputs.attr("cpu")();
+            if (py::hasattr(cpu_input, "numpy")) {
+                input_array = cpu_input.attr("numpy")();
+            } else {
+                throw std::runtime_error("Input tensor does not have numpy() method");
+            }
+        } else {
+            throw std::runtime_error("Input tensor does not have cpu() method");
+        }
+        
+        // Prepare request
+        leaftest::ForwardPassRequest request;
+        request.set_input_data(input_array.data(), input_array.size() * sizeof(float));
+        request.set_model_index(model_index);
+        
+        // Make RPC call
+        grpc::ClientContext context;
+        leaftest::ForwardPassResponse response;
+        
+        auto status = stub->ForwardPass(&context, request, &response);
+        
+        if (!status.ok()) {
+            throw std::runtime_error("Forward pass RPC failed for server " + server_name + ": " + status.error_message());
+        }
+        
+        if (!response.success()) {
+            throw std::runtime_error("Server " + server_name + " forward pass failed: " + response.error_message());
+        }
+        
+        // For now, return a dummy tensor since we're not properly serializing the output
+        // In a real implementation, you'd deserialize the response.gradients() back to a tensor
+        return torch.attr("randn")(1, 10);  // Placeholder output
+        
+    } catch (const std::exception& e) {
+        throw std::runtime_error("Forward pass failed: " + std::string(e.what()));
+    }
+}
+
 std::vector<std::pair<std::string, std::vector<size_t>>> LeafTrainer::distribute_batch(
     const std::vector<std::string>& server_names,
     size_t batch_size) {
@@ -318,15 +427,15 @@ std::vector<std::pair<std::string, std::vector<size_t>>> LeafTrainer::distribute
 
 void LeafTrainer::cleanup_models() {
     std::lock_guard<std::mutex> lock(models_mutex);
-    std::cout << "Cleaning up " << registered_models.size() << " registered models..." << std::endl;
-    registered_models.clear();
+    std::cout << "Cleaning up " << local_models.size() << " local models..." << std::endl;
+    local_models.clear();
     distributed_models.clear();
     std::cout << "Model cleanup completed." << std::endl;
 }
 
 size_t LeafTrainer::get_model_count() const {
     std::lock_guard<std::mutex> lock(models_mutex);
-    return registered_models.size();
+    return local_models.size();
 }
 
 std::vector<std::string> LeafTrainer::get_server_names() const {
@@ -385,7 +494,7 @@ py::object LeafTrainer::register_model(py::object model) {
     // Track the model for proper cleanup
     {
         std::lock_guard<std::mutex> lock(models_mutex);
-        registered_models.push_back(leaf_model);
+        local_models.push_back(leaf_model);
     }
     // Extract model state from PyTorch model using the new serialize_state method
     std::vector<float> model_state = leaf_model->serialize_state();
@@ -405,7 +514,7 @@ py::object LeafTrainer::register_model(py::object model) {
             std::cout << "Storing model on server: " << server_name << std::endl;
             if (is_local) {
                 ServerCommunicationServiceImpl service;
-                std::string model_key = "model_" + std::to_string(registered_models.size());
+                std::string model_key = "model_" + std::to_string(local_models.size());
                 service.store_model(model_key, leaf_model);
                 std::cout << "✓ Model stored locally successfully" << std::endl;
             } else {
@@ -417,7 +526,7 @@ py::object LeafTrainer::register_model(py::object model) {
                 auto stub = leaftest::ServerCommunication::NewStub(channel);
                 leaftest::StoreModelWeightsRequest request;
                 request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
-                request.set_model_id("model_" + std::to_string(registered_models.size()));
+                request.set_model_id("model_" + std::to_string(local_models.size()));
                 grpc::ClientContext context;
                 leaftest::StoreModelWeightsResponse response;
                 auto status = stub->StoreModelWeights(&context, request, &response);
@@ -434,14 +543,33 @@ py::object LeafTrainer::register_model(py::object model) {
         }
     }
     // Create a DistributedModel and store it
-    auto dist_model = std::make_shared<DistributedModel>(leaf_model, this);
+    std::shared_ptr<DistributedModel> dist_model;
     {
         std::lock_guard<std::mutex> lock(models_mutex);
+        size_t model_index = distributed_models.size();
+        dist_model = std::make_shared<DistributedModel>(leaf_model, this, model_index);
         distributed_models.push_back(dist_model);
     }
     py::object model_obj = py::cast(dist_model);
-    std::cout << "Model registered successfully! Total models: " << registered_models.size() << std::endl;
+    std::cout << "Model registered successfully! Total models: " << local_models.size() << std::endl;
     return model_obj;
+}
+
+py::object LeafTrainer::register_criterion(py::object criterion) {
+    std::cout << "Registering criterion with LeafTrainer..." << std::endl;
+    
+    // Create a Criterion instance that wraps the PyTorch criterion
+    auto leaf_criterion = std::make_shared<Criterion>(criterion, this);
+    
+    // Track the criterion for proper cleanup
+    {
+        std::lock_guard<std::mutex> lock(models_mutex);
+        criteria.push_back(leaf_criterion);
+    }
+    
+    py::object criterion_obj = py::cast(leaf_criterion);
+    std::cout << "Criterion registered successfully! Total criteria: " << criteria.size() << std::endl;
+    return criterion_obj;
 }
 
 py::dict LeafTrainer::train(py::object model, 

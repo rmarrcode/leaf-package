@@ -20,6 +20,7 @@ GRPC_HDRS = server_communication.grpc.pb.h
 USER_CREDENTIALS_SRCS = user_credentials.cpp
 SERVER_SRCS = server.cpp
 MODEL_SRCS = model.cpp
+CRITERION_SRCS = criterion.cpp
 
 # Targets
 all: $(PROTO_SRCS) $(GRPC_SRCS) server_communication
@@ -33,7 +34,7 @@ $(GRPC_SRCS) $(GRPC_HDRS): $(PROTO_FILE)
 	$(PROTOC) --grpc_out=. --plugin=protoc-gen-grpc=$(GRPC_CPP_PLUGIN) $(PROTO_FILE)
 
 # Build server_communication binary
-server_communication: $(PROTO_SRCS) $(GRPC_SRCS) $(USER_CREDENTIALS_SRCS) $(SERVER_SRCS) $(MODEL_SRCS) server_communication.cpp
+server_communication: $(PROTO_SRCS) $(GRPC_SRCS) $(USER_CREDENTIALS_SRCS) $(SERVER_SRCS) $(MODEL_SRCS) $(CRITERION_SRCS) server_communication.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Clean

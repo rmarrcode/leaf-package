@@ -23,6 +23,7 @@ message ForwardPassRequest {
     bytes target_data = 3;  // Serialized target tensor data
     string model_type = 4;  // Type of model (e.g., "resnet50")
     string criterion_type = 5;  // Type of loss function (e.g., "CrossEntropyLoss")
+    uint32 model_index = 6;  // Index of the model to use for forward pass
 }
 
 message ForwardPassResponse {

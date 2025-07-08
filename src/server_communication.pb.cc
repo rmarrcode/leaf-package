@@ -105,9 +105,6 @@ inline constexpr StoreModelWeightsRequest::Impl_::Impl_(
       : model_state_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        model_type_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
         model_id_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -250,6 +247,7 @@ inline constexpr ForwardPassRequest::Impl_::Impl_(
         criterion_type_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
+        model_index_{0u},
         _cached_size_{0} {}
 
 template <typename>
@@ -309,6 +307,7 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.target_data_),
         PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.model_type_),
         PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.criterion_type_),
+        PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassRequest, _impl_.model_index_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::leaftest::ForwardPassResponse, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -354,7 +353,6 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsRequest, _impl_.model_state_),
-        PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsRequest, _impl_.model_type_),
         PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsRequest, _impl_.model_id_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::leaftest::StoreModelWeightsResponse, _internal_metadata_),
@@ -374,10 +372,10 @@ static const ::_pbi::MigrationSchema
         {0, -1, -1, sizeof(::leaftest::TimeRequest)},
         {8, -1, -1, sizeof(::leaftest::TimeResponse)},
         {17, -1, -1, sizeof(::leaftest::ForwardPassRequest)},
-        {30, -1, -1, sizeof(::leaftest::ForwardPassResponse)},
-        {42, -1, -1, sizeof(::leaftest::GradientRequest)},
-        {54, -1, -1, sizeof(::leaftest::GradientResponse)},
-        {66, -1, -1, sizeof(::leaftest::StoreModelWeightsRequest)},
+        {31, -1, -1, sizeof(::leaftest::ForwardPassResponse)},
+        {43, -1, -1, sizeof(::leaftest::GradientRequest)},
+        {55, -1, -1, sizeof(::leaftest::GradientResponse)},
+        {67, -1, -1, sizeof(::leaftest::StoreModelWeightsRequest)},
         {77, -1, -1, sizeof(::leaftest::StoreModelWeightsResponse)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
@@ -394,36 +392,36 @@ const char descriptor_table_protodef_server_5fcommunication_2eproto[] ABSL_ATTRI
     protodesc_cold) = {
     "\n\032server_communication.proto\022\010leaftest\"\r"
     "\n\013TimeRequest\"&\n\014TimeResponse\022\026\n\016server_"
-    "time_ms\030\001 \001(\003\"~\n\022ForwardPassRequest\022\023\n\013m"
-    "odel_state\030\001 \001(\014\022\022\n\ninput_data\030\002 \001(\014\022\023\n\013"
-    "target_data\030\003 \001(\014\022\022\n\nmodel_type\030\004 \001(\t\022\026\n"
-    "\016criterion_type\030\005 \001(\t\"^\n\023ForwardPassResp"
-    "onse\022\021\n\tgradients\030\001 \001(\014\022\014\n\004loss\030\002 \001(\002\022\017\n"
-    "\007success\030\003 \001(\010\022\025\n\rerror_message\030\004 \001(\t\"f\n"
-    "\017GradientRequest\022\023\n\013model_state\030\001 \001(\014\022\022\n"
-    "\ninput_data\030\002 \001(\014\022\022\n\nmodel_type\030\003 \001(\t\022\026\n"
-    "\016criterion_type\030\004 \001(\t\"[\n\020GradientRespons"
-    "e\022\021\n\tgradients\030\001 \001(\014\022\014\n\004loss\030\002 \001(\002\022\017\n\007su"
-    "ccess\030\003 \001(\010\022\025\n\rerror_message\030\004 \001(\t\"U\n\030St"
-    "oreModelWeightsRequest\022\023\n\013model_state\030\001 "
-    "\001(\014\022\022\n\nmodel_type\030\002 \001(\t\022\020\n\010model_id\030\003 \001("
-    "\t\"U\n\031StoreModelWeightsResponse\022\017\n\007succes"
-    "s\030\001 \001(\010\022\025\n\rerror_message\030\002 \001(\t\022\020\n\010model_"
-    "id\030\003 \001(\t2\316\002\n\023ServerCommunication\022@\n\rGetS"
-    "erverTime\022\025.leaftest.TimeRequest\032\026.leaft"
-    "est.TimeResponse\"\000\022L\n\013ForwardPass\022\034.leaf"
-    "test.ForwardPassRequest\032\035.leaftest.Forwa"
-    "rdPassResponse\"\000\022G\n\014GetGradients\022\031.leaft"
-    "est.GradientRequest\032\032.leaftest.GradientR"
-    "esponse\"\000\022^\n\021StoreModelWeights\022\".leaftes"
-    "t.StoreModelWeightsRequest\032#.leaftest.St"
-    "oreModelWeightsResponse\"\000b\006proto3"
+    "time_ms\030\001 \001(\003\"\223\001\n\022ForwardPassRequest\022\023\n\013"
+    "model_state\030\001 \001(\014\022\022\n\ninput_data\030\002 \001(\014\022\023\n"
+    "\013target_data\030\003 \001(\014\022\022\n\nmodel_type\030\004 \001(\t\022\026"
+    "\n\016criterion_type\030\005 \001(\t\022\023\n\013model_index\030\006 "
+    "\001(\r\"^\n\023ForwardPassResponse\022\021\n\tgradients\030"
+    "\001 \001(\014\022\014\n\004loss\030\002 \001(\002\022\017\n\007success\030\003 \001(\010\022\025\n\r"
+    "error_message\030\004 \001(\t\"f\n\017GradientRequest\022\023"
+    "\n\013model_state\030\001 \001(\014\022\022\n\ninput_data\030\002 \001(\014\022"
+    "\022\n\nmodel_type\030\003 \001(\t\022\026\n\016criterion_type\030\004 "
+    "\001(\t\"[\n\020GradientResponse\022\021\n\tgradients\030\001 \001"
+    "(\014\022\014\n\004loss\030\002 \001(\002\022\017\n\007success\030\003 \001(\010\022\025\n\rerr"
+    "or_message\030\004 \001(\t\"A\n\030StoreModelWeightsReq"
+    "uest\022\023\n\013model_state\030\001 \001(\014\022\020\n\010model_id\030\002 "
+    "\001(\t\"U\n\031StoreModelWeightsResponse\022\017\n\007succ"
+    "ess\030\001 \001(\010\022\025\n\rerror_message\030\002 \001(\t\022\020\n\010mode"
+    "l_id\030\003 \001(\t2\316\002\n\023ServerCommunication\022@\n\rGe"
+    "tServerTime\022\025.leaftest.TimeRequest\032\026.lea"
+    "ftest.TimeResponse\"\000\022L\n\013ForwardPass\022\034.le"
+    "aftest.ForwardPassRequest\032\035.leaftest.For"
+    "wardPassResponse\"\000\022G\n\014GetGradients\022\031.lea"
+    "ftest.GradientRequest\032\032.leaftest.Gradien"
+    "tResponse\"\000\022^\n\021StoreModelWeights\022\".leaft"
+    "est.StoreModelWeightsRequest\032#.leaftest."
+    "StoreModelWeightsResponse\"\000b\006proto3"
 };
 static ::absl::once_flag descriptor_table_server_5fcommunication_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_server_5fcommunication_2eproto = {
     false,
     false,
-    1033,
+    1035,
     descriptor_table_protodef_server_5fcommunication_2eproto,
     "server_communication.proto",
     &descriptor_table_server_5fcommunication_2eproto_once,
@@ -785,6 +783,7 @@ ForwardPassRequest::ForwardPassRequest(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.model_index_ = from._impl_.model_index_;
 
   // @@protoc_insertion_point(copy_constructor:leaftest.ForwardPassRequest)
 }
@@ -800,6 +799,7 @@ inline PROTOBUF_NDEBUG_INLINE ForwardPassRequest::Impl_::Impl_(
 
 inline void ForwardPassRequest::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.model_index_ = {};
 }
 ForwardPassRequest::~ForwardPassRequest() {
   // @@protoc_insertion_point(destructor:leaftest.ForwardPassRequest)
@@ -853,15 +853,15 @@ const ::google::protobuf::internal::ClassData* ForwardPassRequest::GetClassData(
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 5, 0, 60, 2> ForwardPassRequest::_table_ = {
+const ::_pbi::TcParseTable<3, 6, 0, 60, 2> ForwardPassRequest::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    5, 56,  // max_field_number, fast_idx_mask
+    6, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967264,  // skipmap
+    4294967232,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    5,  // num_field_entries
+    6,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -887,7 +887,9 @@ const ::_pbi::TcParseTable<3, 5, 0, 60, 2> ForwardPassRequest::_table_ = {
     // string criterion_type = 5;
     {::_pbi::TcParser::FastUS1,
      {42, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.criterion_type_)}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // uint32 model_index = 6;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ForwardPassRequest, _impl_.model_index_), 63>(),
+     {48, 63, 0, PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.model_index_)}},
     {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
@@ -907,6 +909,9 @@ const ::_pbi::TcParseTable<3, 5, 0, 60, 2> ForwardPassRequest::_table_ = {
     // string criterion_type = 5;
     {PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.criterion_type_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // uint32 model_index = 6;
+    {PROTOBUF_FIELD_OFFSET(ForwardPassRequest, _impl_.model_index_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt32)},
   }},
   // no aux_entries
   {{
@@ -929,6 +934,7 @@ PROTOBUF_NOINLINE void ForwardPassRequest::Clear() {
   _impl_.target_data_.ClearToEmpty();
   _impl_.model_type_.ClearToEmpty();
   _impl_.criterion_type_.ClearToEmpty();
+  _impl_.model_index_ = 0u;
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -981,6 +987,13 @@ PROTOBUF_NOINLINE void ForwardPassRequest::Clear() {
             target = stream->WriteStringMaybeAliased(5, _s, target);
           }
 
+          // uint32 model_index = 6;
+          if (this_._internal_model_index() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                6, this_._internal_model_index(), target);
+          }
+
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
             target =
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -1031,6 +1044,11 @@ PROTOBUF_NOINLINE void ForwardPassRequest::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_criterion_type());
             }
+            // uint32 model_index = 6;
+            if (this_._internal_model_index() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_model_index());
+            }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
@@ -1059,6 +1077,9 @@ void ForwardPassRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, cons
   if (!from._internal_criterion_type().empty()) {
     _this->_internal_set_criterion_type(from._internal_criterion_type());
   }
+  if (from._internal_model_index() != 0) {
+    _this->_impl_.model_index_ = from._impl_.model_index_;
+  }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1080,6 +1101,7 @@ void ForwardPassRequest::InternalSwap(ForwardPassRequest* PROTOBUF_RESTRICT othe
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.target_data_, &other->_impl_.target_data_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_type_, &other->_impl_.model_type_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.criterion_type_, &other->_impl_.criterion_type_, arena);
+        swap(_impl_.model_index_, other->_impl_.model_index_);
 }
 
 ::google::protobuf::Metadata ForwardPassRequest::GetMetadata() const {
@@ -2052,7 +2074,6 @@ inline PROTOBUF_NDEBUG_INLINE StoreModelWeightsRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::leaftest::StoreModelWeightsRequest& from_msg)
       : model_state_(arena, from.model_state_),
-        model_type_(arena, from.model_type_),
         model_id_(arena, from.model_id_),
         _cached_size_{0} {}
 
@@ -2076,7 +2097,6 @@ inline PROTOBUF_NDEBUG_INLINE StoreModelWeightsRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : model_state_(arena),
-        model_type_(arena),
         model_id_(arena),
         _cached_size_{0} {}
 
@@ -2092,7 +2112,6 @@ inline void StoreModelWeightsRequest::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.model_state_.Destroy();
-  this_._impl_.model_type_.Destroy();
   this_._impl_.model_id_.Destroy();
   this_._impl_.~Impl_();
 }
@@ -2133,15 +2152,15 @@ const ::google::protobuf::internal::ClassData* StoreModelWeightsRequest::GetClas
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 60, 2> StoreModelWeightsRequest::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 50, 2> StoreModelWeightsRequest::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    3, 24,  // max_field_number, fast_idx_mask
+    2, 8,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967288,  // skipmap
+    4294967292,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    3,  // num_field_entries
+    2,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -2151,34 +2170,26 @@ const ::_pbi::TcParseTable<2, 3, 0, 60, 2> StoreModelWeightsRequest::_table_ = {
     ::_pbi::TcParser::GetTable<::leaftest::StoreModelWeightsRequest>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // string model_id = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_id_)}},
     // bytes model_state = 1;
     {::_pbi::TcParser::FastBS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_state_)}},
-    // string model_type = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_type_)}},
-    // string model_id = 3;
-    {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_id_)}},
   }}, {{
     65535, 65535
   }}, {{
     // bytes model_state = 1;
     {PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_state_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
-    // string model_type = 2;
-    {PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_type_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string model_id = 3;
+    // string model_id = 2;
     {PROTOBUF_FIELD_OFFSET(StoreModelWeightsRequest, _impl_.model_id_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\41\0\12\10\0\0\0\0"
+    "\41\0\10\0\0\0\0\0"
     "leaftest.StoreModelWeightsRequest"
-    "model_type"
     "model_id"
   }},
 };
@@ -2191,7 +2202,6 @@ PROTOBUF_NOINLINE void StoreModelWeightsRequest::Clear() {
   (void) cached_has_bits;
 
   _impl_.model_state_.ClearToEmpty();
-  _impl_.model_type_.ClearToEmpty();
   _impl_.model_id_.ClearToEmpty();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -2217,20 +2227,12 @@ PROTOBUF_NOINLINE void StoreModelWeightsRequest::Clear() {
             target = stream->WriteBytesMaybeAliased(1, _s, target);
           }
 
-          // string model_type = 2;
-          if (!this_._internal_model_type().empty()) {
-            const std::string& _s = this_._internal_model_type();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.StoreModelWeightsRequest.model_type");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
-          }
-
-          // string model_id = 3;
+          // string model_id = 2;
           if (!this_._internal_model_id().empty()) {
             const std::string& _s = this_._internal_model_id();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
                 _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "leaftest.StoreModelWeightsRequest.model_id");
-            target = stream->WriteStringMaybeAliased(3, _s, target);
+            target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -2263,12 +2265,7 @@ PROTOBUF_NOINLINE void StoreModelWeightsRequest::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
                                               this_._internal_model_state());
             }
-            // string model_type = 2;
-            if (!this_._internal_model_type().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_model_type());
-            }
-            // string model_id = 3;
+            // string model_id = 2;
             if (!this_._internal_model_id().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_model_id());
@@ -2288,9 +2285,6 @@ void StoreModelWeightsRequest::MergeImpl(::google::protobuf::MessageLite& to_msg
 
   if (!from._internal_model_state().empty()) {
     _this->_internal_set_model_state(from._internal_model_state());
-  }
-  if (!from._internal_model_type().empty()) {
-    _this->_internal_set_model_type(from._internal_model_type());
   }
   if (!from._internal_model_id().empty()) {
     _this->_internal_set_model_id(from._internal_model_id());
@@ -2312,7 +2306,6 @@ void StoreModelWeightsRequest::InternalSwap(StoreModelWeightsRequest* PROTOBUF_R
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_state_, &other->_impl_.model_state_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_type_, &other->_impl_.model_type_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.model_id_, &other->_impl_.model_id_, arena);
 }
 

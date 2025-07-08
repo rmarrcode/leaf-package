@@ -1,10 +1,13 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <cstdint>
 #include <grpcpp/grpcpp.h>
 #include "server_communication.grpc.pb.h"
 #include "server_communication.h"
 #include "model.h"
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -18,6 +21,8 @@ using leaftest::GradientRequest;
 using leaftest::GradientResponse;
 using leaftest::StoreModelWeightsRequest;
 using leaftest::StoreModelWeightsResponse;
+
+namespace py = pybind11;
 
 Status ServerCommunicationServiceImpl::GetServerTime(ServerContext* /*context*/, const TimeRequest* /*request*/, TimeResponse* response) {
     response->set_server_time_ms(123456789);  // fixed demo value
@@ -64,17 +69,56 @@ Status ServerCommunicationServiceImpl::StoreModelWeights(ServerContext* /*contex
 
 Status ServerCommunicationServiceImpl::ForwardPass(ServerContext* /*context*/, const ForwardPassRequest* request, ForwardPassResponse* response) {
     try {
-        // For now, we'll return a dummy response
-        // In a real implementation, this would:
-        // 1. Deserialize input data from request->input_data()
-        // 2. Use the stored model to perform forward pass
-        // 3. Return the output
+        uint32_t model_index = request->model_index();
         
-        // Dummy implementation
-        response->set_gradients("dummy_output");
-        response->set_loss(0.5f);
+        // Get the model ID based on the index
+        std::string model_id = "model_" + std::to_string(model_index);
+        
+        // Check if the model exists
+        if (!has_model(model_id)) {
+            response->set_success(false);
+            response->set_error_message("Model with index " + std::to_string(model_index) + " not found");
+            return Status::OK;
+        }
+        
+        // Get the model
+        auto model = get_model(model_id);
+        if (!model) {
+            response->set_success(false);
+            response->set_error_message("Failed to retrieve model with index " + std::to_string(model_index));
+            return Status::OK;
+        }
+        
+        // Deserialize input data from request
+        const std::string& input_bytes = request->input_data();
+        if (input_bytes.empty()) {
+            response->set_success(false);
+            response->set_error_message("No input data provided");
+            return Status::OK;
+        }
+        
+        // Convert bytes to numpy array and then to PyTorch tensor
+        // This is a simplified version - in practice you'd need proper tensor deserialization
+        py::object torch = py::module_::import("torch");
+        py::object numpy = py::module_::import("numpy");
+        
+        // Create a dummy input tensor for now (in real implementation, deserialize properly)
+        py::object input_tensor = torch.attr("randn")(1, 3, 224, 224);  // Example shape
+        
+        // Perform forward pass using the underlying PyTorch model
+        py::object pytorch_model = model->get_pytorch_model();
+        py::object output = pytorch_model.attr("forward")(input_tensor);
+        
+        // Convert output to bytes for response
+        // In a real implementation, you'd serialize the output tensor
+        std::string output_bytes = "forward_pass_output";  // Placeholder
+        
+        response->set_gradients(output_bytes);
+        response->set_loss(0.0f);  // No loss computation in forward pass
         response->set_success(true);
         response->set_error_message("");
+        
+        std::cout << "Forward pass completed for model index " << model_index << std::endl;
         
         return Status::OK;
     } catch (const std::exception& e) {

@@ -17,17 +17,21 @@ class DistributedModel {
 private:
     std::shared_ptr<Model> model;
     LeafTrainer* leaf_trainer;
+    size_t index; // Index in the distributed_models array
 
 public:
-    DistributedModel(std::shared_ptr<Model> model, LeafTrainer* trainer);
+    DistributedModel(std::shared_ptr<Model> model, LeafTrainer* trainer, size_t index);
 
-    // Forward pass: split input and distribute to all servers
-    py::object forward(py::object input);
-    py::object operator()(py::object input);
+    // Forward pass: distribute to all servers and return true if successful
+    bool forward(py::object input);
+    bool operator()(py::object input);
 
     // Get the underlying PyTorch model
     py::object get_pytorch_model() const;
     LeafTrainer* get_leaf_trainer() const;
+    
+    // Get the index of this model in the distributed_models array
+    size_t get_index() const;
 
     // Delegate common PyTorch model methods
     py::object state_dict();

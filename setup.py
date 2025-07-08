@@ -88,6 +88,7 @@ ext_modules = [
             'src/core_impl.cpp',
             'src/model.cpp',
             'src/distributed_model.cpp',
+            'src/criterion.cpp',
             'src/user_credentials.cpp',
             'src/server.cpp',
             'src/server_communication.cpp',

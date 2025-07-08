@@ -29,6 +29,7 @@
 #include "user_credentials.h"
 #include "server.h"
 #include "model.h"
+#include "criterion.h"
 
 namespace py = pybind11;
 
@@ -63,9 +64,10 @@ private:
     LeafConfig config;
     std::map<std::string, std::shared_ptr<grpc::Channel>> server_channels;
     std::mutex channel_mutex;
-    std::vector<std::shared_ptr<Model>> registered_models;  // Track registered models
+    std::vector<std::shared_ptr<Model>> local_models;  // Track local models
     std::vector<std::shared_ptr<DistributedModel>> distributed_models; // Track distributed models
-    mutable std::mutex models_mutex;  // Protect access to registered_models
+    std::vector<std::shared_ptr<Criterion>> criteria;  // Track criteria
+    mutable std::mutex models_mutex;  // Protect access to local_models
 
     std::shared_ptr<grpc::Channel> create_channel(const std::string& server_name);
     std::pair<std::vector<float>, float> get_gradients_from_server(
@@ -80,6 +82,11 @@ private:
         size_t batch_size);
 
 public:
+    py::object forward_pass_on_server(
+        const std::string& server_name,
+        py::object inputs,
+        uint32_t model_index,
+        bool is_local = false);
     LeafTrainer(const LeafConfig& cfg);
     ~LeafTrainer();
     
@@ -87,9 +94,7 @@ public:
     LeafTrainer(const LeafTrainer&) = delete;
     LeafTrainer& operator=(const LeafTrainer&) = delete;
     
-    // Allow move constructor and assignment
-    LeafTrainer(LeafTrainer&&) = default;
-    LeafTrainer& operator=(LeafTrainer&&) = default;
+    // Move constructor and assignment are implicitly deleted due to mutex members
 
     void cleanup_models();
     size_t get_model_count() const;
@@ -100,6 +105,7 @@ public:
         const std::vector<float>& model_state,
         const std::string& model_id);
     py::object register_model(py::object model);
+    py::object register_criterion(py::object criterion);
     py::dict train(py::object model, 
                    py::object optimizer, 
                    py::object train_loader, 

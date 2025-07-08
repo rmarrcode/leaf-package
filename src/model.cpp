@@ -5,14 +5,25 @@
 namespace py = pybind11;
 
 Model::Model(py::object model, LeafTrainer* trainer)
-    : pytorch_model(model), leaf_trainer(trainer) {}
+    : pytorch_model(model), leaf_trainer(trainer), computed_outputs(false), loss(py::none()) {}
 
-py::object Model::forward(py::object input) {
-    // Call the original model's forward method
-    return pytorch_model.attr("forward")(input);
+bool Model::forward(py::object input) {
+    try {
+        // Call the original model's forward method
+        py::object output = pytorch_model.attr("forward")(input);
+        
+        // Store the output
+        stored_outputs.push_back(output);
+        computed_outputs = true;
+        
+        return true;
+    } catch (const std::exception& e) {
+        std::cout << "Error in Model::forward: " << e.what() << std::endl;
+        return false;
+    }
 }
 
-py::object Model::operator()(py::object input) {
+bool Model::operator()(py::object input) {
     return forward(input);
 }
 
@@ -22,6 +33,31 @@ py::object Model::get_pytorch_model() const {
 
 LeafTrainer* Model::get_leaf_trainer() const {
     return leaf_trainer;
+}
+
+bool Model::has_computed_outputs() const {
+    return computed_outputs;
+}
+
+const std::vector<py::object>& Model::get_stored_outputs() const {
+    return stored_outputs;
+}
+
+void Model::clear_stored_outputs() {
+    stored_outputs.clear();
+    computed_outputs = false;
+}
+
+py::object Model::get_loss() const {
+    return loss;
+}
+
+void Model::set_loss(py::object loss_value) {
+    loss = loss_value;
+}
+
+void Model::clear_loss() {
+    loss = py::none();
 }
 
 py::object Model::state_dict() {

@@ -91,6 +91,7 @@ bool UserCredentials::setup_ssh_tunnel() {
     
     // Verify tunnel is working
     std::string verify_cmd = "lsof -Pi :" + std::to_string(tunnel_port) + " -sTCP:LISTEN -t 2>/dev/null";
+    std::cout << "Verifying SSH tunnel on port " << tunnel_port << "..." << std::endl;
     result.clear();
     pipe = std::unique_ptr<FILE, decltype(&pclose)>(popen(verify_cmd.c_str(), "r"), pclose);
     
@@ -109,6 +110,15 @@ bool UserCredentials::setup_ssh_tunnel() {
         try {
             tunnel_pid = std::stoi(pid_str);
             std::cout << "SSH tunnel established on port " << tunnel_port << " (PID: " << tunnel_pid << ")" << std::endl;
+            
+            // Additional verification: try to connect to the port
+            std::string test_cmd = "nc -z localhost " + std::to_string(tunnel_port) + " 2>/dev/null";
+            if (std::system(test_cmd.c_str()) == 0) {
+                std::cout << "Port " << tunnel_port << " is accepting connections" << std::endl;
+            } else {
+                std::cout << "Warning: Port " << tunnel_port << " is not accepting connections" << std::endl;
+            }
+            
             return true;
         } catch (const std::exception& e) {
             std::cerr << "Failed to parse tunnel PID: " << e.what() << std::endl;
@@ -307,6 +317,7 @@ bool UserCredentials::build_run_docker_container() {
 
 bool UserCredentials::test_grpc_connection() {
     std::string target = "localhost:" + std::to_string(tunnel_port);
+    std::cout << "Testing gRPC connection to: " << target << std::endl;
     
     // Configure channel with increased message size limits to handle large model weights
     grpc::ChannelArguments args;
@@ -315,6 +326,7 @@ bool UserCredentials::test_grpc_connection() {
     
     auto channel = grpc::CreateCustomChannel(target, grpc::InsecureChannelCredentials(), args);
     auto stub = leaftest::ServerCommunication::NewStub(channel);
+    
     // Try to get server time
     grpc::ClientContext context;
     leaftest::TimeRequest request;
@@ -322,10 +334,16 @@ bool UserCredentials::test_grpc_connection() {
     context.set_deadline(std::chrono::system_clock::now() + 
                         std::chrono::seconds(10));
     
+    std::cout << "Making gRPC call to GetServerTime..." << std::endl;
     auto status = stub->GetServerTime(&context, request, &response);
+    
     if (!status.ok()) {
+        std::cout << "gRPC call failed with error: " << status.error_message() 
+                  << " (code: " << status.error_code() << ")" << std::endl;
         return false;
     } 
+    
+    std::cout << "gRPC call successful, server time: " << response.server_time_ms() << std::endl;
     return true;
 }
 
