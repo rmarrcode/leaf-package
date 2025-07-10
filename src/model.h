@@ -10,6 +10,9 @@
 namespace py = pybind11;
 
 // Forward declaration
+class Criterion;
+
+// Forward declaration
 class LeafTrainer;
 
 class Model {
@@ -18,7 +21,8 @@ private:
     LeafTrainer* leaf_trainer;
     bool computed_outputs;
     std::vector<py::object> stored_outputs;
-    py::object loss;  // Store the loss for this model
+    float loss;  // Store the computed loss
+    std::shared_ptr<Criterion> criterion;  // Pointer to the registered criterion
 
 public:
     Model(py::object model, LeafTrainer* trainer);
@@ -44,11 +48,6 @@ public:
     // Clear stored outputs
     void clear_stored_outputs();
     
-    // Loss management
-    py::object get_loss() const;
-    void set_loss(py::object loss_value);
-    void clear_loss();
-    
     // Delegate common PyTorch model methods to the underlying model
     py::object state_dict();
     py::object parameters();
@@ -67,6 +66,18 @@ public:
     
     // Check if model has an attribute
     bool hasattr(const std::string& name);
+    
+    // Get the computed loss
+    float get_loss() const;
+    
+    // Set the loss value
+    void set_loss(float loss_value);
+    
+    // Get the registered criterion
+    std::shared_ptr<Criterion> get_criterion() const;
+    
+    // Set the criterion
+    void set_criterion(std::shared_ptr<Criterion> criterion_ptr);
     
     // Serialize model state to vector of floats
     std::vector<float> serialize_state() const;

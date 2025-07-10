@@ -153,6 +153,8 @@ std::pair<int, std::string> LeafConfig::get_server_connection_info(const std::st
 // LeafTrainer implementation
 LeafTrainer::LeafTrainer(const LeafConfig& cfg) : config(cfg) {
     // gRPC is automatically initialized when needed
+    // Initialize the local service instance
+    local_service = std::make_unique<ServerCommunicationServiceImpl>();
 }
 
 LeafTrainer::~LeafTrainer() {}
@@ -246,9 +248,7 @@ std::pair<std::vector<float>, float> LeafTrainer::get_gradients_from_server(
         // For local servers, directly use the GetGradients function from server_communication.cpp
         std::cout << "  Computing gradients locally (using GetGradients from server_communication)..." << std::endl;
         
-        // Create an instance of ServerCommunicationServiceImpl to use its GetGradients method
-        ServerCommunicationServiceImpl service;
-        
+        // Use the persistent local service instance
         // Create the request and response objects
         leaftest::GradientRequest request;
         leaftest::GradientResponse response;
@@ -259,7 +259,7 @@ std::pair<std::vector<float>, float> LeafTrainer::get_gradients_from_server(
         
         // Call the GetGradients method directly
         grpc::ServerContext context;
-        auto status = service.GetGradients(&context, &request, &response);
+        auto status = local_service->GetGradients(&context, &request, &response);
         
         if (!status.ok()) {
             throw std::runtime_error("Local GetGradients failed: " + status.error_message());
@@ -327,15 +327,14 @@ py::object LeafTrainer::forward_pass_on_server(
     
     try {
         if (is_local) {
-            // For local server, use the local service
-            ServerCommunicationServiceImpl service;
+            // For local server, use the persistent local service
             std::string model_id = "model_" + std::to_string(model_index);
             
-            if (!service.has_model(model_id)) {
+            if (!local_service->has_model(model_id)) {
                 throw std::runtime_error("Model with index " + std::to_string(model_index) + " not found locally");
             }
             
-            auto model = service.get_model(model_id);
+            auto model = local_service->get_model(model_id);
             if (!model) {
                 throw std::runtime_error("Failed to retrieve local model with index " + std::to_string(model_index));
             }
@@ -425,6 +424,33 @@ std::vector<std::pair<std::string, std::vector<size_t>>> LeafTrainer::distribute
     return distribution;
 }
 
+py::object LeafTrainer::divide_targets(py::object targets, 
+                                      const std::vector<std::pair<std::string, std::vector<size_t>>>& distribution) {
+    try {
+        // Create a dictionary to store divided targets for each server
+        py::dict divided_targets;
+        
+        for (const auto& [server_name, indices] : distribution) {
+            // Create a list to store the targets for this server
+            py::list server_targets;
+            
+            for (size_t index : indices) {
+                // Extract the target at the specified index
+                py::object target_item = targets.attr("__getitem__")(index);
+                server_targets.append(target_item);
+            }
+            
+            // Store the targets for this server
+            divided_targets[server_name.c_str()] = server_targets;
+        }
+        
+        return divided_targets;
+    } catch (const std::exception& e) {
+        std::cout << "Error in divide_targets: " << e.what() << std::endl;
+        throw;
+    }
+}
+
 void LeafTrainer::cleanup_models() {
     std::lock_guard<std::mutex> lock(models_mutex);
     std::cout << "Cleaning up " << local_models.size() << " local models..." << std::endl;
@@ -496,9 +522,18 @@ py::object LeafTrainer::register_model(py::object model) {
         std::lock_guard<std::mutex> lock(models_mutex);
         local_models.push_back(leaf_model);
     }
+    
+    // Calculate the model index first
+    size_t model_index;
+    {
+        std::lock_guard<std::mutex> lock(models_mutex);
+        model_index = distributed_models.size();
+    }
+    
     // Extract model state from PyTorch model using the new serialize_state method
     std::vector<float> model_state = leaf_model->serialize_state();
     std::cout << "Model state extracted, size: " << model_state.size() << " parameters" << std::endl;
+    
     // Distribute model to all servers
     auto server_names = config.get_servers();
     std::cout << "Distributing model to " << server_names.size() << " servers..." << std::endl;
@@ -513,9 +548,8 @@ py::object LeafTrainer::register_model(py::object model) {
             }
             std::cout << "Storing model on server: " << server_name << std::endl;
             if (is_local) {
-                ServerCommunicationServiceImpl service;
-                std::string model_key = "model_" + std::to_string(local_models.size());
-                service.store_model(model_key, leaf_model);
+                std::string model_key = "model_" + std::to_string(model_index);
+                local_service->store_model(model_key, leaf_model);
                 std::cout << "✓ Model stored locally successfully" << std::endl;
             } else {
                 std::lock_guard<std::mutex> lock(channel_mutex);
@@ -526,7 +560,7 @@ py::object LeafTrainer::register_model(py::object model) {
                 auto stub = leaftest::ServerCommunication::NewStub(channel);
                 leaftest::StoreModelWeightsRequest request;
                 request.set_model_state(model_state.data(), model_state.size() * sizeof(float));
-                request.set_model_id("model_" + std::to_string(local_models.size()));
+                request.set_model_id("model_" + std::to_string(model_index));
                 grpc::ClientContext context;
                 leaftest::StoreModelWeightsResponse response;
                 auto status = stub->StoreModelWeights(&context, request, &response);
@@ -542,11 +576,11 @@ py::object LeafTrainer::register_model(py::object model) {
             std::cout << "Warning: Error storing model on server " << server_name << ": " << e.what() << std::endl;
         }
     }
+    
     // Create a DistributedModel and store it
     std::shared_ptr<DistributedModel> dist_model;
     {
         std::lock_guard<std::mutex> lock(models_mutex);
-        size_t model_index = distributed_models.size();
         dist_model = std::make_shared<DistributedModel>(leaf_model, this, model_index);
         distributed_models.push_back(dist_model);
     }
@@ -555,7 +589,7 @@ py::object LeafTrainer::register_model(py::object model) {
     return model_obj;
 }
 
-py::object LeafTrainer::register_criterion(py::object criterion) {
+py::object LeafTrainer::register_criterion(py::object model, py::object criterion) {
     std::cout << "Registering criterion with LeafTrainer..." << std::endl;
     
     // Create a Criterion instance that wraps the PyTorch criterion
@@ -564,11 +598,27 @@ py::object LeafTrainer::register_criterion(py::object criterion) {
     // Track the criterion for proper cleanup
     {
         std::lock_guard<std::mutex> lock(models_mutex);
-        criteria.push_back(leaf_criterion);
+        criterions.push_back(leaf_criterion);
+    }
+    
+    // Find the corresponding distributed model and set the criterion
+    {
+        std::lock_guard<std::mutex> lock(models_mutex);
+        for (auto& dist_model : distributed_models) {
+            // Check if this is the model that was passed in
+            if (py::isinstance<DistributedModel>(model)) {
+                auto model_ptr = model.cast<std::shared_ptr<DistributedModel>>();
+                if (model_ptr == dist_model) {
+                    dist_model->set_criterion(leaf_criterion);
+                    std::cout << "✓ Criterion registered with distributed model successfully!" << std::endl;
+                    break;
+                }
+            }
+        }
     }
     
     py::object criterion_obj = py::cast(leaf_criterion);
-    std::cout << "Criterion registered successfully! Total criteria: " << criteria.size() << std::endl;
+    std::cout << "Criterion registered successfully! Total criterions: " << criterions.size() << std::endl;
     return criterion_obj;
 }
 
@@ -771,9 +821,7 @@ py::dict LeafTrainer::test_with_hardcoded_values() {
                 // For local servers, directly use the GetGradients function from server_communication.cpp
                 std::cout << "  Computing gradients locally (using GetGradients from server_communication)..." << std::endl;
                 
-                // Create an instance of ServerCommunicationServiceImpl to use its GetGradients method
-                ServerCommunicationServiceImpl service;
-                
+                // Use the persistent local service instance
                 // Create the request and response objects
                 leaftest::GradientRequest request;
                 leaftest::GradientResponse response;
@@ -784,7 +832,7 @@ py::dict LeafTrainer::test_with_hardcoded_values() {
                 
                 // Call the GetGradients method directly
                 grpc::ServerContext context;
-                auto status = service.GetGradients(&context, &request, &response);
+                auto status = local_service->GetGradients(&context, &request, &response);
                 
                 if (!status.ok()) {
                     throw std::runtime_error("Local GetGradients failed: " + status.error_message());

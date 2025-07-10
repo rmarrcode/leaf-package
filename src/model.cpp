@@ -1,11 +1,12 @@
 #include "model.h"
+#include "criterion.h"
 #include <iostream>
 #include <cstring>
 
 namespace py = pybind11;
 
 Model::Model(py::object model, LeafTrainer* trainer)
-    : pytorch_model(model), leaf_trainer(trainer), computed_outputs(false), loss(py::none()) {}
+    : pytorch_model(model), leaf_trainer(trainer), computed_outputs(false), loss(0.0f), criterion(nullptr) {}
 
 bool Model::forward(py::object input) {
     try {
@@ -46,18 +47,6 @@ const std::vector<py::object>& Model::get_stored_outputs() const {
 void Model::clear_stored_outputs() {
     stored_outputs.clear();
     computed_outputs = false;
-}
-
-py::object Model::get_loss() const {
-    return loss;
-}
-
-void Model::set_loss(py::object loss_value) {
-    loss = loss_value;
-}
-
-void Model::clear_loss() {
-    loss = py::none();
 }
 
 py::object Model::state_dict() {
@@ -102,6 +91,22 @@ void Model::setattr(const std::string& name, py::object value) {
 
 bool Model::hasattr(const std::string& name) {
     return py::hasattr(pytorch_model, name.c_str());
+}
+
+float Model::get_loss() const {
+    return loss;
+}
+
+void Model::set_loss(float loss_value) {
+    loss = loss_value;
+}
+
+std::shared_ptr<Criterion> Model::get_criterion() const {
+    return criterion;
+}
+
+void Model::set_criterion(std::shared_ptr<Criterion> criterion_ptr) {
+    criterion = criterion_ptr;
 }
 
 std::vector<float> Model::serialize_state() const {

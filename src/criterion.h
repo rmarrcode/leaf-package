@@ -9,21 +9,30 @@
 
 namespace py = pybind11;
 
-// Forward declaration
+// Forward declarations
 class LeafTrainer;
 class Model;
+class DistributedModel;
 
 class Criterion {
 private:
     py::object pytorch_criterion;
     LeafTrainer* leaf_trainer;
-    std::vector<py::object> stored_losses;
+    float loss;  // Store the computed loss
+    std::vector<py::object> stored_outputs;
+    std::vector<py::object> stored_targets;
 
 public:
     Criterion(py::object criterion, LeafTrainer* trainer);
     
-    // Calculate loss for outputs and targets, dividing targets the same way inputs were divided
-    py::object operator()(py::object outputs, py::object targets);
+    // Forward pass method that computes loss
+    bool forward(py::object outputs, py::object targets);
+    
+    // Forward pass with divided targets for distributed computation
+    bool forward_distributed(py::object outputs, py::object divided_targets);
+    
+    // Call operator to make it behave like a PyTorch criterion
+    bool operator()(py::object outputs, py::object targets);
     
     // Get the underlying PyTorch criterion
     py::object get_pytorch_criterion() const;
@@ -31,21 +40,28 @@ public:
     // Get the LeafTrainer pointer
     LeafTrainer* get_leaf_trainer() const;
     
-    // Get stored losses
-    const std::vector<py::object>& get_stored_losses() const;
+    // Get the computed loss
+    float get_loss() const;
     
-    // Clear stored losses
-    void clear_stored_losses();
+    // Set the loss value
+    void set_loss(float loss_value);
     
-    // Calculate loss for a specific model with its corresponding target slice
-    py::object calculate_loss_for_model(py::object model_outputs, py::object target_slice, Model* model);
+    // Get stored outputs
+    const std::vector<py::object>& get_stored_outputs() const;
     
-    // Distribute targets across models based on how inputs were distributed
-    std::vector<py::object> distribute_targets(py::object targets, const std::vector<Model*>& models);
+    // Get stored targets
+    const std::vector<py::object>& get_stored_targets() const;
     
-    // Delegate common PyTorch criterion methods to the underlying criterion
+    // Clear stored data
+    void clear_stored_data();
+    
+    // Delegate common PyTorch criterion methods
     py::object getattr(const std::string& name);
+    
+    // Set criterion attributes
     void setattr(const std::string& name, py::object value);
+    
+    // Check if criterion has an attribute
     bool hasattr(const std::string& name);
 };
 

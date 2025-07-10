@@ -35,6 +35,7 @@ namespace py = pybind11;
 
 // Forward declarations
 class DistributedModel;
+class Criterion;
 
 class LeafConfig {
 private:
@@ -66,8 +67,9 @@ private:
     std::mutex channel_mutex;
     std::vector<std::shared_ptr<Model>> local_models;  // Track local models
     std::vector<std::shared_ptr<DistributedModel>> distributed_models; // Track distributed models
-    std::vector<std::shared_ptr<Criterion>> criteria;  // Track criteria
+    std::vector<std::shared_ptr<Criterion>> criterions; // Track criterions
     mutable std::mutex models_mutex;  // Protect access to local_models
+    std::unique_ptr<ServerCommunicationServiceImpl> local_service;  // Persistent local service instance
 
     std::shared_ptr<grpc::Channel> create_channel(const std::string& server_name);
     std::pair<std::vector<float>, float> get_gradients_from_server(
@@ -80,6 +82,10 @@ private:
     std::vector<std::pair<std::string, std::vector<size_t>>> distribute_batch(
         const std::vector<std::string>& server_names,
         size_t batch_size);
+    
+    // Divide targets the same way inputs are divided
+    py::object divide_targets(py::object targets, 
+                             const std::vector<std::pair<std::string, std::vector<size_t>>>& distribution);
 
 public:
     py::object forward_pass_on_server(
@@ -105,7 +111,7 @@ public:
         const std::vector<float>& model_state,
         const std::string& model_id);
     py::object register_model(py::object model);
-    py::object register_criterion(py::object criterion);
+    py::object register_criterion(py::object model, py::object criterion);
     py::dict train(py::object model, 
                    py::object optimizer, 
                    py::object train_loader, 

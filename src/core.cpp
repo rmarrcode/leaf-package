@@ -45,6 +45,10 @@ PYBIND11_MODULE(_core, m) {
         .def("has_computed_outputs", &Model::has_computed_outputs)
         .def("get_stored_outputs", &Model::get_stored_outputs)
         .def("clear_stored_outputs", &Model::clear_stored_outputs)
+        .def("get_loss", &Model::get_loss)
+        .def("set_loss", &Model::set_loss)
+        .def("get_criterion", &Model::get_criterion)
+        .def("set_criterion", &Model::set_criterion)
         .def("state_dict", &Model::state_dict)
         .def("parameters", &Model::parameters)
         .def("named_parameters", &Model::named_parameters)
@@ -57,24 +61,7 @@ PYBIND11_MODULE(_core, m) {
         .def("setattr", &Model::setattr)
         .def("hasattr", &Model::hasattr)
         .def("serialize_state", &Model::serialize_state)
-        .def("deserialize_state", &Model::deserialize_state)
-        .def("get_loss", &Model::get_loss)
-        .def("set_loss", &Model::set_loss)
-        .def("clear_loss", &Model::clear_loss);
-
-    py::class_<Criterion, std::shared_ptr<Criterion>>(m, "Criterion")
-        .def(py::init<py::object, LeafTrainer*>(),
-             py::arg("criterion"), py::arg("trainer"))
-        .def("__call__", &Criterion::operator())
-        .def("get_pytorch_criterion", &Criterion::get_pytorch_criterion)
-        .def("get_leaf_trainer", &Criterion::get_leaf_trainer)
-        .def("get_stored_losses", &Criterion::get_stored_losses)
-        .def("clear_stored_losses", &Criterion::clear_stored_losses)
-        .def("calculate_loss_for_model", &Criterion::calculate_loss_for_model)
-        .def("distribute_targets", &Criterion::distribute_targets)
-        .def("getattr", &Criterion::getattr)
-        .def("setattr", &Criterion::setattr)
-        .def("hasattr", &Criterion::hasattr);
+        .def("deserialize_state", &Model::deserialize_state);
 
     py::class_<DistributedModel, std::shared_ptr<DistributedModel>>(m, "DistributedModel")
         .def(py::init<std::shared_ptr<Model>, LeafTrainer*, size_t>(),
@@ -84,6 +71,10 @@ PYBIND11_MODULE(_core, m) {
         .def("get_pytorch_model", &DistributedModel::get_pytorch_model)
         .def("get_leaf_trainer", &DistributedModel::get_leaf_trainer)
         .def("get_index", &DistributedModel::get_index)
+        .def("get_loss", &DistributedModel::get_loss)
+        .def("set_loss", &DistributedModel::set_loss)
+        .def("get_criterion", &DistributedModel::get_criterion)
+        .def("set_criterion", &DistributedModel::set_criterion)
         .def("state_dict", &DistributedModel::state_dict)
         .def("parameters", &DistributedModel::parameters)
         .def("named_parameters", &DistributedModel::named_parameters)
@@ -97,6 +88,23 @@ PYBIND11_MODULE(_core, m) {
         .def("hasattr", &DistributedModel::hasattr)
         .def("serialize_state", &DistributedModel::serialize_state)
         .def("deserialize_state", &DistributedModel::deserialize_state);
+
+    py::class_<Criterion, std::shared_ptr<Criterion>>(m, "Criterion")
+        .def(py::init<py::object, LeafTrainer*>(),
+             py::arg("criterion"), py::arg("trainer"))
+        .def("forward", &Criterion::forward)
+        .def("forward_distributed", &Criterion::forward_distributed)
+        .def("__call__", &Criterion::operator())
+        .def("get_pytorch_criterion", &Criterion::get_pytorch_criterion)
+        .def("get_leaf_trainer", &Criterion::get_leaf_trainer)
+        .def("get_loss", &Criterion::get_loss)
+        .def("set_loss", &Criterion::set_loss)
+        .def("get_stored_outputs", &Criterion::get_stored_outputs)
+        .def("get_stored_targets", &Criterion::get_stored_targets)
+        .def("clear_stored_data", &Criterion::clear_stored_data)
+        .def("getattr", &Criterion::getattr)
+        .def("setattr", &Criterion::setattr)
+        .def("hasattr", &Criterion::hasattr);
 
     py::class_<LeafConfig>(m, "LeafConfig")
         .def(py::init<>())
@@ -122,7 +130,7 @@ PYBIND11_MODULE(_core, m) {
              py::arg("criterion") = py::none())
         .def("test_with_hardcoded_values", &LeafTrainer::test_with_hardcoded_values)
         .def("register_model", &LeafTrainer::register_model, py::arg("model"))
-        .def("register_criterion", &LeafTrainer::register_criterion, py::arg("criterion"))
+        .def("register_criterion", &LeafTrainer::register_criterion, py::arg("model"), py::arg("criterion"))
         .def("cleanup_models", &LeafTrainer::cleanup_models)
         .def("get_model_count", &LeafTrainer::get_model_count)
         .def("get_server_names", &LeafTrainer::get_server_names)

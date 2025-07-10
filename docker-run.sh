@@ -35,11 +35,4 @@ if ! docker ps | grep -q leaf-grpc-server; then
     exit 1
 fi
 
-# Additional debugging
-echo "Container is running. Checking logs..."
-docker logs leaf-grpc-server
-
-echo "Testing if gRPC server is responding..."
-timeout 10 bash -c 'until nc -z localhost 50051; do sleep 1; done' && echo "gRPC server is responding" || echo "gRPC server is not responding"
-
 echo "Docker container started successfully!" 
