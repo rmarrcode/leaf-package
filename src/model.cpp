@@ -1,12 +1,11 @@
 #include "model.h"
-#include "criterion.h"
 #include <iostream>
 #include <cstring>
 
 namespace py = pybind11;
 
 Model::Model(py::object model, LeafTrainer* trainer)
-    : pytorch_model(model), leaf_trainer(trainer), computed_outputs(false), loss(0.0f), criterion(nullptr) {}
+    : pytorch_model(model), leaf_trainer(trainer), computed_outputs(false) {}
 
 bool Model::forward(py::object input) {
     try {
@@ -91,22 +90,6 @@ void Model::setattr(const std::string& name, py::object value) {
 
 bool Model::hasattr(const std::string& name) {
     return py::hasattr(pytorch_model, name.c_str());
-}
-
-float Model::get_loss() const {
-    return loss;
-}
-
-void Model::set_loss(float loss_value) {
-    loss = loss_value;
-}
-
-std::shared_ptr<Criterion> Model::get_criterion() const {
-    return criterion;
-}
-
-void Model::set_criterion(std::shared_ptr<Criterion> criterion_ptr) {
-    criterion = criterion_ptr;
 }
 
 std::vector<float> Model::serialize_state() const {

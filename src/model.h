@@ -10,9 +10,6 @@
 namespace py = pybind11;
 
 // Forward declaration
-class Criterion;
-
-// Forward declaration
 class LeafTrainer;
 
 class Model {
@@ -21,8 +18,6 @@ private:
     LeafTrainer* leaf_trainer;
     bool computed_outputs;
     std::vector<py::object> stored_outputs;
-    float loss;  // Store the computed loss
-    std::shared_ptr<Criterion> criterion;  // Pointer to the registered criterion
 
 public:
     Model(py::object model, LeafTrainer* trainer);
@@ -66,18 +61,6 @@ public:
     
     // Check if model has an attribute
     bool hasattr(const std::string& name);
-    
-    // Get the computed loss
-    float get_loss() const;
-    
-    // Set the loss value
-    void set_loss(float loss_value);
-    
-    // Get the registered criterion
-    std::shared_ptr<Criterion> get_criterion() const;
-    
-    // Set the criterion
-    void set_criterion(std::shared_ptr<Criterion> criterion_ptr);
     
     // Serialize model state to vector of floats
     std::vector<float> serialize_state() const;

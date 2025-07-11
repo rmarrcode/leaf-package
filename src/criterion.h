@@ -21,6 +21,7 @@ private:
     float loss;  // Store the computed loss
     std::vector<py::object> stored_outputs;
     std::vector<py::object> stored_targets;
+    std::vector<py::object> divided_targets; // Store divided targets for distributed computation
 
 public:
     Criterion(py::object criterion, LeafTrainer* trainer);
@@ -52,6 +53,9 @@ public:
     // Get stored targets
     const std::vector<py::object>& get_stored_targets() const;
     
+    // Get divided targets
+    const std::vector<py::object>& get_divided_targets() const;
+    
     // Clear stored data
     void clear_stored_data();
     
@@ -63,6 +67,9 @@ public:
     
     // Check if criterion has an attribute
     bool hasattr(const std::string& name);
+    
+    // Divide targets for distributed computation (similar to input division)
+    std::vector<py::object> divide_targets(py::object targets, const std::vector<std::string>& server_names);
 };
 
 #endif // CRITERION_H 

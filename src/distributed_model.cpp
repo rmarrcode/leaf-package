@@ -1,6 +1,5 @@
 #include "distributed_model.h"
 #include "model.h"
-#include "criterion.h"
 #include "core.h"
 #include <iostream>
 #include <stdexcept>
@@ -8,7 +7,7 @@
 namespace py = pybind11;
 
 DistributedModel::DistributedModel(std::shared_ptr<Model> model, LeafTrainer* trainer, size_t index)
-    : model(model), leaf_trainer(trainer), index(index), loss(0.0f), criterion(nullptr) {}
+    : model(model), leaf_trainer(trainer), index(index) {}
 
 bool DistributedModel::forward(py::object input) {
     // Get number of servers from trainer
@@ -123,20 +122,4 @@ std::vector<float> DistributedModel::serialize_state() const {
 
 void DistributedModel::deserialize_state(const std::vector<float>& state) { 
     model->deserialize_state(state); 
-}
-
-float DistributedModel::get_loss() const {
-    return loss;
-}
-
-void DistributedModel::set_loss(float loss_value) {
-    loss = loss_value;
-}
-
-std::shared_ptr<Criterion> DistributedModel::get_criterion() const {
-    return criterion;
-}
-
-void DistributedModel::set_criterion(std::shared_ptr<Criterion> criterion_ptr) {
-    criterion = criterion_ptr;
 }
