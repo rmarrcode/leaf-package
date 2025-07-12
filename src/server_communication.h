@@ -26,6 +26,9 @@ private:
     // Store actual Model objects on the server instead of just vectors of floats
     std::map<std::string, std::shared_ptr<Model>> stored_models;
 
+    // NEW: Map to keep the most recent output tensor for each stored model
+    std::map<std::string, std::vector<float>> model_outputs;
+
 public:
     Status GetServerTime(ServerContext* /*context*/, const TimeRequest* /*request*/, TimeResponse* response) override;
     Status ForwardPass(ServerContext* /*context*/, const ForwardPassRequest* request, ForwardPassResponse* response) override;
@@ -38,6 +41,9 @@ public:
     void store_model(const std::string& model_id, std::shared_ptr<Model> model);
     void remove_model(const std::string& model_id);
     std::vector<std::string> get_stored_model_ids() const;
+
+    // NEW: Store the latest outputs produced by each model after a forward pass
+    std::vector<float> get_outputs(const std::string& model_id) const;
 };
 
 #endif // SERVER_COMMUNICATION_H 

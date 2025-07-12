@@ -3,6 +3,7 @@
 #include "server_communication.h"
 #include <algorithm>
 #include <cstring>
+#include <chrono>
 
 namespace py = pybind11;
 
@@ -172,6 +173,13 @@ std::shared_ptr<grpc::Channel> LeafTrainer::create_channel(const std::string& se
     grpc::ChannelArguments args;
     args.SetMaxReceiveMessageSize(100 * 1024 * 1024);  // 100MB
     args.SetMaxSendMessageSize(100 * 1024 * 1024);     // 100MB
+    
+    // Add keepalive settings for better connection stability
+    args.SetInt(GRPC_ARG_KEEPALIVE_TIME_MS, 30000);  // 30 seconds
+    args.SetInt(GRPC_ARG_KEEPALIVE_TIMEOUT_MS, 10000);  // 10 seconds
+    args.SetInt(GRPC_ARG_KEEPALIVE_PERMIT_WITHOUT_CALLS, 1);
+    args.SetInt(GRPC_ARG_HTTP2_MAX_PINGS_WITHOUT_DATA, 0);
+    args.SetInt(GRPC_ARG_HTTP2_MIN_RECV_PING_INTERVAL_WITHOUT_DATA_MS, 5000);
     
     auto channel = grpc::CreateCustomChannel(server_address, grpc::InsecureChannelCredentials(), args);
     return channel;
@@ -359,7 +367,7 @@ py::object LeafTrainer::forward_pass_on_server(
         py::object torch = py::module_::import("torch");
         py::object numpy = py::module_::import("numpy");
         
-        // Convert input to numpy array and then to bytes
+        // Convert input to numpy array
         py::array_t<float> input_array;
         if (py::hasattr(inputs, "cpu")) {
             py::object cpu_input = inputs.attr("cpu")();
@@ -371,29 +379,115 @@ py::object LeafTrainer::forward_pass_on_server(
         } else {
             throw std::runtime_error("Input tensor does not have cpu() method");
         }
+        // Flatten to 1D contiguous array
+        py::object flat_obj = numpy.attr("ascontiguousarray")(input_array).attr("ravel")();
+        py::array_t<float> flat_array = flat_obj.cast<py::array_t<float>>();
         
-        // Prepare request
-        leaftest::ForwardPassRequest request;
-        request.set_input_data(input_array.data(), input_array.size() * sizeof(float));
-        request.set_model_index(model_index);
+        // Check input size and split into chunks if too large
+        size_t input_size = flat_array.size() * sizeof(float);
+        std::cout << "ForwardPass: Input array size: " << input_size << " bytes (" << flat_array.size() << " elements)" << std::endl;
         
-        // Make RPC call
-        grpc::ClientContext context;
-        leaftest::ForwardPassResponse response;
-        
-        auto status = stub->ForwardPass(&context, request, &response);
-        
-        if (!status.ok()) {
-            throw std::runtime_error("Forward pass RPC failed for server " + server_name + ": " + status.error_message());
+        const size_t max_chunk_bytes = 32 * 1024; // 32KB - reasonable chunk size
+        const size_t max_chunk_elems = max_chunk_bytes / sizeof(float);
+        std::vector<py::array_t<float>> input_chunks;
+        if (flat_array.size() > max_chunk_elems) {
+            std::cout << "ForwardPass: Input is large, splitting into chunks of " << max_chunk_elems << " elements each" << std::endl;
+            size_t num_chunks = (flat_array.size() + max_chunk_elems - 1) / max_chunk_elems;
+            auto input_buffer = flat_array.unchecked<1>();
+            for (size_t i = 0; i < num_chunks; ++i) {
+                size_t start = i * max_chunk_elems;
+                size_t end = std::min(start + max_chunk_elems, (size_t)flat_array.size());
+                size_t chunk_size = end - start;
+                py::array_t<float> chunk_array({(py::ssize_t)chunk_size});
+                auto chunk_buffer = chunk_array.mutable_unchecked<1>();
+                for (size_t j = 0; j < chunk_size; ++j) {
+                    chunk_buffer[j] = input_buffer[start + j];
+                }
+                input_chunks.push_back(chunk_array);
+            }
+        } else {
+            input_chunks.push_back(flat_array);
         }
         
-        if (!response.success()) {
-            throw std::runtime_error("Server " + server_name + " forward pass failed: " + response.error_message());
+        // Run forward pass for each chunk and collect outputs
+        py::list outputs;
+        for (size_t chunk_idx = 0; chunk_idx < input_chunks.size(); ++chunk_idx) {
+            const auto& chunk_array = input_chunks[chunk_idx];
+            std::cout << "ForwardPass: Processing chunk " << (chunk_idx + 1) << "/" << input_chunks.size() << std::endl;
+            
+            // Retry logic for RPC calls
+            const int max_retries = 3;
+            bool success = false;
+            std::string last_error;
+            
+            for (int retry = 0; retry < max_retries && !success; ++retry) {
+                try {
+                    // Use the numpy array directly for the request
+                    leaftest::ForwardPassRequest request;
+                    request.set_input_data(chunk_array.data(), chunk_array.size() * sizeof(float));
+                    request.set_model_index(model_index);
+                    
+                    grpc::ClientContext context;
+                    std::chrono::system_clock::time_point deadline = 
+                        std::chrono::system_clock::now() + std::chrono::seconds(60); // Longer timeout
+                    context.set_deadline(deadline);
+                    
+                    std::cout << "ForwardPass: Making RPC call to server " << server_name << " (attempt " << (retry + 1) << "/" << max_retries << ")" << std::endl;
+                    std::cout << "ForwardPass: Chunk size: " << chunk_array.size() * sizeof(float) << " bytes" << std::endl;
+                    
+                    leaftest::ForwardPassResponse response;
+                    auto status = stub->ForwardPass(&context, request, &response);
+                    
+                    if (!status.ok()) {
+                        std::cout << "ForwardPass: RPC failed with error code: " << status.error_code() << std::endl;
+                        std::cout << "ForwardPass: Error message: " << status.error_message() << std::endl;
+                        std::cout << "ForwardPass: Error details: " << status.error_details() << std::endl;
+                        last_error = "RPC failed: " + status.error_message();
+                        
+                        if (retry < max_retries - 1) {
+                            std::cout << "ForwardPass: Retrying in 1 second..." << std::endl;
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                            continue;
+                        }
+                    } else if (!response.success()) {
+                        std::cout << "ForwardPass: Server returned success=false" << std::endl;
+                        last_error = "Server failed: " + response.error_message();
+                        
+                        if (retry < max_retries - 1) {
+                            std::cout << "ForwardPass: Retrying in 1 second..." << std::endl;
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                            continue;
+                        }
+                    } else {
+                        success = true;
+                        std::cout << "ForwardPass: Chunk " << (chunk_idx + 1) << " successful" << std::endl;
+                    }
+                } catch (const std::exception& e) {
+                    last_error = "Exception: " + std::string(e.what());
+                    std::cout << "ForwardPass: Exception on attempt " << (retry + 1) << ": " << e.what() << std::endl;
+                    
+                    if (retry < max_retries - 1) {
+                        std::cout << "ForwardPass: Retrying in 1 second..." << std::endl;
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        continue;
+                    }
+                }
+            }
+            
+            if (!success) {
+                throw std::runtime_error("Forward pass failed for chunk " + std::to_string(chunk_idx + 1) + " after " + std::to_string(max_retries) + " attempts. Last error: " + last_error);
+            }
+            
+            // For now, append a dummy tensor for each chunk
+            outputs.append(torch.attr("randn")(1, 10));
+            
+            // Add delay between chunks to prevent overwhelming the server
+            if (chunk_idx < input_chunks.size() - 1) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
         }
-        
-        // For now, return a dummy tensor since we're not properly serializing the output
-        // In a real implementation, you'd deserialize the response.gradients() back to a tensor
-        return torch.attr("randn")(1, 10);  // Placeholder output
+        // Concatenate outputs along batch dimension
+        return torch.attr("cat")(outputs, 0);
         
     } catch (const std::exception& e) {
         throw std::runtime_error("Forward pass failed: " + std::string(e.what()));

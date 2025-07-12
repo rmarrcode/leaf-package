@@ -10,10 +10,9 @@ DistributedModel::DistributedModel(std::shared_ptr<Model> model, LeafTrainer* tr
     : model(model), leaf_trainer(trainer), index(index) {}
 
 bool DistributedModel::forward(py::object input) {
-    // Get number of servers from trainer
+    // Get server names from trainer
     auto server_names = leaf_trainer->get_server_names();
-    size_t num_servers = server_names.size();
-    if (num_servers == 0) {
+    if (server_names.empty()) {
         std::cout << "Error: No servers available for distributed forward" << std::endl;
         return false;
     }
@@ -23,9 +22,8 @@ bool DistributedModel::forward(py::object input) {
     size_t connected_servers = 0;
     size_t successful_servers = 0;
     
-    // Get server info to determine which servers are local vs remote
-    for (size_t i = 0; i < num_servers; ++i) {
-        const std::string& server_name = server_names[i];
+    // Iterate directly through server names like test_with_hardcoded_values
+    for (const auto& server_name : server_names) {
         py::dict server_info = leaf_trainer->get_server_info(server_name);
         bool is_local = server_info["is_local"].cast<bool>();
         bool is_connected = server_info["connected"].cast<bool>();

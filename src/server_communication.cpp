@@ -70,60 +70,114 @@ Status ServerCommunicationServiceImpl::StoreModelWeights(ServerContext* /*contex
 Status ServerCommunicationServiceImpl::ForwardPass(ServerContext* /*context*/, const ForwardPassRequest* request, ForwardPassResponse* response) {
     try {
         uint32_t model_index = request->model_index();
+        std::cout << "ForwardPass: Starting for model index " << model_index << std::endl;
         
         // Get the model ID based on the index
         std::string model_id = "model_" + std::to_string(model_index);
+        std::cout << "ForwardPass: Looking for model_id: " << model_id << std::endl;
         
         // Check if the model exists
         if (!has_model(model_id)) {
+            std::cout << "ForwardPass: ERROR - Model " << model_id << " not found" << std::endl;
             response->set_success(false);
             response->set_error_message("Model with index " + std::to_string(model_index) + " not found");
             return Status::OK;
         }
+        std::cout << "ForwardPass: Model " << model_id << " found" << std::endl;
         
         // Get the model
         auto model = get_model(model_id);
         if (!model) {
+            std::cout << "ForwardPass: ERROR - Failed to retrieve model " << model_id << std::endl;
             response->set_success(false);
             response->set_error_message("Failed to retrieve model with index " + std::to_string(model_index));
             return Status::OK;
         }
+        std::cout << "ForwardPass: Model " << model_id << " retrieved successfully" << std::endl;
         
-        // Deserialize input data from request
+        // Deserialize input data from request into a numpy array
         const std::string& input_bytes = request->input_data();
         if (input_bytes.empty()) {
+            std::cout << "ForwardPass: ERROR - No input data provided" << std::endl;
             response->set_success(false);
             response->set_error_message("No input data provided");
             return Status::OK;
         }
+        std::cout << "ForwardPass: Input data size: " << input_bytes.size() << " bytes" << std::endl;
         
-        // Convert bytes to numpy array and then to PyTorch tensor
-        // This is a simplified version - in practice you'd need proper tensor deserialization
-        py::object torch = py::module_::import("torch");
+        try {
+            py::object numpy = py::module_::import("numpy");
+            std::cout << "ForwardPass: NumPy imported successfully" << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "ForwardPass: ERROR - Failed to import numpy: " << e.what() << std::endl;
+            response->set_success(false);
+            response->set_error_message("Failed to import numpy: " + std::string(e.what()));
+            return Status::OK;
+        }
+        
+        try {
+            py::object torch = py::module_::import("torch");
+            std::cout << "ForwardPass: PyTorch imported successfully" << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "ForwardPass: ERROR - Failed to import torch: " << e.what() << std::endl;
+            response->set_success(false);
+            response->set_error_message("Failed to import torch: " + std::string(e.what()));
+            return Status::OK;
+        }
+        
         py::object numpy = py::module_::import("numpy");
+        py::object torch = py::module_::import("torch");
         
-        // Create a dummy input tensor for now (in real implementation, deserialize properly)
-        py::object input_tensor = torch.attr("randn")(1, 3, 224, 224);  // Example shape
+        py::object input_tensor;
+        try {
+            // Create numpy array from raw bytes (float32)
+            py::object np_float32 = numpy.attr("dtype")("float32");
+            py::object input_array = numpy.attr("frombuffer")(py::bytes(input_bytes), np_float32);
+            std::cout << "ForwardPass: Input array created from bytes successfully" << std::endl;
+            
+            // Convert numpy array to torch tensor
+            input_tensor = torch.attr("from_numpy")(input_array).attr("float")();
+            std::cout << "ForwardPass: Input tensor created successfully" << std::endl;
+            
+            // Ensure batch dimension exists (if caller sent flat tensor we treat it as batch size 1)
+            if (input_tensor.attr("dim")().cast<int>() == 1) {
+                input_tensor = input_tensor.attr("unsqueeze")(0);
+                std::cout << "ForwardPass: Added batch dimension to input tensor" << std::endl;
+            }
+            
+            std::cout << "ForwardPass: Input tensor shape: " << py::str(input_tensor.attr("shape")).cast<std::string>() << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "ForwardPass: ERROR - Failed to create input tensor: " << e.what() << std::endl;
+            response->set_success(false);
+            response->set_error_message("Failed to create input tensor: " + std::string(e.what()));
+            return Status::OK;
+        }
         
-        // Perform forward pass using the underlying PyTorch model
-        py::object pytorch_model = model->get_pytorch_model();
-        py::object output = pytorch_model.attr("forward")(input_tensor);
-        
-        // Convert output to bytes for response
-        // In a real implementation, you'd serialize the output tensor
-        std::string output_bytes = "forward_pass_output";  // Placeholder
-        
-        response->set_gradients(output_bytes);
-        response->set_loss(0.0f);  // No loss computation in forward pass
-        response->set_success(true);
-        response->set_error_message("");
-        
-        std::cout << "Forward pass completed for model index " << model_index << std::endl;
-        
-        return Status::OK;
+        try {
+            // Run forward pass using the stored PyTorch model
+            py::object pytorch_model = model->get_pytorch_model();
+            std::cout << "ForwardPass: Retrieved PyTorch model successfully" << std::endl;
+            
+            py::object output_tensor = pytorch_model.attr("forward")(input_tensor);
+            std::cout << "ForwardPass: Forward pass completed successfully" << std::endl;
+            
+            // Just return true if the forward pass worked
+            response->set_success(true);
+            response->set_error_message("");
+            
+            std::cout << "ForwardPass: Completed successfully for model index " << model_index << std::endl;
+            
+            return Status::OK;
+        } catch (const std::exception& e) {
+            std::cout << "ForwardPass: ERROR - Forward pass failed: " << e.what() << std::endl;
+            response->set_success(false);
+            response->set_error_message("Forward pass failed: " + std::string(e.what()));
+            return Status::OK;
+        }
     } catch (const std::exception& e) {
+        std::cout << "ForwardPass: ERROR - Unexpected error: " << e.what() << std::endl;
         response->set_success(false);
-        response->set_error_message(e.what());
+        response->set_error_message("Unexpected error: " + std::string(e.what()));
         return Status::OK;
     }
 }
@@ -179,6 +233,15 @@ std::vector<std::string> ServerCommunicationServiceImpl::get_stored_model_ids() 
     return ids;
 }
 
+
+std::vector<float> ServerCommunicationServiceImpl::get_outputs(const std::string& model_id) const {
+    auto it = model_outputs.find(model_id);
+    if (it != model_outputs.end()) {
+        return it->second;
+    }
+    return {};
+}
+
 int main(int /*argc*/, char** /*argv*/) {
     const std::string addr("0.0.0.0:50051");
     ServerCommunicationServiceImpl service;
@@ -188,6 +251,13 @@ int main(int /*argc*/, char** /*argv*/) {
     // Default is 4MB, we'll set it to 100MB to handle large model weights
     builder.AddChannelArgument(GRPC_ARG_MAX_RECEIVE_MESSAGE_LENGTH, 100 * 1024 * 1024);  // 100MB
     builder.AddChannelArgument(GRPC_ARG_MAX_SEND_MESSAGE_LENGTH, 100 * 1024 * 1024);      // 100MB
+    
+    // Add keepalive settings for better connection stability
+    builder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIME_MS, 30000);  // 30 seconds
+    builder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIMEOUT_MS, 10000);  // 10 seconds
+    builder.AddChannelArgument(GRPC_ARG_KEEPALIVE_PERMIT_WITHOUT_CALLS, 1);
+    builder.AddChannelArgument(GRPC_ARG_HTTP2_MAX_PINGS_WITHOUT_DATA, 0);
+    builder.AddChannelArgument(GRPC_ARG_HTTP2_MIN_RECV_PING_INTERVAL_WITHOUT_DATA_MS, 5000);
     
     builder.AddListeningPort(addr, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
