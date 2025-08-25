@@ -2,7 +2,7 @@
 
 A Python package for managing server configurations and compute resources.
 
-## 📄 Technical Report
+## Technical Report
 
 [Click here to view the full Leaf Technical Report (PDF)](Leaf_Technical_Report.pdf)
 
